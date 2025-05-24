@@ -8,6 +8,7 @@ from itertools import chain
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--enable")
+parser.add_argument("--cout")
 args = parser.parse_args()
 
 # WHATEVER JUST HARDCODE THIS FOR NOW
@@ -26,11 +27,13 @@ for surfAddr in surfList:
 
 for m in masks:
     print(f'autotrain {m} is {hex(masks[m])}')
-    
-# enable autotrain for the enabled SURFs
+
+# enable autotrain for the enabled SURFs and the COUT offset
 for n in tio:
     print(f'Setting TURFIO#{n} autotrain to {hex(masks[n])}')
     tio[n].surfturf.autotrain = masks[n]
+    # magic number
+    tio[n].surfturf.cout_offset = 3
 
 # enable RXCLK for the TURFIOs containing the SURFs
 for t in tio.values():
@@ -72,11 +75,15 @@ dev.trig.runcmd(dev.trig.RUNCMD_SYNC)
 
 # we need a blank starting point
 surfEyes = []
+surfCoutEyes = []
 for i in range(4):
     stio = []
+    scouttio = []
     for j in range(7):
         stio.append(None)
+        scouttio.append(None)
     surfEyes.append(stio)
+    surfCoutEyes.append(scouttio)
 
 tioCompleteMask = [ 0, 0, 0, 0 ]
     
@@ -84,7 +91,7 @@ tioCompleteMask = [ 0, 0, 0, 0 ]
 for surfAddr in surfActiveList:
     tn = surfAddr[0]
     sn = surfAddr[1]
-    t = tio[tn]
+    t = tio[tn]    
     print(f'Finding DOUT alignment on SURF#{sn} on TURFIO#{tn}:')
     try:
         eyes = t.dalign[sn].find_alignment(do_reset=True, verbose=True)
@@ -92,6 +99,14 @@ for surfAddr in surfActiveList:
         print(f'DOUT alignment failed on SURF#{sn} on TURFIO#{tn}, skipping')
         continue
     print(f'DOUT alignment found eyes: {eyes}')
+    if args.cout:
+        try:
+            coutEyes = t.calign[sn].find_alignment(do_reset=True, verbose=True)
+        except IOError:
+            print(f'COUT alignment failed on SURF#{sn} on TURFIO#{tn}, skipping')
+            continue
+        print(f'COUT alignment found eyes: {coutEyes}')
+        surfCoutEyes[tn][sn] = coutEyes
     surfEyes[tn][sn] = eyes
     tioCompleteMask[tn] |= (1<<sn)
 
@@ -100,8 +115,8 @@ commonEye = None
 for d in list(chain(*surfEyes)):
     if d is not None:
         commonEye = d.keys() if commonEye is None else commonEye & d.keys()
-
 print(f'Common eye[s]: {commonEye}')
+
 usingEye = None
 if len(commonEye) > 1:
     print(f'Multiple common eyes found, choosing the one with smallest delay')
@@ -126,6 +141,40 @@ if len(commonEye) > 1:
 elif len(commonEye):
     usingEye = list(commonEye)[0]
 
+if args.cout:
+    commonCoutEye = None
+    for d in list(chain(*surfCoutEyes)):
+        if d is not None:
+            commonCoutEye = d.keys() if commonCoutEye is None else commonCoutEye & d.keys()            
+    print(f'Common COUT eye[s]: {commonCoutEye}')
+    usingCoutEye = None
+    if len(commonCoutEye)>1:
+        print(f'Multiple common COUT eyes found, choosing the one with the smallest delay')
+        test_surf = None
+        for i in range(4):
+            for j in range(7):
+                if surfEyes[i][j] is not None:
+                    test_surf = surfCoutEyes[i][j]
+        min = None
+        minEye = None
+        for eye in commonCoutEye:
+            if minEye is None:
+                min = test_surf[eye]
+                minEye = eye
+                print(f'First eye {minEye} has tap {min}')
+            else:
+                if test_surf[eye] < min:
+                    min = test_surf[eye]
+                    minEye = eye
+                    print(f'New eye {minEye} has smaller tap {min}, using it')
+            usingCoutEye = minEye
+    elif len(commonCoutEye):
+        usingCoutEye = list(commonCoutEye)[0]
+
+print(f'DOUT eye: {usingEye}')
+if args.cout:
+    print(f'COUT eye: {usingCoutEye}')
+
 trainedSurfs = []
 
 for i in range(4):
@@ -133,6 +182,9 @@ for i in range(4):
         if surfEyes[i][j] is not None:
             eye = (surfEyes[i][j][usingEye], usingEye)
             tio[i].dalign[j].apply_alignment(eye)
+            if args.cout:
+                eye = (surfCoutEyes[i][j][usingCoutEye], usingCoutEye)
+                tio[i].calign[j].apply_alignment(eye)
             trainedSurfs.append( (i, j) )
 
 # Enabling is a bit tricky, because we CANNOT
