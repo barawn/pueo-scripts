@@ -22,6 +22,8 @@ for tio in tioList:
         sys.exit(1)
 
 dev = PueoTURF(None, 'Ethernet')
+# Start off by clean-resetting the TURF-y side stuff.
+dev.ctl.reset()
 
 tios = [ None, None, None, None ]
 for tionum in tioList:
