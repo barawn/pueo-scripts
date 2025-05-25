@@ -33,6 +33,7 @@ for n in tio:
     print(f'Setting TURFIO#{n} autotrain to {hex(masks[n])}')
     tio[n].surfturf.autotrain = masks[n]
     # magic number
+    print(f'Setting TURFIO#{n} COUT offset to 3')
     tio[n].surfturf.cout_offset = 3
 
 # enable RXCLK for the TURFIOs containing the SURFs
