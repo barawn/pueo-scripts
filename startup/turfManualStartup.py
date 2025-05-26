@@ -30,12 +30,17 @@ for tionum in tioList:
         print(f'Lane not up, skipping??')
         continue
     tio = PueoTURFIO((dev, tionum), 'TURFGTP')
+    # MAYBE we should check to see if the clock has
+    # already been programmed here???
     tio.program_sysclk(tio.ClockSource.TURF)
     while not ((tio.read(0xC) & 0x1)):
         print(f'Waiting for clock on TURFIO#{tionum}...')
     print(f'Aligning RXCLK->SYSCLK transition on TURFIO#{tionum}...')
     tap = tio.cinalign.align_rxclk()
     print(f'TURFIO#{tionum} - tap is {tap}')
+    # Everything after this point we COULD maybe repeat IF
+    # we also turned off the SURFs and let them lose commanding too.
+    # Don't know if this makes sense.
     print(f'Aligning CIN on TURFIO#{tionum}...')    
     dev.ctl.tio[tionum].train_enable(True)
     # this should never matter BUT doesn't hurt
