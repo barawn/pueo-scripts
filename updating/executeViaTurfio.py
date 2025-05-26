@@ -31,6 +31,9 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("filename")
+parser.add_argument("--timeout")
+parser.add_argument("--wait")
+
 args = parser.parse_args()
 
 print(f'Sending {args.filename} to be executed! : MD5 {filemd5(args.filename)}')
@@ -76,8 +79,10 @@ try:
 except Exception as e:
     print("caught an exception during execute??")
     print(repr(e))
-    
-time.sleep(0.1)
+
+if args.wait:
+    print(f'Waiting {wait} before getting journal')
+    time.sleep(wait)
 for s in surfList:
     hsk.send(HskPacket(surfAddrDict[s], 'eJournal', data="-u pyfwupd -o cat -n 1"))
     pkt = hsk.receive()
