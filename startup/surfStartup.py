@@ -209,7 +209,6 @@ for i in range(4):
                 eye = dev.ctl.tio[i].bit[j].locate_eyecenter()
                 print(f'TURFIO{i} SURF{j} : {eye[0]} ns {eye[1]} offset')
                 dev.ctl.tio[i].bit[j].apply_eye(eye)
-                eyes.append(eye)
                         
 # Enabling is a bit tricky, because we CANNOT
 # enable the data path UNTIL the SURF exits
