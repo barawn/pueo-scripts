@@ -186,7 +186,14 @@ for i in range(4):
                 eye = (surfCoutEyes[i][j][usingCoutEye], usingCoutEye)
                 tio[i].calign[j].apply_alignment(eye)
             trainedSurfs.append( (i, j) )
-
+    if args.cout:
+        # Now we need to align the TURF inputs
+        # as well while the SURFs are training.
+        # This is significantly easier than the TURFIO
+        # side since there's virtually no skew or variation
+        # across the entire experiment.
+        pass
+        
 # Enabling is a bit tricky, because we CANNOT
 # enable the data path UNTIL the SURF exits
 # training.
