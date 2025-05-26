@@ -207,7 +207,7 @@ for i in range(4):
             # if we got an eye we can train it at the TURF
             if surfCoutEyes[i][j] is not None:
                 eye = dev.ctl.tio[i].bit[j].locate_eyecenter()
-                print(f'TURFIO{i} SURF{j} : {eye[0]} ns {eye[1]} offset')
+                print(f'TURFIO{i} SURF{j} : {eye[0]} ps {eye[1]} offset')
                 dev.ctl.tio[i].bit[j].apply_eye(eye)
                         
 # Enabling is a bit tricky, because we CANNOT
