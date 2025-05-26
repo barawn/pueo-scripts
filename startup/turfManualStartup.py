@@ -38,6 +38,8 @@ for tionum in tioList:
     print(f'TURFIO#{tionum} - tap is {tap}')
     print(f'Aligning CIN on TURFIO#{tionum}...')    
     dev.ctl.tio[tionum].train_enable(True)
+    # this should never matter BUT doesn't hurt
+    tio.cinalign.enable(False)
     tios[tionum] = tio
 
 tioEyes = [ None, None, None, None ]
