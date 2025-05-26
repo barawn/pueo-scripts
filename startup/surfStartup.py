@@ -6,6 +6,14 @@ import sys
 import argparse
 from itertools import chain
 
+#
+# This has gotten incredibly painful and likely needs to be cleaned up a ton.
+# It starts up the SURFs and then aligns the return paths, which means
+# aligning data inputs at the TURFIOs, then aligning the trigger inputs
+# at the TURFIO and then at the TURF.
+# 
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--enable")
 parser.add_argument("--cout")
@@ -28,13 +36,19 @@ for surfAddr in surfList:
 for m in masks:
     print(f'autotrain {m} is {hex(masks[m])}')
 
-# enable autotrain for the enabled SURFs and the COUT offset
+# enable autotrain for the enabled SURFs
+# and the COUT offset at the TURFIOs and the corresponding CIN offset
+# at TURF. We can do this regardless of whether we're training
+# the COUT path or not.
 for n in tio:
     print(f'Setting TURFIO#{n} autotrain to {hex(masks[n])}')
     tio[n].surfturf.autotrain = masks[n]
     # magic number
     print(f'Setting TURFIO#{n} COUT offset to 3')
     tio[n].surfturf.cout_offset = 3
+    print(f'Setting TURF CIN[{n}] offset to 0')
+    # magic number 2
+    dev.ctl.tio[n].cin_offset = 0
 
 # enable RXCLK for the TURFIOs containing the SURFs
 for t in tio.values():
@@ -188,13 +202,15 @@ for i in range(4):
                 tio[i].calign[j].apply_alignment(eye)
             trainedSurfs.append( (i, j) )
     if args.cout:
-        # Now we need to align the TURF inputs
-        # as well while the SURFs are training.
-        # This is significantly easier than the TURFIO
-        # side since there's virtually no skew or variation
-        # across the entire experiment.
-        pass
-        
+        print("Now aligning trigger inputs (CIN) at TURF:")
+        for j in range(7):
+            # if we got an eye we can train it at the TURF
+            if surfCoutEyes[i][j] is not None:
+                eye = dev.ctl.tio[i].bit[j].locate_eyecenter()
+                print(f'TURFIO{i} SURF{j} : {eye[0]} ns {eye[1]} offset')
+                dev.ctl.tio[i].bit[j].apply_eye(eye)
+                eyes.append(eye)
+                        
 # Enabling is a bit tricky, because we CANNOT
 # enable the data path UNTIL the SURF exits
 # training.
