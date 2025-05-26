@@ -22,6 +22,8 @@ for tio in tioList:
         sys.exit(1)
 
 dev = PueoTURF(None, 'Ethernet')
+# Start off by clean-resetting the TURF-y side stuff.
+dev.ctl.reset()
 
 tios = [ None, None, None, None ]
 for tionum in tioList:
@@ -123,6 +125,10 @@ for tio in aligned_turfios:
     
 dev.trig.runcmd(dev.trig.RUNCMD_SYNC)
 for tio in aligned_turfios:
+    # Reset the OSERDES on the TURFIO COUT -> TURF CIN path now that sync
+    # has run.
+    tio.cinalign.oserdes_reset = 1
+    tio.cinalign.oserdes_reset = 0
     tio.extsync = False
 
 print(f'TURFIO sync complete')
