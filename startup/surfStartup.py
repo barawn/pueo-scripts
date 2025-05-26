@@ -109,14 +109,14 @@ for surfAddr in surfActiveList:
     t = tio[tn]    
     print(f'Finding DOUT alignment on SURF#{sn} on TURFIO#{tn}:')
     try:
-        eyes = t.dalign[sn].find_alignment(do_reset=True, verbose=True)
+        eyes = t.dalign[sn].find_alignment(do_reset=True)
     except IOError:
         print(f'DOUT alignment failed on SURF#{sn} on TURFIO#{tn}, skipping')
         continue
     print(f'DOUT alignment found eyes: {eyes}')
     if args.cout:
         try:
-            coutEyes = t.calign[sn].find_alignment(do_reset=True, verbose=True)
+            coutEyes = t.calign[sn].find_alignment(do_reset=True)
         except IOError:
             print(f'COUT alignment failed on SURF#{sn} on TURFIO#{tn}, skipping')
             continue
