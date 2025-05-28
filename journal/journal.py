@@ -4,7 +4,7 @@ from HskSerial import HskSerial, HskEthernet, HskPacket
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('local',
+parser.add_argument('--local',
                     help='set to 1 if using /dev/hsklocal')
 parser.add_argument('addr',
                     help='housekeeping address of SURF to get journal from',
