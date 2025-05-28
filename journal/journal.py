@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-from HskSerial import HskEthernet, HskPacket
+from HskSerial import HskSerial, HskEthernet, HskPacket
 import argparse
 
 parser = argparse.ArgumentParser()
+parser.add_argument('local',
+                    help='set to 1 if using /dev/hsklocal')
 parser.add_argument('addr',
                     help='housekeeping address of SURF to get journal from',
                     type=lambda x : int(x,0))
@@ -12,7 +14,10 @@ addr = args.addr
 cmdstr = ' '.join(remaining)
 print(f'Sending eJournal to {hex(addr)}: journalctl {cmdstr}')
 
-hsk = HskEthernet()
+if args.local:
+    hsk = HskSerial('/dev/hsklocal', srcId=0xFC)
+else:
+    hsk = HskEthernet()
 hsk.send(HskPacket(addr, 'eJournal', data=cmdstr.encode()))
 
 res = ''
