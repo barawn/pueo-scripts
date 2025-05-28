@@ -10,6 +10,3 @@ for s in ls:
     hsk.send(HskPacket(s, 'eFwNext', data='/lib/firmware/pueo_surf6_v0r1p13.bit'.encode()))
     print(hsk.receive().pretty(asString=True))
 
-for s in ls:
-    hsk.send(HskPacket(s, 'eRestart', data=[0]))
-
