@@ -41,8 +41,8 @@ for m in masks:
 # at TURF. We can do this regardless of whether we're training
 # the COUT path or not.
 for n in tio:
-    print(f'Setting TURFIO#{n} autotrain to {hex(masks[n])}')
-    tio[n].surfturf.autotrain = masks[n]
+    print(f'Setting TURFIO#{n} autotrain bits: {hex(masks[n])}')
+    r = tio[n].surfturf.autotrain | masks[n]
     # magic number
     print(f'Setting TURFIO#{n} COUT offset to 3')
     tio[n].surfturf.cout_offset = 3
@@ -50,10 +50,13 @@ for n in tio:
     # magic number 2
     dev.ctl.tio[n].cin_offset = 0
 
-# enable RXCLK for the TURFIOs containing the SURFs
-for t in tio.values():
-    print(f'Enabling RXCLK on {t}')
-    t.enable_rxclk(True)
+# the RXCLK bitmask is the same as masks[n], just inverted
+for n in tio:
+    printf(f'Enabling RXCLK bits: {hex(masks[n])}')
+    r = tio[n].surfturf.rxclk_disable
+    m = (masks[n] ^ 0xFF)
+    r = r & m
+    tio[n].surfturf.rxclk_disable = r
 
 surfActiveList = []
 for surfAddr in surfList:
@@ -217,8 +220,10 @@ for i in range(4):
 if args.enable:
     for i in range(4):
         if tioCompleteMask[i] != 0:
-            print(f'Setting TURFIO#{i} complete to {hex(tioCompleteMask[i])}')
-            tio[i].surfturf.train_complete = tioCompleteMask[i]
+            print(f'Setting TURFIO#{i} complete bits: {hex(tioCompleteMask[i])}')
+            r = tio[i].surfturf.train_complete
+            r |= tioCompleteMask[i]
+            tio[i].surfturf.train_complete = r
             
     print("Issuing NOOP_LIVE")
     dev.trig.runcmd(dev.trig.RUNCMD_NOOP_LIVE)
