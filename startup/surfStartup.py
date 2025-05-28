@@ -8,10 +8,25 @@ from itertools import chain
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--enable")
+parser.add_argument("--surfside", type=str, default="HL,HR,VL,VR",
+                    help="either HL, HR, VL, VR") # not going to go insane just yet
 args = parser.parse_args()
 
 # WHATEVER JUST HARDCODE THIS FOR NOW
-surfList = [ (0, 0), (0, 5) ]
+if not args.surfside : # hopefully this 
+    surfList = [ (0, 0), (0, 5) ]
+
+# all 7 slots populated for HDAQ
+if args.surfside == 'HL': 
+    surfList = [ (0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6) ] 
+elif args.surfside == 'HR': 
+    surfList = [ (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6) ] 
+
+# only 6 slots populated for VDAQ 
+elif args.surfside == 'VR': 
+    surfList = [ (2, 0), (2, 1), (2, 2), (2, 3), (2, 4), (2, 5) ] 
+elif args.surfside == 'VL': 
+    surfList = [ (3, 0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 5) ] 
 
 dev = PueoTURF(None, 'Ethernet')
 tio = {}
