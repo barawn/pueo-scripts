@@ -27,10 +27,14 @@ idLen = len(idList)
 print("DNA: ", idList[0])
 print("MAC: ", idList[1])
 print("PetaLinux: ", idList[2])
-print("SURF Software: ", idList[3])
-# technically there's more crap
-for l in range(len(idList[4:])):    
-    print(f'Field {l+4}: {idList[l+4]}')
+# Those are always there. Next grab SW version if possible.
+if len(idList[3:6]) == 3:
+    print(f'SURF Software: {idList[3]} hash {idList[4]} date {idList[5]}')
+    idx = 6
+else:
+    idx = 3
+if len(idList[idx:idx+1]):
+    print(f'Location: {idList[idx:]}')
 
 print("Next Firmware: ", fwPkt.data.decode())
 
