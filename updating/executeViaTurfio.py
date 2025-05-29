@@ -32,7 +32,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("filename")
 parser.add_argument("--timeout")
-parser.add_argument("--wait")
+parser.add_argument("--wait", type=int)
 
 args = parser.parse_args()
 
@@ -81,8 +81,8 @@ except Exception as e:
     print(repr(e))
 
 if args.wait:
-    print(f'Waiting {wait} before getting journal')
-    time.sleep(wait)
+    print(f'Waiting {args.wait} before getting journal')
+    time.sleep(args.wait)
 for s in surfList:
     hsk.send(HskPacket(surfAddrDict[s], 'eJournal', data="-u pyfwupd -o cat -n 1"))
     pkt = hsk.receive()
