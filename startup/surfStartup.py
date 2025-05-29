@@ -7,7 +7,12 @@ import argparse
 from itertools import chain
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--enable")
+parser.add_argument("--enable",
+                    action='store_true',
+                    help='enable the datapath on SURFs at exit')
+parser.add_argument('--manual',
+                    action='store_true',
+                    help='check for train in req instead of using autotrain')
 parser.add_argument("--tio", type=int)
 parser.add_argument("--slots", type=str, default="0,5")
 args = parser.parse_args()
@@ -35,15 +40,21 @@ for surfAddr in surfList:
     masks[surfAddr[0]] |= 1<<(surfAddr[1])
 
 for m in masks:
-    print(f'autotrain {m} is {hex(masks[m])}')
-    
-# enable autotrain for the enabled SURFs
-for n in tio:
-    print(f'Setting TURFIO#{n} autotrain to {hex(masks[n])}')
-    r = tio[n].surfturf.autotrain
-    r |= masks[n]
-    tio[n].surfturf.autotrain = r
+    print(f'Bitmask of SURFs to startup in TURFIO{m} is {hex(masks[m])}')
 
+for n in tio:
+    if not args.manual:
+        print(f'Setting TURFIO#{n} autotrain bits: {hex(masks[n])}')
+        r = tio[n].surfturf.autotrain
+        r |= masks[n]
+    else:
+        print(f'Clearing TURFIO#{n} autotrain bits: {hex(masks[n])}')
+        r = tio[n].surfturf.autotrain
+        m = masks[n] ^ 0xFF
+        r = r & m        
+    print(f'TURFIO#{n} autotrain bits now: {hex(r)}')
+    tio[n].surfturf.autotrain = r
+        
 # enable RXCLK for the TURFIOs containing the SURFs
 for n in tio:
     r = tio[n].surfturf.rxclk_disable
@@ -52,6 +63,18 @@ for n in tio:
     print(f'Setting rxclk disable to {hex(r)}')
     tio[n].surfturf.rxclk_disable = r
 
+if args.manual:
+    # wait for train in req on each
+    for surfAddr in surfList:
+        tn = surfAddr[0]
+        sn = surfAddr[1]
+        print(f'Waiting for train in req on SURF#{sn} on TURFIO#{tn}')
+        while not(tio[tn].surfturf.train_in_req & (1<<sn)):
+            time.sleep(0.1)
+        print(f'SURF#{sn} on TURFIO#{tn} is requesting in training')
+        tio[tn].dalign[sn].train_enable = 1
+        tio[tn].dalign[sn].oserdes_reset = 0
+    
 surfActiveList = []
 for surfAddr in surfList:
     tn = surfAddr[0]
