@@ -33,7 +33,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("filename")
 parser.add_argument("--timeout")
 parser.add_argument("--wait", type=int)
-
 args = parser.parse_args()
 
 print(f'Sending {args.filename} to be executed! : MD5 {filemd5(args.filename)}')
@@ -44,8 +43,8 @@ print(f'Sending {args.filename} to be executed! : MD5 {filemd5(args.filename)}')
 # SURF SLOT #[s], HSK ADDRESS[es]
 tios = (0, 0x58)
 
-surfs = [ (0, 0x97),
-          (1, 0xa0) ]
+surfs = [ (2, 0x99),
+          (3, 0x8d) ]
 
 # get the housekeeping path
 hsk = HskEthernet()
