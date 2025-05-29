@@ -43,6 +43,7 @@ for m in masks:
 for n in tio:
     print(f'Setting TURFIO#{n} autotrain bits: {hex(masks[n])}')
     r = tio[n].surfturf.autotrain | masks[n]
+    tio[n].surfturf.autotrain = r
     # magic number
     print(f'Setting TURFIO#{n} COUT offset to 3')
     tio[n].surfturf.cout_offset = 3
