@@ -20,7 +20,7 @@ parser.add_argument("--cout")
 args = parser.parse_args()
 
 # WHATEVER JUST HARDCODE THIS FOR NOW
-surfList = [ (0, 0), (0, 5) ]
+surfList = [ (0, 0), (0, 3) ]
 
 dev = PueoTURF(None, 'Ethernet')
 tio = {}
@@ -52,7 +52,7 @@ for n in tio:
 
 # the RXCLK bitmask is the same as masks[n], just inverted
 for n in tio:
-    printf(f'Enabling RXCLK bits: {hex(masks[n])}')
+    print(f'Enabling RXCLK bits: {hex(masks[n])}')
     r = tio[n].surfturf.rxclk_disable
     m = (masks[n] ^ 0xFF)
     r = r & m
