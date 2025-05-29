@@ -8,10 +8,20 @@ from itertools import chain
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--enable")
+parser.add_argument("--tio", type=int)
+parser.add_argument("--slots", type=str, default="0,5")
 args = parser.parse_args()
 
-# WHATEVER JUST HARDCODE THIS FOR NOW
-surfList = [ (0, 0), (0, 5) ]
+slotList = list(map(int,args.slots.split(',')))
+
+if args.tio:
+    tio = args.tio
+else:
+    tio = 0
+
+surfList = []
+for slot in slotList:
+    surfList.append( (tio, slot) )
 
 dev = PueoTURF(None, 'Ethernet')
 tio = {}
@@ -30,12 +40,17 @@ for m in masks:
 # enable autotrain for the enabled SURFs
 for n in tio:
     print(f'Setting TURFIO#{n} autotrain to {hex(masks[n])}')
-    tio[n].surfturf.autotrain = masks[n]
+    r = tio[n].surfturf.autotrain
+    r |= masks[n]
+    tio[n].surfturf.autotrain = r
 
 # enable RXCLK for the TURFIOs containing the SURFs
-for t in tio.values():
-    print(f'Enabling RXCLK on {t}')
-    t.enable_rxclk(True)
+for n in tio:
+    r = tio[n].surfturf.rxclk_disable
+    m = masks[n] ^ 0xFF
+    r = r & m
+    print(f'Setting rxclk disable to {hex(r)}')
+    tio[n].surfturf.rxclk_disable = r
 
 surfActiveList = []
 for surfAddr in surfList:
@@ -143,7 +158,9 @@ if args.enable:
     for i in range(4):
         if tioCompleteMask[i] != 0:
             print(f'Setting TURFIO#{i} complete to {hex(tioCompleteMask[i])}')
-            tio[i].surfturf.train_complete = tioCompleteMask[i]
+            r = tio[i].surfturf.train_complete
+            r |= tioCompleteMask[i]
+            tio[i].surfturf.train_complete = r
             
     print("Issuing NOOP_LIVE")
     dev.trig.runcmd(dev.trig.RUNCMD_NOOP_LIVE)
