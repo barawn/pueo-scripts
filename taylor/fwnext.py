@@ -20,8 +20,12 @@ if args.local:
     hsk = HskSerial('/dev/hsklocal', srcId=0xFC)
 else:
     hsk = HskEthernet()
-    
-hsk.send(HskPacket(args.addr, 'eFwNext', data=args.next.encode()))
+
+if args.next:
+    data = args.next
+else:
+    data = None
+hsk.send(HskPacket(args.addr, 'eFwNext', data=data))
 pkt = hsk.receive()
 print(f'SURF eFwNext response: {pkt.pretty(asString=True)}')
 
