@@ -21,7 +21,7 @@ if args.local:
 else:
     hsk = HskEthernet()
     
-hsk.send(HskPacket(args.addr, 'eFwNext', data=args.nextfw.encode()))
+hsk.send(HskPacket(args.addr, 'eFwNext', data=args.next.encode()))
 pkt = hsk.receive()
 print(f'SURF eFwNext response: {pkt.pretty(asString=True)}')
 
