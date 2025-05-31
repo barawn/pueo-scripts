@@ -3,7 +3,8 @@ from HskSerial import HskEthernet, HskPacket
 
 parser = argparse.ArgumentParser()
 parser.add_argument('addr',
-                    help='housekeeping address of TURFIO to get Hot Swap currents of RACK')
+                    help='housekeeping address of TURFIO to get Hot Swap currents of RACK',
+                    type=lambda x : int(x,0))
 args = parser.parse_args()
 
 
