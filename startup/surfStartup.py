@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from pueo.turf import PueoTURF
 from pueo.turfio import PueoTURFIO
 from pueo.surf import PueoSURF
@@ -6,6 +8,33 @@ import sys
 import argparse
 from itertools import chain
 
+TRAIN_WAIT_LOOPS = 40
+ALIGN_ATTEMPTS = 5
+
+class exciting:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
+class boring:
+    PURPLE = ''
+    CYAN = ''
+    DARKCYAN = ''
+    BLUE = ''
+    GREEN = ''
+    YELLOW = ''
+    RED = ''
+    BOLD = ''
+    UNDERLINE = ''
+    END = ''
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--enable",
                     action='store_true',
@@ -13,9 +42,21 @@ parser.add_argument("--enable",
 parser.add_argument('--manual',
                     action='store_true',
                     help='check for train in req instead of using autotrain')
+
 parser.add_argument("--tio", type=int)
-parser.add_argument("--slots", type=str, default="0,5")
+parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
+parser.add_argument("--commandonly",
+                    action='store_true',
+                    help='only enable the commanding path')
+parser.add_argument("--boring",
+                    action='store_true',
+                    help='make the output boring')
+parser.add_argument("--noturf",
+                    action='store_true',
+                    help="don't train the TURF inputs, just TURFIO")
+
 args = parser.parse_args()
+color = exciting if not args.boring else boring
 
 slotList = list(map(int,args.slots.split(',')))
 
@@ -33,26 +74,32 @@ tio = {}
 masks = {}
 for surfAddr in surfList:
     if surfAddr[0] not in tio:
-        print(f'Building TURFIO#{surfAddr[0]}')
-        tio[surfAddr[0]] = PueoTURFIO((dev, surfAddr[0]), 'TURFGTP')
-        print(f'TURFIO#{surfAddr[0]} : {tio[surfAddr[0]]}')
+        print(f'Building TURFIO port#{surfAddr[0]}')
+        try:
+            tio[surfAddr[0]] = PueoTURFIO((dev, surfAddr[0]), 'TURFGTP')
+        except Exception as e:
+            print(color.BOLD + color.RED +
+                  f'Could not build TURFIO port#{surfAddr[0]} : {repr(e)}' +
+                  color.END)
+            exit(1)
+        print(f'TURFIO port#{surfAddr[0]} : {tio[surfAddr[0]]}')
         masks[surfAddr[0]] = 0
     masks[surfAddr[0]] |= 1<<(surfAddr[1])
 
 for m in masks:
-    print(f'Bitmask of SURFs to startup in TURFIO{m} is {hex(masks[m])}')
+    print(f'Bitmask of SURFs to startup in TURFIO port#{m} is {hex(masks[m])}')
 
 for n in tio:
     if not args.manual:
-        print(f'Setting TURFIO#{n} autotrain bits: {hex(masks[n])}')
+        print(f'Setting TURFIO port#{n} autotrain bits: {hex(masks[n])}')
         r = tio[n].surfturf.autotrain
         r |= masks[n]
     else:
-        print(f'Clearing TURFIO#{n} autotrain bits: {hex(masks[n])}')
+        print(f'Clearing TURFIO port#{n} autotrain bits: {hex(masks[n])}')
         r = tio[n].surfturf.autotrain
         m = masks[n] ^ 0xFF
         r = r & m        
-    print(f'TURFIO#{n} autotrain bits now: {hex(r)}')
+    print(f'TURFIO port#{n} autotrain bits now: {hex(r)}')
     tio[n].surfturf.autotrain = r
         
 # enable RXCLK for the TURFIOs containing the SURFs
@@ -63,147 +110,281 @@ for n in tio:
     print(f'Setting rxclk disable to {hex(r)}')
     tio[n].surfturf.rxclk_disable = r
 
+# OK, so what we're going to do here is go through and look
+# for the SURFs requesting in training. The SURFs do this
+# after they have seen the clock, programmed their own, and
+# are up and running.
+#
+# If not all the SURFs we *expect* are there, we can exit now.
+# The clocks for the others are still on, but that's fine.
+# Rerunning this script after fixing is fine.
+
+# objects are cool: just store them.
+# the train_enable/oserdes_reset in dalign/calign are common.
+# so we just grab the daligns.
+daligns = []
+surfActiveList=[]
 if args.manual:
     # wait for train in req on each
     for surfAddr in surfList:
         tn = surfAddr[0]
         sn = surfAddr[1]
-        print(f'Waiting for train in req on SURF#{sn} on TURFIO#{tn}')
-        while not(tio[tn].surfturf.train_in_req & (1<<sn)):
+        print(f'Waiting for train in req on SURF slot#{sn} on TURFIO port#{tn}')
+        loopno = 0
+        # it should take a few seconds because it needs to program its clocks
+        while not(tio[tn].surfturf.train_in_req & (1<<sn)) and loopno < TRAIN_WAIT_LOOPS:
             time.sleep(0.1)
-        print(f'SURF#{sn} on TURFIO#{tn} is requesting in training')
-        tio[tn].dalign[sn].train_enable = 1
-        tio[tn].dalign[sn].oserdes_reset = 0
+            loopno = loopno + 1
+        if loopno == TRAIN_WAIT_LOOPS:
+            print(color.BOLD + color.RED +
+                  f'SURF slot#{sn} on TURFIO port#{tn} never requested in training!'+
+                  color.END)
+            print('Exiting to allow fixes/debugging.')
+            exit(1)
+        print(color.GREEN +
+              f'SURF slot#{sn} on TURFIO port#{tn} is requesting in training' +
+              color.END)
+        daligns.append(tio[tn].dalign[sn])
+        surfActiveList.append((tn,sn))
+
+# In training also tells us that they've handled their clocks:
+# so we can check that the SURFs exist here.
+for surfAddr in surfActiveList:
+    tn = surfAddr[0]
+    sn = surfAddr[1]
+    t = tio[tn]
+    s = PueoSURF((t,sn), 'TURFIO')
+    if s.read(0).to_bytes(4,'big') != b'SURF':
+        print(color.BOLD + color.RED +
+              f'SURF slot#{sn} on TURFIO port#{tn} is not accessible!' +
+              color.END)
+        print('Exiting to allow checks/fixes.')
+        exit(1)
+    print(f'Slot #{sn} is a SURF: applying sync offset')
+    s.sync_offset = 7
+
+# At this point the SURFs exist. Turn on the outputs
+for align in daligns:
+    align.train_enable = 1
+    align.oserdes_reset = 0
     
+# Wait for out train request. 
 surfActiveList = []
+daligns = []
 for surfAddr in surfList:
     tn = surfAddr[0]
     sn = surfAddr[1]
     # wait for train out rdy on each
     print(f'Waiting for train out rdy on SURF#{sn} on TURFIO#{tn}')
     loopno = 0
-    while not(tio[tn].surfturf.train_out_rdy & (1<<sn)) and loopno < 20:
+    while not(tio[tn].surfturf.train_out_rdy & (1<<sn)) and loopno < TRAIN_WAIT_LOOPS:
         time.sleep(0.1)
-    if loopno == 20:
-        print(f'SURF#{sn} on TURFIO#{tn} did not become ready??')
+        loopno = loopno + 1
+    if loopno == TRAIN_WAIT_LOOPS:
+        print(color.BOLD + color.RED +
+              f'SURF#{sn} on TURFIO#{tn} did not become ready!' +
+              color.END)
+        print('Exiting to allow checks/fixes.')
+        exit(1)
     else:
-        print(f'SURF#{sn} on TURFIO#{tn} is ready for out training')
-        tio[tn].dalign[sn].train_enable = 0
+        print(color.GREEN +
+              f'SURF#{sn} on TURFIO#{tn} is ready for out training' +
+              color.END)
+        daligns.append(tio[tn].dalign[sn])
         surfActiveList.append(surfAddr)
 
-# dumbass hackery, since sync_offset should be constant
-for surfAddr in surfActiveList:
-    tn = surfAddr[0]
-    sn = surfAddr[1]
-    t = tio[tn]
-    print(f'Applying sync offset to SURF#{sn} on TURFIO#{tn}')
-    s = PueoSURF((t, sn), 'TURFIO')
-    s.sync_offset = 7
+# This is the point of no return - once we turn off train
+# enable from a TURFIO, they're getting commanding from the TURFs
+# so now we have to be a ton more careful if we repeat things.
+for align in daligns:
+    align.train_enable = 0
     
-print("Issuing SYNC")
+print("Issuing SYNC!")
 dev.trig.runcmd(dev.trig.RUNCMD_SYNC)
 
-# We should be able to COMPLETELY align the entire
-# payload the same, because the only variation should come
-# from slot in crate....
-# this might be wrong because of left/right issues
-
-# we need a blank starting point
-surfEyes = []
-for i in range(4):
-    stio = []
-    for j in range(7):
-        stio.append(None)
-    surfEyes.append(stio)
-
-tioCompleteMask = [ 0, 0, 0, 0 ]
+# This is ALL THAT'S NEEDED for command-only.
+if args.commandonly:
+    print('Exiting because requested command-only startup.')
+    print('These SURFs will not produce valid data or triggers!')
+    exit(0)
     
+print(f'Training the outbound (DOUT/COUT) paths from the SURFs.')
+# we need a blank starting point
+doutEyes = []
+coutEyes = []
+for i in range(4):
+    dtio = []
+    ctio = []
+    for j in range(7):
+        dtio.append(None)
+        ctio.append(None)
+    doutEyes.append(dtio)
+    coutEyes.append(ctio)
+
+tioCompleteMask = [ 0, 0, 0, 0 ]    
 # Find ALL the eyes
+eyesFound = False
 for surfAddr in surfActiveList:
     tn = surfAddr[0]
     sn = surfAddr[1]
     t = tio[tn]
-    print(f'Finding DOUT alignment on SURF#{sn} on TURFIO#{tn}:')
-    try:
-        eyes = t.dalign[sn].find_alignment(do_reset=True, verbose=True)
-    except IOError:
-        print(f'DOUT alignment failed on SURF#{sn} on TURFIO#{tn}, skipping')
-        continue
-    print(f'DOUT alignment found eyes: {eyes}')
-    surfEyes[tn][sn] = eyes
-    tioCompleteMask[tn] |= (1<<sn)
+    print(f'Finding alignments on SURF#{sn} on TURFIO#{tn}:')
+    dtries = 0
+    while dtries < ALIGN_ATTEMPTS:
+        try:
+            deyes = t.dalign[sn].find_alignment(do_reset=True)
+            break
+        except IOError:
+            print(f'Attempt {dtries+1} at aligning DOUT failed on SURF#{sn} TURFIO#{tn}')
+            dtries = dtries + 1
+    ctries = 0
+    while ctries < ALIGN_ATTEMPTS:
+        try:
+            ceyes = t.calign[sn].find_alignment(do_reset=True)
+            break
+        except IOError:
+            print(f'Attempt {ctries+1} at aligning COUT failed on SURF#{sn} TURFIO#{tn}')
+            ctries = ctries + 1
+    
+    if dtries < ALIGN_ATTEMPTS and ctries < ALIGN_ATTEMPTS:
+        print(color.GREEN +
+              f'Alignments succeeded on SURF#{sn} TURFIO#{tn}' +
+              color.END)
+        print(f'DOUT alignment found eyes: {deyes}')
+        print(f'COUT alignment found eyes: {ceyes}')
+    
+        doutEyes[tn][sn] = deyes
+        coutEyes[tn][sn] = ceyes
+        tioCompleteMask[tn] |= (1<<sn)
+        eyesFound = True
+    else:
+        if dtries == ALIGN_ATTEMPTS:
+            print(color.BOLD +
+                  f'DOUT alignment failed on SURF#{sn} on TURFIO#{tn}!' +
+                  color.END)
+        if ctries == ALIGN_ATTEMPTS:
+            print(color.BOLD +
+                  f'COUT alignment failed on SURF#{sn} on TURFIO#{tn}!' +
+                  color.END)            
+        print('Skipping SURF#{sn} on TURFIO#{tn} for remaining operations!')
+
+if not eyesFound:
+    print(color.BOLD + color.RED +
+          f'No SURF eyes found! Exiting!' +
+          color.END)
+    exit(1)
 
 print('Eyes found, processing to find a common one.')
-commonEye = None
-for d in list(chain(*surfEyes)):
+commonDoutEye = None
+commonCoutEye = None
+for d in list(chain(*doutEyes)):
     if d is not None:
-        commonEye = d.keys() if commonEye is None else commonEye & d.keys()
+        commonDoutEye = d.keys() if commonDoutEye is None else commonDoutEye & d.keys()
+for c in list(chain(*coutEyes)):
+    if c is not None:
+        commonCoutEye = c.keys() if commonCoutEye is None else commonCoutEye & c.keys()
 
-print(f'Common eye[s]: {commonEye}')
-usingEye = None
-if len(commonEye) > 1:
-    print(f'Multiple common eyes found, choosing the one with smallest delay')
-    test_surf = None
-    for i in range(4):
-        for j in range(7):
-            if surfEyes[i][j] is not None:
-                test_surf = surfEyes[i][j]
-    min = None
-    minEye = None
-    for eye in commonEye:
-        if minEye is None:
-            min = test_surf[eye]
-            minEye = eye
-            print(f'First eye {minEye} has tap {min}')
-        else:
-            if test_surf[eye] < min:
-                min = test_surf[eye]
+print(f'Common DOUT eye[s]: {commonDoutEye}')
+print(f'Common COUT eye[s]: {commonCoutEye}')
+
+test_dout = None
+test_cout = None
+for i in range(4):
+    for j in range(7):
+        if doutEyes[i][j] is not None and coutEyes[i][j] is not None:
+            test_dout = doutEyes[i][j]
+            test_cout = coutEyes[i][j]
+
+def find_eye(eyes, test, label):
+    if len(eyes) > 1:
+        print(f'Multiple {label} eyes found, choosing one with smallest delay')
+        min = None
+        minEye = None
+        for eye in eyes:
+            if minEye is None:
+                min = test[eye]
                 minEye = eye
-                print(f'New eye {minEye} has smaller tap {min}, using it')
-    usingEye = minEye
-elif len(commonEye):
-    usingEye = list(commonEye)[0]
+                print(f'First {label} eye {minEye} has tap {min}')
+            else:
+                if test[eye] < min:
+                    min = test[eye]
+                    minEye = eye
+                    print(f'New {label} eye {minEye} has smaller tap {min}, using it')
+        return minEye
+    elif len(eyes):
+        return list(eyes)[0]
 
+usingDoutEye = find_eye(commonDoutEye, test_dout, 'DOUT')
+usingCoutEye = find_eye(commonCoutEye, test_cout, 'COUT')
+    
 trainedSurfs = []
 
 for i in range(4):
     for j in range(7):
-        if surfEyes[i][j] is not None:
-            eye = (surfEyes[i][j][usingEye], usingEye)
-            tio[i].dalign[j].apply_alignment(eye)
+        if doutEyes[i][j] is not None and coutEyes[i][j] is not None:
+            eye = (doutEyes[i][j][usingDoutEye], usingDoutEye)
+            try:
+                tio[i].dalign[j].apply_alignment(eye)
+            except Exception as e:
+                print(color.BOLD +
+                      f'DOUT eye {eye} on SURF#{sn} on TURFIO#{tn}: {repr(e)}' +
+                      color.END)
+                continue
+            eye = (coutEyes[i][j][usingCoutEye], usingCoutEye)
+            try:
+                tio[i].calign[j].apply_alignment(eye)
+            except Exception as e:
+                print(color.BOLD +
+                      f'COUT eye {eye} on SURF#{sn} on TURFIO#{tn}: {repr(e)}' +
+                      color.END)
+                continue
             trainedSurfs.append( (i, j) )
 
-# Enabling is a bit tricky, because we CANNOT
-# enable the data path UNTIL the SURF exits
-# training.
-# The SURF live detector does this for us.
-if args.enable:
-    for i in range(4):
-        if tioCompleteMask[i] != 0:
-            print(f'Setting TURFIO#{i} complete to {hex(tioCompleteMask[i])}')
-            r = tio[i].surfturf.train_complete
-            r |= tioCompleteMask[i]
-            tio[i].surfturf.train_complete = r
-            
-    print("Issuing NOOP_LIVE")
-    dev.trig.runcmd(dev.trig.RUNCMD_NOOP_LIVE)
+if not args.noturf:
+    for surf in trainedSurfs:
+        tn = surf[0]
+        sn = surf[1]
+        print(f'Aligning SURF#{sn} on TURFIO#{tn} through to TURF')
+        eye = dev.ctl.tio[tn].bit[sn].locate_eyecenter()
+        print(f'At TURF: TURFIO{tn} SURF{sn} : {eye[0]} ps {eye[1]} offset')
+        dev.ctl.tio[tn].bit[sn].apply_eye(eye)            
+else:
+    print('Skipping TURF input align due to user request!')
 
-    # now wait...
-    for i in range(4):
-        if tioCompleteMask[i] != 0:
-            nloops = 20
-            while tio[i].surfturf.surf_live & tioCompleteMask[i] != tioCompleteMask[i] and nloops:
-                time.sleep(0.1)
-                nloops = nloops - 1
-            if nloops == 0:
-                print("An expected SURF did not become live:")
-                print(f'Expected {hex(tioCompleteMask[i])}')
-                print(f'Got : {hex(tio[i].surfturf.surf_live & tioCompleteMask[i])}')
-                sys.exit(1)
-            if tio[i].surfturf.surf_misaligned & tioCompleteMask[i]:
-                print('A trained SURF is misaligned: {hex(tio[i].surfturf.surf_misaligned & tioCompleteMask[i])}')
-                sys.exit(1)
+for i in range(4):
+    if tioCompleteMask[i] != 0:
+        print(f'Setting TURFIO#{i} complete to {hex(tioCompleteMask[i])}')
+        r = tio[i].surfturf.train_complete
+        r |= tioCompleteMask[i]
+        tio[i].surfturf.train_complete = r
             
+print("Issuing NOOP_LIVE")
+dev.trig.runcmd(dev.trig.RUNCMD_NOOP_LIVE)
+
+# now wait...
+for i in range(4):
+    if tioCompleteMask[i] != 0:
+        nloops = TRAIN_WAIT_LOOPS
+        while ((tio[i].surfturf.surf_live & tioCompleteMask[i]) != tioCompleteMask[i]) and nloops:
+            time.sleep(0.1)
+            nloops = nloops - 1
+        if nloops == 0:
+            print(color.BOLD + color.RED +
+                  "An expected SURF did not become live:" +
+                  color.END)
+            print(f'Expected {hex(tioCompleteMask[i])}')
+            print(f'Got : {hex(tio[i].surfturf.surf_live & tioCompleteMask[i])}')
+            sys.exit(1)
+        if tio[i].surfturf.surf_misaligned & tioCompleteMask[i]:
+            print(color.BOLD + color.RED +
+                  'A trained SURF is misaligned: {hex(tio[i].surfturf.surf_misaligned & tioCompleteMask[i])}' +
+                  color.END)
+            sys.exit(1)
+
+print(color.BOLD + color.GREEN +
+      'All trained SURFs are now live.' + color.END)
+            
+if args.enable:                
     for surfAddr in trainedSurfs:
         tn = surfAddr[0]
         sn = surfAddr[1]

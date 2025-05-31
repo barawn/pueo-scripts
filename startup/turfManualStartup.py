@@ -118,7 +118,9 @@ for tio in aligned_turfios:
     
 dev.trig.runcmd(dev.trig.RUNCMD_SYNC)
 for tio in aligned_turfios:
+    tio.cinalign.oserdes_reset = 1
+    tio.cinalign.oserdes_reset = 0
     tio.extsync = False
-
+    
 print(f'TURFIO sync complete')
 

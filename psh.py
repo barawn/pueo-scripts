@@ -32,7 +32,11 @@ class HskShell(cmd.Cmd):
     def do_eEnable(self, argline:str):
         if self.target:
             addr = int(self.target, 0)
-            data = list(map(lambda x : int(x,0), argline.split(' ')))
+            args = argline.lstrip(' ')
+            if len(args):
+                data = list(map(lambda x : int(x,0), args.split(' ')))
+            else:
+                data = None
             hsk.send(HskPacket(addr, 'eEnable', data=data))
             pkt = self.try_receive()
             if pkt:
@@ -77,6 +81,18 @@ class HskShell(cmd.Cmd):
             pkt = self.try_receive()
             if pkt:
                 print(pkt.pretty(asString=True))
+
+    def do_eStartState(self, argline:str):
+        if self.target:
+            addr = int(self.target, 0)
+            if len(argline):
+                data = int(argline, 0)
+            else:
+                data = None
+            hsk.send(HskPacket(addr, 'eStartState', data=data))
+            pkt = self.try_receive()
+            if pkt:
+                print(pkt.pretty())
                 
 if __name__ == "__main__":
     HskShell().cmdloop()
