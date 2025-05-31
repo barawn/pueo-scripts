@@ -77,6 +77,18 @@ class HskShell(cmd.Cmd):
             pkt = self.try_receive()
             if pkt:
                 print(pkt.pretty(asString=True))
+
+    def do_eStartState(self, argline:str):
+        if self.target:
+            addr = int(self.target, 0)
+            if len(argline):
+                data = int(argline, 0)
+            else:
+                data = None
+            hsk.send(HskPacket(addr, 'eStartState', data=data))
+            pkt = self.try_receive()
+            if pkt:
+                print(pkt.pretty())
                 
 if __name__ == "__main__":
     HskShell().cmdloop()
