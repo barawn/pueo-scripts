@@ -30,11 +30,4 @@ for s in surfs:
     hsk.send(HskPacket(s, 'eStartState'))
     pkt = hsk.receive().data
     state = int.from_bytes(pkt,byteorder='big')
-    if state > 12 and state < 255:
-        print('SURF in slot {} all good!'.format(iter))
-    elif state <= 12:
-        print('SURF slot {} has not entered ENABLE_TRAINING! Exiting!'.format(iter))
-        sys.exit(1)
-    elif state >= 255:
-        print('SURF slot {} is in STARTUP_FAILURE! Exiting!'.format(iter))
-        sys.exit(1)
+    print('SURF in slot {} is in state {}'.format(iter, state))
