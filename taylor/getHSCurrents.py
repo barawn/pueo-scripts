@@ -20,4 +20,5 @@ for iter in range(0, 16, 2):
         print('TURFIO:', round(I, 2), 'mA')
     else:
         I = (val - 2048)*12.51/4.762
-        print('SURF slot ' + str(int(iter/2)) + ':', round(I, 2), 'mA')
+        if (I > 0):
+            print('SURF slot ' + str(int(iter/2)) + ':', round(I, 2), 'mA')
