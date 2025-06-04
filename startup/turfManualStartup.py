@@ -9,38 +9,82 @@ from pueo.turfio import PueoTURFIO
 import argparse
 import sys
 
+class exciting:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
+class boring:
+    PURPLE = ''
+    CYAN = ''
+    DARKCYAN = ''
+    BLUE = ''
+    GREEN = ''
+    YELLOW = ''
+    RED = ''
+    BOLD = ''
+    UNDERLINE = ''
+    END = ''
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--turfio", type=str, default="0,1,2,3",
                     help="comma-separated list of TURFIOs to initialize")
+parser.add_argument("--boring",
+                    action='store_true',
+                    help='make the output boring')
 
 args = parser.parse_args()
+color = exciting if not args.boring else boring
+
 validTios = [0,1,2,3]
 tioList = list(map(int,args.turfio.split(',')))
 for tio in tioList:
     if tio not in validTios:
-        print("TURFIOs can only be one of", validTios)
+        print(color.BOLD + color.RED +
+              f'TURFIOs can only be one of {validTios}' +
+              color.END)
         sys.exit(1)
 
+# get all the objects
 dev = PueoTURF(None, 'Ethernet')
+tios = [ None, None, None, None ]
+for tionum in tioList:
+    print(f'Getting TURFIO#{tionum}')
+    try:
+        tio = PueoTURFIO((dev, tionum), 'TURFGTP')
+        tios[tionum] = tio
+    except Exception as e:
+        print(color.RED + color.BOLD +
+              f'Getting TURFIO#{tionum} failed: {repr(e)}' +
+              color.END)
+        print(f'Exiting for debugging/fix.')
+        exit(1)
+
 # Start off by clean-resetting the TURF-y side stuff.
 dev.ctl.reset()
 
-tios = [ None, None, None, None ]
-for tionum in tioList:
-    print(f'Trying to initialize TURFIO#{tionum}')
-    if not (dev.aurora.linkstat(tionum) & 0x1):
-        print(f'Lane not up, skipping??')
-        continue
-    tio = PueoTURFIO((dev, tionum), 'TURFGTP')
-    tio.program_sysclk(tio.ClockSource.TURF)
-    while not ((tio.read(0xC) & 0x1)):
-        print(f'Waiting for clock on TURFIO#{tionum}...')
-    print(f'Aligning RXCLK->SYSCLK transition on TURFIO#{tionum}...')
-    tap = tio.cinalign.align_rxclk()
-    print(f'TURFIO#{tionum} - tap is {tap}')
-    print(f'Aligning CIN on TURFIO#{tionum}...')    
-    dev.ctl.tio[tionum].train_enable(True)
-    tios[tionum] = tio
+for i in range(4):
+    if tios[i]:
+        tio = tios[i]
+        print(f'Trying to initialize TURFIO#{i}')
+        tio.program_sysclk(tio.ClockSource.TURF)
+        while not ((tio.read(0xC) & 0x1)):
+            print(f'Waiting for clock on TURFIO#{i}...')
+        print(f'Aligning RXCLK->SYSCLK transition on TURFIO#{i}...')
+        tap = tio.cinalign.align_rxclk()
+        print(f'TURFIO#{i} - tap is {tap}')
+        print(f'Aligning CIN on TURFIO#{i}...')    
+        dev.ctl.tio[i].train_enable(True)
+    else:
+        print(f'Skipping TURFIO#{i} as it was not requested.')
 
 tioEyes = [ None, None, None, None ]
 for i in range(4):
@@ -48,9 +92,11 @@ for i in range(4):
         try:
             eyes = tios[i].cinalign.find_alignment(do_reset=True)        
         except IOError:
-            print(f'Alignment failed on TURFIO#{i}, skipping')
+            print(color.BOLD + color.RED +
+                  f'Alignment failed on TURFIO#{i}, skipping' +
+                  color.END)
             continue
-        print(f'CIN alignment found eyes: {eyes}')
+        print(color.GREEN + f'CIN alignment found eyes: {eyes}' + color.END)
         tioEyes[i] = eyes
 
 print("Eyes found, processing to find a common one:")
@@ -84,7 +130,8 @@ elif len(commonEye):
     usingEye = list(commonEye)[0]
 
 if usingEye is None:
-    print("No common eye found???!?")
+    print(color.BOLD + color.RED + "No common eye found???!?"
+          + color.END)
     sys.exit(1)
 
 print(f'Using eye: {usingEye}')
@@ -106,9 +153,13 @@ for i in range(4):
             except Exception:
                 trials = trials + 1
         if trials == 1000:
-            print(f'CIN alignment on TURFIO#{i} failed?!?')
+            print(color.BOLD + color.RED +
+                  f'CIN alignment on TURFIO#{i} failed?!?' +
+                  color.END)
         else:
-            print(f'CIN aligned and running on TURFIO#{i} after {trials} attempts')
+            print(color.GREEN +
+                  f'CIN aligned and running on TURFIO#{i} after {trials} attempts' +
+                  color.END)
             aligned_turfios.append(tios[i])
             
 
@@ -122,5 +173,7 @@ for tio in aligned_turfios:
     tio.cinalign.oserdes_reset = 0
     tio.extsync = False
     
-print(f'TURFIO sync complete')
+print(color.BOLD + color.GREEN +
+      f'TURFIO sync complete' +
+      color.END)
 
