@@ -1,14 +1,18 @@
 from EventTester import EventServer
 from pueo.turf import PueoTURF
 
-def eventStartup():
+def eventStartup(devs=None):
+    """ Startup the event path. devs = (PueoTURF, EventServer) tuple. If none, creates them and returns it. """
     # n.b. enable the SURF datapath outside of this!!
     # Need to check that the event stuff only runs between
     # RUN_RESET/RUN_STOP.
-    
-    es = EventServer()
-    dev = PueoTURF()
-    
+    if devs is None:
+        dev = PueoTURF()
+        es = EventServer()
+    else:
+        dev = devs[0]
+        es = devs[1]
+        
     # reset event
     dev.event.reset()
     
