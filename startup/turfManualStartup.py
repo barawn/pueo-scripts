@@ -5,21 +5,21 @@
 
 from pueo.turf import PueoTURF
 from pueo.turfio import PueoTURFIO
-
+from pueo.common.term import Term
 import argparse
 import sys
 
 class exciting:
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    DARKCYAN = '\033[36m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    END = '\033[0m'
+    PURPLE = Term.PURPLE
+    CYAN = Term.CYAN
+    DARKCYAN = Term.DARKCYAN
+    BLUE = Term.BLUE
+    GREEN = Term.GREEN
+    YELLOW = Term.YELLOW
+    RED = Term.RED
+    BOLD = Term.BOLD
+    UNDERLINE = Term.UNDERLINE
+    END = Term.END
 
 class boring:
     PURPLE = ''
