@@ -55,9 +55,9 @@ elif args.tio =='t':
 hsk = HskEthernet()
 hsk.send(HskPacket(args.tio[1], 'eEnable', [0x40, 0x40]))
 
-with open('output.txt', 'w') as f:
-    for s in surfs:
-        hsk.send(HskPacket(s[1], 'eStartState', data=[19])) 
-        hsk.receive()
-        hsk.send(HskPacket(s[1], 'eStartState'))
-        hsk.receive().pretty()
+
+for s in surfs:
+    hsk.send(HskPacket(s[1], 'eStartState', data=[19])) 
+    hsk.receive()
+    hsk.send(HskPacket(s[1], 'eStartState'))
+    hsk.receive().pretty()
