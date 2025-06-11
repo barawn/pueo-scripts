@@ -53,7 +53,7 @@ elif args.tio =='t':
 
 
 hsk = HskEthernet()
-hsk.send(HskPacket(args.tio[1], 'eEnable', [0x40, 0x40]))
+hsk.send(HskPacket(tios[1], 'eEnable', [0x40, 0x40]))
 
 
 for s in surfs:
