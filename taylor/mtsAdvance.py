@@ -2,8 +2,7 @@
 
 from HskSerial import HskEthernet, HskPacket
 import argparse
-import pickle
-
+import time 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--tio", type=str, default="0,1,2,3", 
@@ -52,11 +51,14 @@ elif args.tio == 't':
 
 
 hsk = HskEthernet()
-hsk.send(HskPacket(tios[1], 'eEnable', [0x40, 0x40]))
-
-
+hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
+pkt = hsk.receive()
+print('This takes 5 seconds to run! Be patient!')
 for s in surfs:
     hsk.send(HskPacket(s[1], 'eStartState', data=[19])) 
-    hsk.receive()
+    pkt = hsk.receive()
+time.sleep(5)
+for s in surfs:
     hsk.send(HskPacket(s[1], 'eStartState'))
-    hsk.receive().pretty()
+    pkt = hsk.receive()
+    print(pkt.pretty())
