@@ -6,9 +6,8 @@ import pickle
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--tio',
-                    help='slot of the TURFIO for the surfs enable',
-                    type=lambda x : int(x,0))
+parser.add_argument("--tio", type=str, default="0,1,2,3", 
+        help="comma-separated list of TURFIOs to initialize")
 
 
 args = parser.parse_args()
@@ -47,7 +46,7 @@ elif args.tio == '3':
             (3, 0x8e),
             (4, 0x90),
             (5, 0x92) ]
-elif args.tio =='t':
+elif args.tio == 't':
     tios = (3, 0x48)
     surfs = [ (0, 0x93) ]
 
