@@ -10,10 +10,6 @@ parser.add_argument('--tio',
                     help='slot of the TURFIO for the surfs enable',
                     type=lambda x : int(x,0))
 
-parser.add_argument('--slot', 
-                    help='slots you want to enable (start at 0, nerd)',
-                    type=lambda x : int(x,0)),
-
 
 args = parser.parse_args()
 
@@ -61,22 +57,7 @@ hsk.send(HskPacket(args.tio[1], 'eEnable', [0x40, 0x40]))
 
 with open('output.txt', 'w') as f:
     for s in surfs:
-        hsk.send(HskPacket(s[1], 'eFwParams', data=[0x0]))
-        hsk.receive()
         hsk.send(HskPacket(s[1], 'eStartState', data=[19])) 
         hsk.receive()
-        hsk.send(HskPacket(s[1], 'e'))
-        hsk.receive() 
-        remaining = '-u pyfwupd -o cat -n 30'
-        cmdstr = ' '.join(remaining)
-        hsk.send(HskPacket(s[1], 'eJournal', data=cmdstr.encode()))
-        res = ''
-        pkt = hsk.receive() 
-        res += pkt.data.decode()
-        while len(pkt.data) == 255: 
-            hsk.send(HskPacket(s[1], 'eJournal'))
-            pkt = hsk.receive() 
-            res += pkt.data.decode()
-        lines = res.split('\n')
-        for line in lines: 
-            print(line, file = f)
+        hsk.send(HskPacket(s[1], 'eStartState'))
+        hsk.receive().pretty()
