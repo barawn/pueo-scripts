@@ -2,17 +2,11 @@
 
 from HskSerial import HskEthernet, HskPacket
 import argparse
-import pickle
-
+import time 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--tio',
-                    help='slot of the TURFIO for the surfs enable',
-                    type=lambda x : int(x,0))
-
-parser.add_argument('--slot', 
-                    help='slots you want to enable (start at 0, nerd)',
-                    type=lambda x : int(x,0)),
+parser.add_argument("--tio", type=str, default="0,1,2,3", 
+        help="comma-separated list of TURFIOs to initialize")
 
 
 args = parser.parse_args()
@@ -51,32 +45,22 @@ elif args.tio == '3':
             (3, 0x8e),
             (4, 0x90),
             (5, 0x92) ]
-elif args.tio =='t':
+elif args.tio == 't':
     tios = (3, 0x48)
     surfs = [ (0, 0x93) ]
 
 
 hsk = HskEthernet()
-hsk.send(HskPacket(args.tio[1], 'eEnable', [0x40, 0x40]))
-
-with open('output.txt', 'w') as f:
-    for s in surfs:
-        hsk.send(HskPacket(s[1], 'eFwParams', data=[0x0]))
-        hsk.receive()
-        hsk.send(HskPacket(s[1], 'eStartState', data=[19])) 
-        hsk.receive()
-        hsk.send(HskPacket(s[1], 'e'))
-        hsk.receive() 
-        remaining = '-u pyfwupd -o cat -n 30'
-        cmdstr = ' '.join(remaining)
-        hsk.send(HskPacket(s[1], 'eJournal', data=cmdstr.encode()))
-        res = ''
-        pkt = hsk.receive() 
-        res += pkt.data.decode()
-        while len(pkt.data) == 255: 
-            hsk.send(HskPacket(s[1], 'eJournal'))
-            pkt = hsk.receive() 
-            res += pkt.data.decode()
-        lines = res.split('\n')
-        for line in lines: 
-            print(line, file = f)
+hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
+pkt = hsk.receive()
+print('This takes 5 seconds to run! Be patient!')
+for s in surfs:
+    hsk.send(HskPacket(s[1], 'eFwParams', data = b'\x01\x00\x00\x00\x78\x00'))
+    pkt = hsk.receive()
+    hsk.send(HskPacket(s[1], 'eStartState', data=[19])) 
+    pkt = hsk.receive()
+time.sleep(5)
+for s in surfs:
+    hsk.send(HskPacket(s[1], 'eStartState'))
+    pkt = hsk.receive()
+    print(pkt.pretty())
