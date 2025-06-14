@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import time
 
-from PueoTURF import PueoTURF
+from pueo.turf import PueoTURF
 
 # this is crap right now just turn on the ext pps
 
