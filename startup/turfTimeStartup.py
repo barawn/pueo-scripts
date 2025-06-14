@@ -8,7 +8,7 @@ from pueo.turf import PueoTURF
 dev = PueoTURF()
 dev.time.pps_holdoff = 100
 dev.time.use_ext_pps = 1
-time.sleep(1)
+time.sleep(3)
 sec = dev.time.current_second
 freq = (dev.time.last_pps - dev.time.llast_pps) & 0xFFFFFFFF
 print(f'TURF time: {sec}')
