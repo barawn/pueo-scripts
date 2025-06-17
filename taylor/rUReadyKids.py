@@ -1,8 +1,6 @@
-
 from HskSerial import HskEthernet, HskPacket
 
 
-print('Aye Aye, Captain!')
 
 hsk = HskEthernet()
 hsk.send(HskPacket(0x40, 'eEnable', [0x40, 0x40]))
@@ -47,5 +45,4 @@ for ii in range(len(surfs)):
     print(rm.pretty())
 
 print('Aye Aye, Captain!')
-
 
