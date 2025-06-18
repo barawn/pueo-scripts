@@ -112,6 +112,14 @@ for n in tio:
     print(f'Setting rxclk disable to {hex(r)}')
     tio[n].surfturf.rxclk_disable = r
 
+# SURF STATE:
+# At this point they should advance from 1 (WAIT_CLOCK)
+# through to 9 (WAIT_CIN_ACTIVE) all by themselves.
+# It may take a second or two.
+
+# So if you exit here, SURFs should be in 9 (WAIT_CIN_ACTIVE) after a
+# brief delay.
+    
 # OK, so what we're going to do here is go through and look
 # for the SURFs requesting in training. The SURFs do this
 # after they have seen the clock, programmed their own, and
@@ -149,6 +157,8 @@ if args.manual:
         daligns.append(tio[tn].dalign[sn])
         surfActiveList.append((tn,sn))
 
+# SURFs are DEFINITELY in state 9 (WAIT_CIN_ACTIVE) now.
+        
 # In training also tells us that they've handled their clocks:
 # so we can check that the SURFs exist here.
 for surfAddr in surfActiveList:
@@ -169,7 +179,10 @@ for surfAddr in surfActiveList:
 for align in daligns:
     align.train_enable = 1
     align.oserdes_reset = 0
-    
+
+# SURF STATE HERE:
+# SURFs should advance from 9 to 14 all by themselves.
+
 # Wait for out train request. 
 surfActiveList = []
 daligns = []
@@ -195,6 +208,8 @@ for surfAddr in surfList:
         daligns.append(tio[tn].dalign[sn])
         surfActiveList.append(surfAddr)
 
+# At this point the SURFs are DEFINITELY in state 14.
+        
 # This is the point of no return - once we turn off train
 # enable from a TURFIO, they're getting commanding from the TURFs
 # so now we have to be a ton more careful if we repeat things.
@@ -362,6 +377,8 @@ for i in range(4):
             
 print("Issuing NOOP_LIVE")
 dev.trig.runcmd(dev.trig.RUNCMD_NOOP_LIVE)
+
+# The SURFs will NOW advance to state 15 (WAIT_SYNC).
 
 # now wait...
 for i in range(4):
