@@ -12,6 +12,8 @@ pkt = hsk.receive()
 hsk.send(HskPacket(0x58, 'eEnable', [0x40, 0x40]))
 pkt = hsk.receive()
 
+print("Are you Ready kids?")
+
 surfs = [ (0, 0x97),
         (1, 0xa0),
         (2, 0x99),
