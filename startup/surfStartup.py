@@ -264,11 +264,15 @@ for surfAddr in surfActiveList:
             print(color.BOLD +
                   f'DOUT alignment failed on SURF#{sn} on TURFIO#{tn}!' +
                   color.END)
+            print(color.BOLD + color.RED + 'Exiting!' + color.END) 
+            sys.exit(1) 
         if ctries == ALIGN_ATTEMPTS:
             print(color.BOLD +
                   f'COUT alignment failed on SURF#{sn} on TURFIO#{tn}!' +
                   color.END)            
-        print('Skipping SURF#{sn} on TURFIO#{tn} for remaining operations!')
+            print(color.BOLD + color.RED + 'Exiting!' + color.END) 
+            sys.exit(1)
+        print(f'Skipping SURF#{sn} on TURFIO#{tn} for remaining operations!')
 
 if not eyesFound:
     print(color.BOLD + color.RED +
