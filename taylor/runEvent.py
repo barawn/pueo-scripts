@@ -8,6 +8,7 @@ from EventTester import EventServer
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--stop', type=int) 
+parser.add_argument('--mask', type=int, default=0) 
 parser.add_argument('--filename')
 args = parser.parse_args()
 
@@ -16,7 +17,7 @@ es = EventServer()
 
 from startup.eventStartup import eventStartup
 
-eventStartup((dev, es))
+eventStartup((dev, es), args.mask)
 for i in range(0,(args.stop)): 
     dev.trig.soft_trig()
     e = es.event_receive()
