@@ -24,4 +24,5 @@ for i in range(0,(args.stop)):
     f = open(args.filename+'{}.pkl'.format(i), 'wb')
     pickle.dump(e,f)
     f.close()
+    print(e[0][0:8].hex()) 
     es.event_ack(e[0][0:8])
