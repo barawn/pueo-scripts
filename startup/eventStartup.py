@@ -1,7 +1,7 @@
 from EventTester import EventServer
 from pueo.turf import PueoTURF
 
-def eventStartup(devs=None):
+def eventStartup(devs=None, mask = 0b0000):
     """ Startup the event path. devs = (PueoTURF, EventServer) tuple. If none, creates them and returns it. """
     # n.b. enable the SURF datapath outside of this!!
     # Need to check that the event stuff only runs between
@@ -18,7 +18,7 @@ def eventStartup(devs=None):
     
     # only 2 TURFIOs for me
     # 1 = drop all data from this TURFIO
-    dev.event.mask = 0b1100
+    dev.event.mask = mask
     
     # latency from now -> trigger readout (time for triggers to arrive)
     # this is probably waaay short
