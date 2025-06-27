@@ -31,13 +31,13 @@ freeze_state = int(args.freeze)
 
 dev = PueoTURF()
 tio = PueoTURFIO((dev,tio_num), 'TURFGTP')
-surf = PueoSURF((tio, slot_num), 'TURFIO', param_file=[args.paramfile])
+surf = PueoSURF((tio, slot_num), 'TURFIO', param_file=args.paramfile)
 if not isinstance(surf.rfdc, PyRFDC):
     raise Exception("you don't have pyrfdc/libunivrfdc/paramfiles setup")
 
 for i in range(8):
-    tile_id = 8//2
-    block_id = 8%2
+    tile_id = i//2
+    block_id = i%2
     print(f'Channel {i}: tile {tile_id} block_id {block_id}')
 
     freeze_settings = surf.rfdc.GetCalFreeze(tile_id, block_id)
