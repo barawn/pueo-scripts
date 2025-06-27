@@ -41,9 +41,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--enable",
                     action='store_true',
                     help='enable the datapath on SURFs at exit')
-parser.add_argument('--manual',
+parser.add_argument('--auto',
                     action='store_true',
-                    help='check for train in req instead of using autotrain')
+                    help='use autotrain instead of check for train in req')
 
 parser.add_argument("--tio", type=int)
 parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
@@ -56,6 +56,7 @@ parser.add_argument("--boring",
 parser.add_argument("--noturf",
                     action='store_true',
                     help="don't train the TURF inputs, just TURFIO")
+parser.add_argument("--manual")
 
 args = parser.parse_args()
 color = exciting if not args.boring else boring
@@ -66,6 +67,10 @@ if args.tio:
     tio = args.tio
 else:
     tio = 0
+
+if args.manual: 
+    print(color.BOLD + color.RED +'Manual arg is deprecated. Stop using it. >:(' +
+              color.END)
 
 surfList = []
 for slot in slotList:
@@ -92,15 +97,16 @@ for m in masks:
     print(f'Bitmask of SURFs to startup in TURFIO port#{m} is {hex(masks[m])}')
 
 for n in tio:
-    if not args.manual:
-        print(f'Setting TURFIO port#{n} autotrain bits: {hex(masks[n])}')
-        r = tio[n].surfturf.autotrain
-        r |= masks[n]
-    else:
+    if not args.auto:
         print(f'Clearing TURFIO port#{n} autotrain bits: {hex(masks[n])}')
         r = tio[n].surfturf.autotrain
         m = masks[n] ^ 0xFF
-        r = r & m        
+        r = r & m     
+    else:
+        print(f'Setting TURFIO port#{n} autotrain bits: {hex(masks[n])}')
+        r = tio[n].surfturf.autotrain
+        r |= masks[n]
+           
     print(f'TURFIO port#{n} autotrain bits now: {hex(r)}')
     tio[n].surfturf.autotrain = r
         
@@ -134,7 +140,7 @@ for n in tio:
 # so we just grab the daligns.
 daligns = []
 surfActiveList=[]
-if args.manual:
+if not args.auto:
     # wait for train in req on each
     for surfAddr in surfList:
         tn = surfAddr[0]
@@ -279,11 +285,15 @@ for surfAddr in surfActiveList:
             print(color.BOLD +
                   f'DOUT alignment failed on SURF#{sn} on TURFIO#{tn}!' +
                   color.END)
+            print(color.BOLD + color.RED + 'Exiting!' + color.END) 
+            sys.exit(1) 
         if ctries == ALIGN_ATTEMPTS:
             print(color.BOLD +
                   f'COUT alignment failed on SURF#{sn} on TURFIO#{tn}!' +
                   color.END)            
-        print('Skipping SURF#{sn} on TURFIO#{tn} for remaining operations!')
+            print(color.BOLD + color.RED + 'Exiting!' + color.END) 
+            sys.exit(1)
+        print(f'Skipping SURF#{sn} on TURFIO#{tn} for remaining operations!')
 
 if not eyesFound:
     print(color.BOLD + color.RED +
