@@ -10,7 +10,7 @@ from pueo.turfio import PueoTURFIO
 from pueo.surf import PueoSURF
 from pyrfdc import PyRFDC
 
-from argparse
+import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--tio", type=str, default="0",
@@ -31,7 +31,7 @@ freeze_state = int(args.freeze)
 
 dev = PueoTURF()
 tio = PueoTURFIO((dev,tio_num), 'TURFGTP')
-surf = PueoSURF((tio, slot_num), 'TURFIO', param_file=args['paramfile'])
+surf = PueoSURF((tio, slot_num), 'TURFIO', param_file=[args.paramfile])
 if not isinstance(surf.rfdc, PyRFDC):
     raise Exception("you don't have pyrfdc/libunivrfdc/paramfiles setup")
 
