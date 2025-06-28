@@ -4,10 +4,21 @@ if [ $# -eq 0 ]
     then 
         echo "Starting up all TURFIOs"
         /home/pueo/taylor/ppython /home/pueo/startup/turfManualStartup.py
+
+        python3 getHSCurrents.py
+        if [[ $? -eq 1]]
+        then
+            echo "One of the SURFs didnt boot properly"
+            echo "Nuking the system..."
+        fi
+
+        echo "Alligning SURF clocks"
         /home/puep/taylor/ppython /home/pueo/startup/surfStartup.py --enable --tio 0 --slots 0,1,2,3,4,5,6
         /home/puep/taylor/ppython /home/pueo/startup/surfStartup.py --enable --tio 1 --slots 0,1,2,3,4,5,6
         /home/puep/taylor/ppython /home/pueo/startup/surfStartup.py --enable --tio 2 --slots 0,1,2,3,4,5
         /home/puep/taylor/ppython /home/pueo/startup/surfStartup.py --enable --tio 3 --slots 0,1,2,3,4,5
+
+
         /home/puep/taylor/ppython /home/pueo/startup/mtsAdcance.py
 fi
 
@@ -16,18 +27,19 @@ while test $# -gt 0; do
         -t|--tio)
             shift
             /home/pueo/taylor/ppython /home/pueo/startup/turfManualStartup.py --turfio $1
-            if $1 -eq 0; then
+            if [[ $1 -eq 0 ]]; then
                 /home/puep/taylor/ppython /home/pueo/startup/surfStartup.py --enable --tio 0 --slots 0,1,2,3,4,5,6
                 /home/puep/taylor/ppython /home/pueo/startup/mtsAdcance.py --tio 0
-            else if $1 -eq 1; then
+            else if [[ $1 -eq 1 ]]; then
                 /home/puep/taylor/ppython /home/pueo/startup/surfStartup.py --enable --tio 1 --slots 0,1,2,3,4,5,6
                 /home/puep/taylor/ppython /home/pueo/startup/mtsAdcance.py --tio 1
-            else if $1 -eq 2; then
+            else if [[ $1 -eq 2 ]]; then
                 /home/puep/taylor/ppython /home/pueo/startup/surfStartup.py --enable --tio 2 --slots 0,1,2,3,4,5
                 /home/puep/taylor/ppython /home/pueo/startup/mtsAdcance.py --tio 2
-            else if $1 -eq 3; then
+            else if [[ $1 -eq 3 ]]; then
                 /home/puep/taylor/ppython /home/pueo/startup/surfStartup.py --enable --tio 3 --slots 0,1,2,3,4,5
                 /home/puep/taylor/ppython /home/pueo/startup/mtsAdcance.py --tio 3
+            fi
             shift;;
 
     esac
