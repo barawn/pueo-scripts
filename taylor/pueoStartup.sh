@@ -1,15 +1,16 @@
 #! /bin/bash
 
-while getopts "tio:"; do
-    case $arg in 
-        tio)
-            /home/pueo/taylor/ppython /home/pueo/startup/turfManualStartup --tio $OPTARG;;
-    esac
-done
-if [ $OPTIND -eq 1 ]
+if [ $# -eq 0 ]
     then 
         echo "Starting up all TURFIOs"
         /home/pueo/taylor/ppython /home/pueo/startup/turfManualStartup
 fi
 
-##ppython ../startup/turfManualStartup 
+while test $# -gt 0; do
+    case $1 in 
+        -t|--tio)
+            shift
+            /home/pueo/taylor/ppython /home/pueo/startup/turfManualStartup --turfio $1
+            shift;;
+    esac
+done
