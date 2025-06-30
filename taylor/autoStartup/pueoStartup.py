@@ -14,12 +14,12 @@ print('rebooting TURF')
 time.sleep(60)
 print('done')
 
-#dev = PueoTURF()
+dev = PueoTURF()
 #hsk = HskEthernet()
 
 ## Once TURF has rebooted, want to check that the aurora bridge is up and running
 ## if not, then it hasnt finished rebooting
-down = bridgeCheck()
+down = bridgeCheck(dev)
 if (down[0] != 4):
     print('Aurora Bridge is down.')
     print('Exiting startup...')

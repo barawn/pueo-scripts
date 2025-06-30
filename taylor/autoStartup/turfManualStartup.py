@@ -177,3 +177,5 @@ print(color.BOLD + color.GREEN +
       f'TURFIO sync complete' +
       color.END)
 
+dev.dev.close()
+

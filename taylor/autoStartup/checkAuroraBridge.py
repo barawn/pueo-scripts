@@ -18,6 +18,8 @@ def bridgeCheck():
     # a down link throws back 828. 831 is a successful bridge
         if val != 831: 
             down.append(i)
+
+    dev.dev.close()
         
     # send back all down links if they are not up 
     # otherwise send 4 as a 'all good!'
