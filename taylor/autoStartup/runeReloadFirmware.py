@@ -1,6 +1,7 @@
 from HskSerial import HskPacket
 
 def runeReloadFirmware(hsk, port):
+
     # map of all turfios to ports for the turf
     tios = [ (0, 0x58), 
             (1, 0x50), 
@@ -12,3 +13,4 @@ def runeReloadFirmware(hsk, port):
         for tio in tios: 
             if port[i] == tio[0]: 
                 hsk.send(HskPacket(tio[1], 'eReloadFirmware', data = [0,0,0,0]))
+    
