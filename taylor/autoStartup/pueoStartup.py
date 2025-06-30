@@ -4,7 +4,7 @@ from checkAuroraBridge import bridgeCheck
 import sys
 from pueo.turf import PueoTURF
 from HskSerial import HskEthernet
-from getHSCurrents import getHSCurrents
+from getHSCurrents import checkHSCurrents
 
 ## First thing is we are going to reset CPU and reboot the TURF
 os.system('/home/pueo/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
@@ -29,7 +29,7 @@ print('Starting up all TURFIOs')
 os.system('/home/pueo/taylor/ppython /home/pueo/startup/turfManualStartup.py')
 
 ## Checking that the SURFs have the correct
-down = getHSCurrents()
+down = checkHSCurrents()
 if (down != 0):
     print('SURF hotswap currents are too low.')
     print('Exiting startup...')
