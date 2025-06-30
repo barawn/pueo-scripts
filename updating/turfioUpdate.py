@@ -71,6 +71,7 @@ for i in range(4):
     if tios[i]:
         tio = tios[i]
         tio.watchdog_disable = 1
+        print(f'TURFIO#{i} watchdog disabled! Update time, yo!')
         with tio.genspi as spi: 
             spi.program_mcs(args.filename) 
         tio.watchdog_disable = 0
