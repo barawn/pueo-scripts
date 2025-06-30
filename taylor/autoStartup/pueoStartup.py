@@ -10,10 +10,12 @@ from getHSCurrents import checkHSCurrents
 os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
 
 ## TURF takes like 45 seconds to restart, so we gotta wait
+print('rebooting TURF')
 time.sleep(60)
+print('done')
 
-dev = PueoTURF()
-hsk = HskEthernet()
+#dev = PueoTURF()
+#hsk = HskEthernet()
 
 ## Once TURF has rebooted, want to check that the aurora bridge is up and running
 ## if not, then it hasnt finished rebooting
