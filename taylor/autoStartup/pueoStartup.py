@@ -4,7 +4,7 @@ from checkAuroraBridge import bridgeCheck
 import sys
 from pueo.turf import PueoTURF
 from HskSerial import HskEthernet
-from getHSCurrents import getHSCurrents()
+from getHSCurrents import getHSCurrents
 
 ## First thing is we are going to reset CPU and reboot the TURF
 os.system('/home/pueo/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
