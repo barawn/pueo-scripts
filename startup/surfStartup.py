@@ -140,6 +140,8 @@ for n in tio:
 # so we just grab the daligns.
 daligns = []
 surfActiveList=[]
+anyTrain=False
+st = time.time()
 if not args.auto:
     # wait for train in req on each
     for surfAddr in surfList:
@@ -157,9 +159,14 @@ if not args.auto:
                   color.END)
             print('Exiting to allow fixes/debugging.')
             exit(1)
+        if not anyTrain:
+            anyTrain = True
+            sp = time.time()
+            print(f'Waited {sp-st} for first SURF to request in training.')
         print(color.GREEN +
               f'SURF slot#{sn} on TURFIO port#{tn} is requesting in training' +
               color.END)
+        print(f'SURF train out rdy: {hex(tio[tn].surfturf.train_out_rdy)}')
         daligns.append(tio[tn].dalign[sn])
         surfActiveList.append((tn,sn))
 
@@ -192,6 +199,8 @@ for align in daligns:
 # Wait for out train request. 
 surfActiveList = []
 daligns = []
+st = time.time()
+anyTrain = False
 for surfAddr in surfList:
     tn = surfAddr[0]
     sn = surfAddr[1]
@@ -208,6 +217,10 @@ for surfAddr in surfList:
         print('Exiting to allow checks/fixes.')
         exit(1)
     else:
+        if not anyTrain:
+            sp = time.time()
+            anyTrain = True
+            print(f'Waited {sp-st} for first SURF to finish in training')
         print(color.GREEN +
               f'SURF#{sn} on TURFIO#{tn} is ready for out training' +
               color.END)
