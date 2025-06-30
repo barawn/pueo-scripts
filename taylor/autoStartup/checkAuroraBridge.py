@@ -14,6 +14,7 @@ def bridgeCheck():
 
     for i in range(0,4): 
         val = dev.aurora.linkstat(i)
+        print(val)
 
     # a down link throws back 828. 831 is a successful bridge
         if val != 831: 
