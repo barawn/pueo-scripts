@@ -3,12 +3,15 @@
 import cmd
 import argparse
 import os.path
+import sys
+from functools import partial
 
 try:
     import readline
 except ImportError:
     readline = None
-    
+
+from pueo.common.term import Term
 from HskSerial import HskEthernet, HskSerial, HskPacket
 
 histfile = os.path.expanduser('~/.psh_history')
@@ -18,10 +21,25 @@ histfile_size = 1000
 hsk = HskEthernet()
 
 class HskShell(cmd.Cmd):
-    prompt = f'HSK (None)> '
-    def preloop(self):
+    TITLE = 'PUEO Housekeeping Shell'
+    
+    PREFIX = Term.CURSOR_SAVE + Term.CURSOR_POS(1,1) + Term.BLACK + Term.BG_WHITE
+    POSTFIX = Term.END + Term.CURSOR_RESTORE
+
+    @property
+    def prompt(self):
+        sz = os.get_terminal_size()
+        width = sz.columns
+        prefill = width//2 - len(self.TITLE)//2
+        postfill = width - len(self.TITLE) - prefill
+        return self.PREFIX + ' '*prefill + self.TITLE + ' '*postfill + self.POSTFIX + f'HSK ({self.target})> '
+    
+    def preloop(self):        
         if readline and os.path.exists(histfile):
             readline.read_history_file(histfile)
+
+        print(Term.CLEAR_SCREEN)
+
 
     def postloop(self):
         if readline:
@@ -34,9 +52,8 @@ class HskShell(cmd.Cmd):
             return pkt
         except KeyboardInterrupt:
             print('Interrupted')
-            return None
+            return None        
         
-
     def do_quit(self, argline:str) -> bool:
         return self.do_exit(argline)
 
@@ -44,40 +61,28 @@ class HskShell(cmd.Cmd):
         return True
 
     def do_shell(self, argline:str):
-        self.target = argline
-        self.prompt = f'HSK ({self.target})> '
+        ll = argline.lstrip(' ').split(' ')
+        if ll[0] == 'target':
+            self.target = ll[1]
 
-    # I need to parse the available HskPackets and
-    # automatically build a dumb version of this for
-    # ones that aren't already defined.
-    # do_eEnable is probably the default for that.
+    def __init__(self):
+        self.target = None
+        # get list of commands
+        cmds = list(HskPacket.cmds.keys())
+        # remove eError
+        cmds.remove('eError')
+        # patch in all of them that might not have a definition
+        for key in HskPacket.cmds.keys():
+            if not getattr(self, f'do_{key}', None):
+                f = partial(self._basic_command, cmd=key)
+                f.__doc__ = HskPacket.cmds[key][1]
+                setattr(HskShell, f'do_{key}', f)
+            else:
+                pass
+            
+        super().__init__()
         
-    def do_eEnable(self, argline:str):
-        if self.target:
-            addr = int(self.target, 0)
-            args = argline.lstrip(' ')
-            if len(args):
-                data = list(map(lambda x : int(x,0), args.split(' ')))
-            else:
-                data = None
-            hsk.send(HskPacket(addr, 'eEnable', data=data))
-            pkt = self.try_receive()
-            if pkt:
-                print(pkt.pretty())
-
-    def do_eRestart(self, argline:str):
-        if self.target:
-            addr = int(self.target, 0)
-            args = argline.lstrip(' ')
-            if len(args):
-                data = list(map(lambda x : int(x,0), args.split(' ')))
-            else:
-                data = None
-            hsk.send(HskPacket(addr, 'eRestart', data=data))
-            pkt = self.try_receive()
-            if pkt:
-                print(pkt.pretty())
-                
+        
     def do_eIdentify(self, argline:str):
         if self.target:
             addr = int(self.target, 0)
@@ -85,6 +90,22 @@ class HskShell(cmd.Cmd):
             pkt = self.try_receive()
             if pkt:
                 print(pkt.pretty(asString=True))
+
+    def do_eTemps(self, argline:str):
+        if self.target:
+            addr = int(self.target, 0)
+            hsk.send(HskPacket(addr, 'eTemps'))
+            pkt = self.try_receive()
+            if pkt:
+                print(pkt.pretty())
+
+    def do_eCurrents(self, argline:str):
+        if self.target:
+            addr = int(self.target, 0)
+            hsk.send(HskPacket(addr, 'eCurrents'))
+            pkt = self.try_receive()
+            if pkt:
+                print(pkt.pretty())                
                 
     def do_ePingPong(self, argline:str):
         if self.target:
@@ -118,18 +139,24 @@ class HskShell(cmd.Cmd):
             if pkt:
                 print(pkt.pretty(asString=True))
 
-    def do_eStartState(self, argline:str):
+    def _basic_command(self, argline:str, cmd=None):
+        """ this is the base method used for basic commands """
         if self.target:
             addr = int(self.target, 0)
-            if len(argline):
-                data = int(argline, 0)
+            args = argline.lstrip(' ')
+            if len(args):
+                data = list(map(lambda x : int(x,0), args.split(' ')))
             else:
                 data = None
-            hsk.send(HskPacket(addr, 'eStartState', data=data))
+            hsk.send(HskPacket(addr, cmd, data=data))
             pkt = self.try_receive()
             if pkt:
                 print(pkt.pretty())
                 
 if __name__ == "__main__":
-    HskShell().cmdloop()
+    sz = os.get_terminal_size()
+          
+    shell = HskShell()
+            
+    shell.cmdloop()
 
