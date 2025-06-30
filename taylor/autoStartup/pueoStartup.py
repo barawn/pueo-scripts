@@ -7,7 +7,7 @@ from HskSerial import HskEthernet
 from getHSCurrents import checkHSCurrents
 
 ## First thing is we are going to reset CPU and reboot the TURF
-os.system('/home/pueo/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
+os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
 
 ## TURF takes like 45 seconds to restart, so we gotta wait
 time.sleep(60)
@@ -26,7 +26,7 @@ if (down[0] != 4):
 
 ## Once TURF is ready, we will want to set up TURFIOs
 print('Starting up all TURFIOs')
-os.system('/home/pueo/taylor/ppython /home/pueo/startup/turfManualStartup.py')
+os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/startup/turfManualStartup.py')
 
 ## Checking that the SURFs have the correct
 down = checkHSCurrents()
