@@ -5,6 +5,7 @@ tio_addr = [0x40, 0x48, 0x50, 0x58]
 
 
 def checkHSCurrents():
+    down = []
     hsk = HskEthernet()
     for addr in tio_addr:
         hsk.send(HskPacket(addr, 'eCurrents'))
@@ -20,9 +21,8 @@ def checkHSCurrents():
                     print('SURF slot ' + str(int(iter/2)) + ':', round(I, 2), 'mA')
                 if (I < 450):
                     print('SURF slot ' + str(str(int(iter/2))) + ' on TURFIO at address ' + str(addr) + 'did not boot correctly')
-                    sys.exit(1)
+                    down.append((addr,iter/2))
+    if (len(down) != 0):
+        return down
 
-    return sys.exit(0)
-
-if __name__ == '__main__':
-    derjkhgkjg = checkHSCurrents()
+    return 0
