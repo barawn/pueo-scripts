@@ -109,6 +109,11 @@ for n in tio:
            
     print(f'TURFIO port#{n} autotrain bits now: {hex(r)}')
     tio[n].surfturf.autotrain = r
+
+# Reset the live detector
+for n in tio:
+    tio[n].surfturf.livedet_reset = 1
+    tio[n].surfturf.livedet_reset = 0
         
 # enable RXCLK for the TURFIOs containing the SURFs
 for n in tio:
