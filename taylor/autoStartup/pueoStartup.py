@@ -8,6 +8,8 @@ from getHSCurrents import checkHSCurrents
 from turfManualStartup import turfManualStartup
 from surfStartup import surfStartup
 from mtsAdvance import mtsAdvance
+from checkStartState import checkStartState
+#from func_timeout import func_timeout
 
 ## First thing is we are going to reset CPU and reboot the TURF
 os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
@@ -27,6 +29,11 @@ if (down[0] != 4):
     print('Aurora Bridge is down.')
     print('Exiting startup...')
     sys.exit(1)
+
+## Checking that the SURFs are in the correct start state
+print('Checking SURF start state...')
+
+down = checkStartState(hsk)
     
 
 ## Once TURF is ready, we will want to set up TURFIOs
@@ -40,6 +47,7 @@ else:
 
 
 ## Checking that the SURFs have the correct
+
 '''down = checkHSCurrents()
 if (down != 0):
     print('SURF hotswap currents are too low.')
