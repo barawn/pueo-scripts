@@ -7,6 +7,7 @@ from HskSerial import HskEthernet
 from getHSCurrents import checkHSCurrents
 from turfManualStartup import turfManualStartup
 from surfStartup import surfStartup
+from mtsAdvance import mtsAdvance
 
 ## First thing is we are going to reset CPU and reboot the TURF
 os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
@@ -67,4 +68,12 @@ if (down == 1):
     print('SURF failed alignment.')
     print('Exiting...')
     sys.exit(1)
+
+## Not set up multi-tile synchronization
+print('Setting up multi-tile synchronization...')
+down = mtsAdvance(0)
+down = mtsAdvance(1)
+down = mtsAdvance(2)
+down = mtsAdvance(3)
+print('Multi-tile synchronization complete!')
 
