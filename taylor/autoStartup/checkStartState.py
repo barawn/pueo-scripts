@@ -81,7 +81,7 @@ def checkStartState(hsk):
                 signal.alarm(0)
                 # Restore handler to previous value
                 signal.signal(signal.SIGALRM, old_handler)
-    if (len(failed == 0)):
+    if (len(failed) == 0):
         return 0
     else:
         return failed
