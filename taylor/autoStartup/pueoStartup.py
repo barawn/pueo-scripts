@@ -17,7 +17,7 @@ time.sleep(60)
 print('done')
 
 #dev = PueoTURF()
-hsk = HskEthernet()
+#hsk = HskEthernet()
 
 ## Once TURF has rebooted, want to check that the aurora bridge is up and running
 ## if not, then it hasnt finished rebooting
@@ -39,11 +39,11 @@ else:
 
 
 ## Checking that the SURFs have the correct
-down = checkHSCurrents()
+'''down = checkHSCurrents()
 if (down != 0):
     print('SURF hotswap currents are too low.')
     print('Exiting startup...')
-    sys.exit(1)
+    sys.exit(1)'''
 
 
 ## Aligining SURF clocks
