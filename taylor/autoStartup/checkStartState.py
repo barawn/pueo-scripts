@@ -56,6 +56,7 @@ def checkStartState(hsk):
                     print('failed to receive a response')
             except: 
                 print(pkt) 
+                print('all good yo :D')
                 continue 
     
 
