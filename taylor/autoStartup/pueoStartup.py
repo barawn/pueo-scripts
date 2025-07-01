@@ -18,7 +18,7 @@ time.sleep(60)
 print('done')
 
 #dev = PueoTURF()
-#hsk = HskEthernet()
+hsk = HskEthernet()
 
 ## Once TURF has rebooted, want to check that the aurora bridge is up and running
 ## if not, then it hasnt finished rebooting
@@ -71,9 +71,9 @@ if (down == 1):
 
 ## Not set up multi-tile synchronization
 print('Setting up multi-tile synchronization...')
-down = mtsAdvance(0)
-down = mtsAdvance(1)
-down = mtsAdvance(2)
-down = mtsAdvance(3)
+down = mtsAdvance(hsk, 0)
+down = mtsAdvance(hsk, 1)
+down = mtsAdvance(hsk, 2)
+down = mtsAdvance(hsk, 3)
 print('Multi-tile synchronization complete!')
 

@@ -3,7 +3,7 @@
 from HskSerial import HskEthernet, HskPacket
 import time 
 
-def mtsAdvance(tio = '0'):
+def mtsAdvance(hsk, tio = '0'):
     if isinstance(tio, int):
         tio = str(tio)
 
@@ -46,7 +46,7 @@ def mtsAdvance(tio = '0'):
         surfs = [ (0, 0x93) ]
 
 
-    hsk = HskEthernet()
+    #hsk = HskEthernet()
     hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
     pkt = hsk.receive()
     print('This takes 5 seconds to run! Be patient!')
