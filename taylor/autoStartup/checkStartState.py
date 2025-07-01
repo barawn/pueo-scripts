@@ -3,7 +3,7 @@ import time
 
 
 def checkStartState(hsk): 
-
+    hsk = HskEthernet()
     tio0 = (0, 0x58)
     surf0 = [ (0, 0x97),
             (1, 0xa0),
