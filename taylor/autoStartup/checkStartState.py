@@ -1,4 +1,17 @@
 from HskSerial import HskEthernet, HskPacket
+import signal
+from time import sleep    # only needed for testing
+
+timelimit_seconds = 3    # Must be an integer
+
+# Custom exception for the timeout
+class TimeoutException(Exception):
+    pass
+
+# Handler function to be called when SIGALRM is received
+def sigalrm_handler(signum, frame):
+    # We get signal!
+    raise TimeoutException()
 
 
 def checkStartState(hsk): 
@@ -48,15 +61,26 @@ def checkStartState(hsk):
         for surf in surfs[idx]:
             pkt = 0 
             hsk.send(HskPacket(surf[1], 'eStartState'))
+            # Set up signal handler for SIGALRM, saving previous value
+            old_handler = signal.signal(signal.SIGALRM, sigalrm_handler)
+            # Start timer
+            signal.alarm(timelimit_seconds)
             try:
                 pkt = hsk.receive().data
-                if pkt is None:
-                    failed.append((tio[1], surf[0]))
-                    print('failed to receive a response')
-            except: 
-                print(pkt) 
-                print('all good yo :D')
+                #if pkt is None:
+                #    failed.append((tio[1], surf[0]))
+                #    print('failed to receive a response')
+            except TimeoutException: 
+                #print(pkt) 
+                print('failed to receive a response within the time limit...')
+                failed.append((tio[1], surf[0]))
+                #print('all good yo :D')
                 continue 
+            finally:
+                # Turn off timer
+                signal.alarm(0)
+                # Restore handler to previous value
+                signal.signal(signal.SIGALRM, old_handler)
     if (len(failed == 0)):
         return 0
     else:
