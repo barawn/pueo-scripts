@@ -3,7 +3,9 @@
 from HskSerial import HskEthernet, HskPacket
 import time 
 
-def mtsAdvance(tio = 0):
+def mtsAdvance(tio = '0'):
+    if isinstance(tio, int):
+        tio = str(tio)
 
     if tio == '0':
         tios = (0, 0x58)
