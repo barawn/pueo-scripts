@@ -41,7 +41,6 @@ def checkStartState(hsk):
     tios = [tio0, tio1, tio2, tio3]
     surfs = [surf0, surf1, surf2, surf3]
 
-    tios, surfs = addr()
     failed = []
     for tio in tios: 
         hsk.send(HskPacket(tio[1], 'eEnable', data = [0x40, 0x40]))
