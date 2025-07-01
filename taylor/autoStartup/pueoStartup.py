@@ -45,6 +45,8 @@ if (down != 0):
     print('Exiting startup...')
     sys.exit(1)
 
+
+## Aligining SURF clocks
 down = surfStartup(tio = 0, slotList = [0, 1, 2, 3, 4, 5, 6])
 if (down == 1):
     print('SURF failed alignment.')
