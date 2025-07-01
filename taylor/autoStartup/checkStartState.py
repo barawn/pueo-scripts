@@ -1,6 +1,6 @@
-# from HskSerial import HskEthernet, HskPacket
+from HskSerial import HskEthernet, HskPacket
 import time
-from turfsurfAddrs import addr
+
 
 def checkStartState(hsk): 
 
@@ -44,8 +44,8 @@ def checkStartState(hsk):
     tios, surfs = addr()
     failed = []
     for tio in tios: 
-        # hsk.send(HskPacket(tio[1], 'eEnable', data = [0x40, 0x40]))
-        # pkt = hsk.receive()
+        hsk.send(HskPacket(tio[1], 'eEnable', data = [0x40, 0x40]))
+        pkt = hsk.receive()
         idx = tios.index(tio)
         for surf in surfs[idx]:
             pkt = 0 
@@ -56,6 +56,7 @@ def checkStartState(hsk):
                     failed.append((tio[1], surf[0]))
                     print('failed to receive a response')
             except: 
+                print(pkt) 
                 continue 
     
 
