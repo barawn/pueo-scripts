@@ -67,7 +67,7 @@ def checkStartState(hsk):
             signal.alarm(timelimit_seconds)
             try:
                 pkt = hsk.receive().data
-                sleep(4)
+                #sleep(4)
                 #if pkt is None:
                 #    failed.append((tio[1], surf[0]))
                 #    print('failed to receive a response')
