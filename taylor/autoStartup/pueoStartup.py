@@ -34,6 +34,10 @@ if (down[0] != 4):
 print('Checking SURF start state...')
 
 down = checkStartState(hsk)
+if (down != 0):
+    print('at least 1 SURF is not in the correct state')
+    print('Exiting...')
+    sys.exit(1)
     
 
 ## Once TURF is ready, we will want to set up TURFIOs
@@ -41,6 +45,7 @@ print('Starting up all TURFIOs')
 down = turfManualStartup()
 if (down != 0):
     print('Failed setting up the TURFIOs')
+    print('Exiting...')
     sys.exit(1)
 else:
     print('Finished setting up TURFIOs')
