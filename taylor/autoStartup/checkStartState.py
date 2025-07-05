@@ -1,9 +1,21 @@
 from HskSerial import HskEthernet, HskPacket
-import time
+import signal
+from time import sleep    # only needed for testing
+
+timelimit_seconds = 3    # Must be an integer
+
+# Custom exception for the timeout
+class TimeoutException(Exception):
+    pass
+
+# Handler function to be called when SIGALRM is received
+def sigalrm_handler(signum, frame):
+    # We get signal!
+    raise TimeoutException()
 
 
 def checkStartState(hsk): 
-    hsk = HskEthernet()
+    #hsk = HskEthernet()
     tio0 = (0, 0x58)
     surf0 = [ (0, 0x97),
             (1, 0xa0),
@@ -49,62 +61,31 @@ def checkStartState(hsk):
         for surf in surfs[idx]:
             pkt = 0 
             hsk.send(HskPacket(surf[1], 'eStartState'))
+            # Set up signal handler for SIGALRM, saving previous value
+            old_handler = signal.signal(signal.SIGALRM, sigalrm_handler)
+            # Start timer
+            signal.alarm(timelimit_seconds)
             try:
                 pkt = hsk.receive().data
-                if pkt is None:
-                    failed.append((tio[1], surf[0]))
-                    print('failed to receive a response')
-            except: 
-                print(pkt) 
-                print('all good yo :D')
+                #sleep(4)
+                #if pkt is None:
+                #    failed.append((tio[1], surf[0]))
+                #    print('failed to receive a response')
+            except TimeoutException: 
+                #print(pkt) 
+                print('failed to receive a response within the time limit...')
+                failed.append((tio[1], surf[0]))
+                #print('all good yo :D')
                 continue 
+            finally:
+                # Turn off timer
+                signal.alarm(0)
+                # Restore handler to previous value
+                signal.signal(signal.SIGALRM, old_handler)
+    if (len(failed) == 0):
+        return 0
+    else:
+        return failed
     
 
-
-
-    """hsk.send(HskPacket(0x40, 'eEnable', [0x40, 0x40]))
-    pkt = hsk.receive()
-    hsk.send(HskPacket(0x48, 'eEnable', [0x40, 0x40]))
-    pkt = hsk.receive()
-    hsk.send(HskPacket(0x50, 'eEnable', [0x40, 0x40]))
-    pkt = hsk.receive()
-    hsk.send(HskPacket(0x58, 'eEnable', [0x40, 0x40]))
-    pkt = hsk.receive()
-
-    print("Are you Ready kids?")"""
-"""
-    surfs = [ (0, 0x97),
-            (1, 0xa0),
-            (2, 0x99),
-            (3, 0x8d),
-            (4, 0x9d),
-            (5, 0x94),
-            (6, 0x8a),
-            (0, 0x8c),
-            (1, 0x95),
-            (2, 0x9f),
-            (3, 0x9a),
-            (4, 0x87),
-            (5, 0x85), 
-            (6, 0x9c),
-            (0, 0x89),
-            (1, 0x88),
-            (2, 0x9e),
-            (3, 0x8b),
-            (4, 0xa1),
-            (5, 0x98),
-            (0, 0x93),
-            (1, 0x9b),
-            (2, 0x96),
-            (3, 0x8e),
-            (4, 0x90),
-            (5, 0x92)]
-
-    for ii in range(len(surfs)):
-        hsk.send(HskPacket(surfs[ii][1], 'eStartState'))
-        rm = hsk.receive()
-        print(rm.pretty())
-
-    print('Aye Aye, Captain!')"""
-
-checkStartState(1)
+#checkStartState(1)
