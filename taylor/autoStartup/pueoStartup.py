@@ -3,7 +3,7 @@ import time
 from checkAuroraBridge import bridgeCheck
 import sys
 from pueo.turf import PueoTURF
-from HskSerial import HskEthernet
+from HskSerial import HskEthernet, HskPacket
 from getHSCurrents import checkHSCurrents
 from turfManualStartup import turfManualStartup
 from surfStartup import surfStartup
@@ -16,7 +16,7 @@ os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/ftdi-t
 
 ## TURF takes like 45 seconds to restart, so we gotta wait
 print('rebooting TURF')
-time.sleep(60)
+time.sleep(70)
 print('done')
 
 #dev = PueoTURF()
@@ -61,11 +61,16 @@ if (down != 0):
 
 
 ## Aligining SURF clocks
+hsk.send(HskPacket(0x40, 'eEnable', [0x40, 0x40]))
+hsk.send(HskPacket(0x48, 'eEnable', [0x40, 0x40]))
+hsk.send(HskPacket(0x50, 'eEnable', [0x40, 0x40]))
+hsk.send(HskPacket(0x58, 'eEnable', [0x40, 0x40]))
 down = surfStartup(tio = 0, slotList = [0, 1, 2, 3, 4, 5, 6])
 if (down == 1):
     print('SURF failed alignment.')
     print('Exiting...')
     sys.exit(1)
+
 down = surfStartup(tio = 1, slotList = [0, 1, 2, 3, 4, 5, 6])
 if (down == 1):
     print('SURF failed alignment.')
@@ -89,4 +94,6 @@ down = mtsAdvance(hsk, 1)
 down = mtsAdvance(hsk, 2)
 down = mtsAdvance(hsk, 3)
 print('Multi-tile synchronization complete!')
+print('DAQ startup complete!')
+print('Ready to take data!')
 
