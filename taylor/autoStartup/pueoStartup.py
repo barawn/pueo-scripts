@@ -9,10 +9,17 @@ from turfManualStartup import turfManualStartup
 from surfStartup import surfStartup
 from mtsAdvance import mtsAdvance
 from checkStartState import checkStartState
+import argparse
 #from func_timeout import func_timeout
 
 ## First thing is we are going to reset CPU and reboot the TURF
 os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--slotmaskoff", type=str, default="0,1,2,3,4,5,6")
+args = parser.parse_args()
+slotList = list(map(int,args.slotmaskoff.split(',')))
+
 
 ## TURF takes like 45 seconds to restart, so we gotta wait
 print('rebooting TURF')
@@ -109,10 +116,10 @@ if (down == 1):
 
 ## Not set up multi-tile synchronization
 print('Setting up multi-tile synchronization...')
-down = mtsAdvance(hsk, 0)
-down = mtsAdvance(hsk, 1)
-down = mtsAdvance(hsk, 2)
-down = mtsAdvance(hsk, 3)
+down = mtsAdvance(hsk, 0, slotList)
+down = mtsAdvance(hsk, 1, slotList)
+down = mtsAdvance(hsk, 2, slotList)
+down = mtsAdvance(hsk, 3, slotList)
 print('Multi-tile synchronization complete!')
 print('DAQ startup complete!')
 print('Ready to take data!')
