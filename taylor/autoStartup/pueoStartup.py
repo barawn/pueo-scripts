@@ -25,8 +25,23 @@ hsk = HskEthernet()
 ## Once TURF has rebooted, want to check that the aurora bridge is up and running
 ## if not, then it hasnt finished rebooting
 down = bridgeCheck()
-if (down[0] != 4):
+breakout = 0
+while (down[0] != 4 or breakout <= 5):
     print('Aurora Bridge is down.')
+    for i in down:
+        if i == 0:
+            hsk.send(HskPacket(0x58, 'eReloadFirmware', data = [0, 0, 0, 0]))
+        if i == 1:
+            hsk.send(HskPacket(0x50, 'eReloadFirmware', data = [0, 0, 0, 0]))
+        if i == 2:
+            hsk.send(HskPacket(0x40, 'eReloadFirmware', data = [0, 0, 0, 0]))
+        if i == 3:
+            hsk.send(HskPacket(0x48, 'eReloadFirmware', data = [0, 0, 0, 0]))
+
+    print('Reloaded firmware and checking again... ' + str(breakout) + '/5')
+    breakout += 1
+    down = bridgeCheck()
+if (breakout > 5):
     print('Exiting startup...')
     sys.exit(1)
 
