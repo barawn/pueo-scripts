@@ -116,10 +116,10 @@ if (down == 1):
 
 ## Not set up multi-tile synchronization
 print('Setting up multi-tile synchronization...')
-down = mtsAdvance(hsk, 0, slotmaskoff)
-down = mtsAdvance(hsk, 1, slotmaskoff)
-down = mtsAdvance(hsk, 2, slotmaskoff)
-down = mtsAdvance(hsk, 3, slotmaskoff)
+down = mtsAdvance(hsk, 0)
+down = mtsAdvance(hsk, 1)
+down = mtsAdvance(hsk, 2)
+down = mtsAdvance(hsk, 3)
 print('Multi-tile synchronization complete!')
 print('DAQ startup complete!')
 print('Ready to take data!')

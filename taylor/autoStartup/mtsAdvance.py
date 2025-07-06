@@ -3,7 +3,7 @@
 from HskSerial import HskEthernet, HskPacket
 import time 
 
-def mtsAdvance(hsk, tio = '0', slotmaskoff = None):
+def mtsAdvance(hsk, tio = '0'):
     if isinstance(tio, int):
         tio = str(tio)
 
@@ -14,8 +14,7 @@ def mtsAdvance(hsk, tio = '0', slotmaskoff = None):
                 (2, 0x99),
                 (3, 0x8d),
                 (4, 0x9d),
-                (5, 0x94),
-                (6, 0x8a) ]
+                (5, 0x94)]
     elif tio == '1':
         tios = (1, 0x50)
         surfs = [ (0, 0x8c),
@@ -23,8 +22,7 @@ def mtsAdvance(hsk, tio = '0', slotmaskoff = None):
                 (2, 0x9f),
                 (3, 0x9a),
                 (4, 0x87),
-                (5, 0x85), 
-                (6, 0x9c)]
+                (5, 0x85)]
     elif tio == '2':
         tios = (2, 0x40)
         surfs = [ (0, 0x89),
@@ -45,13 +43,13 @@ def mtsAdvance(hsk, tio = '0', slotmaskoff = None):
         tios = (3, 0x48)
         surfs = [ (0, 0x93) ]
 
-    if (slotmaskoff != None):
-        for s in slotmaskoff:
-            try:
-                surfs.remove(surfs[s])
-                print(surfs)
-            except:
-                print(f'TURFIO does not have a slot {s}')
+    #if (slotmaskoff != None):
+    #    for s in slotmaskoff:
+    #        try:
+    #            surfs.remove(surfs[s])
+    #            print(surfs)
+    #        except:
+    #            print(f'TURFIO does not have a slot {s}')
 
 
     #hsk = HskEthernet()
