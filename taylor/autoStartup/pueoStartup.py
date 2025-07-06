@@ -3,7 +3,7 @@ import time
 from checkAuroraBridge import bridgeCheck
 import sys
 from pueo.turf import PueoTURF
-from HskSerial import HskEthernet, HskPacket
+from HskSerial import HskEthernet
 from getHSCurrents import checkHSCurrents
 from turfManualStartup import turfManualStartup
 from surfStartup import surfStartup
@@ -28,6 +28,7 @@ down = bridgeCheck()
 breakout = 0
 while (down[0] != 4 and breakout <= 5):
     print('Aurora Bridge is down.')
+    sys.exit(1)
     for i in down:
         if i == 0:
             hsk.send(HskPacket(0x58, 'eReloadFirmware', data = [0, 0, 0, 0]))
@@ -108,7 +109,7 @@ if (down == 1):
 
 ## Not set up multi-tile synchronization
 print('Setting up multi-tile synchronization...')
-down = mtsAdvance(hsk, 0)
+#down = mtsAdvance(hsk, 0)
 down = mtsAdvance(hsk, 1)
 down = mtsAdvance(hsk, 2)
 down = mtsAdvance(hsk, 3)
