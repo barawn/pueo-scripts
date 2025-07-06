@@ -26,17 +26,22 @@ hsk = HskEthernet()
 ## if not, then it hasnt finished rebooting
 down = bridgeCheck()
 breakout = 0
-while (down[0] != 4 or breakout <= 5):
+while (down[0] != 4 and breakout <= 5):
+    print(down)
     print('Aurora Bridge is down.')
     for i in down:
         if i == 0:
             hsk.send(HskPacket(0x58, 'eReloadFirmware', data = [0, 0, 0, 0]))
+            pkt = hsk.receive()
         if i == 1:
             hsk.send(HskPacket(0x50, 'eReloadFirmware', data = [0, 0, 0, 0]))
+            pkt = hsk.receive()
         if i == 2:
             hsk.send(HskPacket(0x40, 'eReloadFirmware', data = [0, 0, 0, 0]))
+            pkt = hsk.receive()
         if i == 3:
             hsk.send(HskPacket(0x48, 'eReloadFirmware', data = [0, 0, 0, 0]))
+            pkt = hsk.receive()
 
     print('Reloaded firmware and checking again... ' + str(breakout) + '/5')
     breakout += 1
