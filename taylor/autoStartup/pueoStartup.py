@@ -18,7 +18,7 @@ os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/ftdi-t
 parser = argparse.ArgumentParser()
 parser.add_argument("--slotmaskoff", type=str, default="0,1,2,3,4,5,6")
 args = parser.parse_args()
-slotList = list(map(int,args.slotmaskoff.split(',')))
+slotmaskoff = list(map(int,args.slotmaskoff.split(',')))
 
 
 ## TURF takes like 45 seconds to restart, so we gotta wait
@@ -116,10 +116,10 @@ if (down == 1):
 
 ## Not set up multi-tile synchronization
 print('Setting up multi-tile synchronization...')
-down = mtsAdvance(hsk, 0, slotList)
-down = mtsAdvance(hsk, 1, slotList)
-down = mtsAdvance(hsk, 2, slotList)
-down = mtsAdvance(hsk, 3, slotList)
+down = mtsAdvance(hsk, 0, slotmaskoff)
+down = mtsAdvance(hsk, 1, slotmaskoff)
+down = mtsAdvance(hsk, 2, slotmaskoff)
+down = mtsAdvance(hsk, 3, slotmaskoff)
 print('Multi-tile synchronization complete!')
 print('DAQ startup complete!')
 print('Ready to take data!')
