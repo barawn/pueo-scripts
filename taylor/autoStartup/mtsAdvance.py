@@ -57,7 +57,6 @@ def mtsAdvance(hsk, tio = '0'):
     pkt = hsk.receive()
     print('This takes 5 seconds to run! Be patient!')
     for s in surfs:
-        print(s)
         hsk.send(HskPacket(s[1], 'eFwParams', data = b'\x01\x00\x00\x00\x78\x00'))
         pkt = hsk.receive()
         hsk.send(HskPacket(s[1], 'eStartState', data=[19])) 
