@@ -3,7 +3,7 @@ import time
 from checkAuroraBridge import bridgeCheck
 import sys
 from pueo.turf import PueoTURF
-from HskSerial import HskEthernet
+from HskSerial import HskEthernet, HskPacket
 from getHSCurrents import checkHSCurrents
 from turfManualStartup import turfManualStartup
 from surfStartup import surfStartup
@@ -82,9 +82,13 @@ if (down != 0):
 
 ## Aligining SURF clocks
 hsk.send(HskPacket(0x40, 'eEnable', [0x40, 0x40]))
+pkt = hsk.receive()
 hsk.send(HskPacket(0x48, 'eEnable', [0x40, 0x40]))
+pkt = hsk.receive()
 hsk.send(HskPacket(0x50, 'eEnable', [0x40, 0x40]))
+pkt = hsk.receive()
 hsk.send(HskPacket(0x58, 'eEnable', [0x40, 0x40]))
+pkt = hsk.receive()
 #down = surfStartup(tio = 0, slotList = [0, 1, 2, 3, 4, 5, 6])
 #if (down == 1):
 #    print('SURF failed alignment.')
