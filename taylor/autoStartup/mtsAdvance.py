@@ -9,7 +9,7 @@ def mtsAdvance(hsk, tio = '0'):
 
     if tio == '0':
         tios = (0, 0x58)
-        surfs = [
+        surfs = [ (0, 0x97),
                 (1, 0xa0),
                 (2, 0x99),
                 (3, 0x8d),
