@@ -90,7 +90,7 @@ if (down == 1):
     print('Exiting...')
     sys.exit(1)
 
-down = surfStartup(tio = 1, slotList = [0, 1, 2, 3, 4, 5, 6])
+down = surfStartup(tio = 1, slotList = [0, 1, 2, 3, 4, 5])
 if (down == 1):
     print('SURF failed alignment.')
     print('Exiting...')
