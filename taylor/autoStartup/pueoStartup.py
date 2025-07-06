@@ -9,17 +9,10 @@ from turfManualStartup import turfManualStartup
 from surfStartup import surfStartup
 from mtsAdvance import mtsAdvance
 from checkStartState import checkStartState
-import argparse
 #from func_timeout import func_timeout
 
 ## First thing is we are going to reset CPU and reboot the TURF
 os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--slotmaskoff", type=str, default="0,1,2,3,4,5,6")
-args = parser.parse_args()
-slotmaskoff = list(map(int,args.slotmaskoff.split(',')))
-
 
 ## TURF takes like 45 seconds to restart, so we gotta wait
 print('rebooting TURF')
@@ -34,7 +27,6 @@ hsk = HskEthernet()
 down = bridgeCheck()
 breakout = 0
 while (down[0] != 4 and breakout <= 5):
-    print(down)
     print('Aurora Bridge is down.')
     for i in down:
         if i == 0:
