@@ -195,6 +195,7 @@ for surfAddr in surfActiveList:
 
 # At this point the SURFs exist. Turn on the outputs
 for align in daligns:
+    align.iserdes_reset = 0
     align.train_enable = 1
     align.oserdes_reset = 0
 
