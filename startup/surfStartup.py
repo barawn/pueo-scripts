@@ -91,7 +91,10 @@ for surfAddr in surfList:
             exit(1)
         print(f'TURFIO port#{surfAddr[0]} : {tio[surfAddr[0]]}')
         masks[surfAddr[0]] = 0
+    print(f'Pulling TURFIO port#{surfAddr[0]} slot {surfAddr[1]} ISERDES out of reset')
+    tio[surfAddr[0]].dalign[surfAddr[1]].iserdes_reset = 0
     masks[surfAddr[0]] |= 1<<(surfAddr[1])
+    
 
 for m in masks:
     print(f'Bitmask of SURFs to startup in TURFIO port#{m} is {hex(masks[m])}')
@@ -195,7 +198,6 @@ for surfAddr in surfActiveList:
 
 # At this point the SURFs exist. Turn on the outputs
 for align in daligns:
-    align.iserdes_reset = 0
     align.train_enable = 1
     align.oserdes_reset = 0
 
