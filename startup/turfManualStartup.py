@@ -81,6 +81,9 @@ for i in range(4):
         print(f'Aligning RXCLK->SYSCLK transition on TURFIO#{i}...')
         tap = tio.cinalign.align_rxclk()
         print(f'TURFIO#{i} - tap is {tap}')
+        print(f'Enabling all ISERDESes on TURF port #{i}')
+        for bit in dev.ctl.tio[i].bit:
+            bit.rst = 0
         print(f'Aligning CIN on TURFIO#{i}...')    
         dev.ctl.tio[i].train_enable(True)
     else:
