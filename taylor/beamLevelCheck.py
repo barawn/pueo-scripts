@@ -9,10 +9,6 @@ from pueo.surf import PueoSURF
 from EventTester import EventServer
 import time
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--threshold', type = int)
-args = parser.parse_args()
-
 
 dev = PueoTURF()
 
@@ -23,5 +19,5 @@ surf1 = PueoSURF((tio1, 5), 'TURFIO')
 surf2 = PueoSURF((tio2, 5), 'TURFIO')
 
 print(f'SURF 5 Threshold: {surf1.levelone.read(0x0800)}')
-print(f'SURF 26 Threshold: {surf2.levelone.read(0x0800)')
+print(f'SURF 26 Threshold: {surf2.levelone.read(0x0800)}')
 print(dev.trig.scaler.scalers(verbose = True))

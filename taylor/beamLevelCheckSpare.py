@@ -9,10 +9,6 @@ from pueo.surf import PueoSURF
 from EventTester import EventServer
 import time
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--threshold', type = int)
-args = parser.parse_args()
-
 
 dev = PueoTURF()
 

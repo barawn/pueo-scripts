@@ -15,7 +15,6 @@ args = parser.parse_args()
 
 
 dev = PueoTURF()
-es = EventServer()
 
 tio1 = PueoTURFIO((dev, 0), 'TURFGTP')
 tio2 = PueoTURFIO((dev, 3), 'TURFGTP')
@@ -32,5 +31,4 @@ for i in range(49):
     surf2.levelone.write(0x1000, 1)
 
 print(f'Yippee, threshold {args.threshold}')
-print(surf1.levelone.read(0x0800))
-print(surf2.levelone.read(0x0800))
+

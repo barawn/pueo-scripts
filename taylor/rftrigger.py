@@ -29,10 +29,6 @@ if surf1.trig_clock_en != 1 or surf2.trig_clock_en != 1:
     print("Yo, the RF stuff ain't set up right")
     sys.exit(1)
 
-surf1.levelone.write(0x1008, 0x30000)
-surf1.levelone.write(0x100C, 0xffffffff)
-surf2.levelone.write(0x1008, 0x30000)
-surf2.levelone.write(0x100C, 0xffffffff)
 
 dev.trig.mask = 201326559
 
