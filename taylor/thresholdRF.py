@@ -10,7 +10,7 @@ from EventTester import EventServer
 import time
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--threshold')
+parser.add_argument('--threshold', type = int)
 args = parser.parse_args()
 
 
