@@ -395,7 +395,8 @@ if not args.noturf:
         print(f'Aligning SURF#{sn} on TURFIO#{tn} through to TURF')
         eye = dev.ctl.tio[tn].bit[sn].locate_eyecenter()
         print(f'At TURF: TURFIO{tn} SURF{sn} : {eye[0]} ps {eye[1]} offset')
-        dev.ctl.tio[tn].bit[sn].apply_eye(eye)            
+        dev.ctl.tio[tn].bit[sn].apply_eye(eye)
+        dev.ctl.tio[tn].bit[sn].enable = 1
 else:
     print('Skipping TURF input align due to user request!')
 
