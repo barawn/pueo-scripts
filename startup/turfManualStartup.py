@@ -83,8 +83,11 @@ for i in range(4):
         print(f'TURFIO#{i} - tap is {tap}')
         print(f'Aligning CIN on TURFIO#{i}...')    
         dev.ctl.tio[i].train_enable(True)
-    else:
-        print(f'Skipping TURFIO#{i} as it was not requested.')
+    else:        
+        print(f'Disabling all ISERDESes on TURFIO#{i} as it was not requested.')
+        for bit in dev.ctl.tio[i].bit:
+            bit.rst = 1
+        
 
 tioEyes = [ None, None, None, None ]
 for i in range(4):

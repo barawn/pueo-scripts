@@ -81,6 +81,7 @@ if (down != 0):
 
 
 ## Aligining SURF clocks
+<<<<<<< HEAD
 hsk.send(HskPacket(0x40, 'eEnable', [0x40, 0x40]))
 pkt = hsk.receive()
 hsk.send(HskPacket(0x48, 'eEnable', [0x40, 0x40]))
@@ -90,6 +91,9 @@ pkt = hsk.receive()
 hsk.send(HskPacket(0x58, 'eEnable', [0x40, 0x40]))
 pkt = hsk.receive()
 down = surfStartup(tio = 0, slotList = [0, 1, 2, 3, 4, 5])
+=======
+down = surfStartup(tio = 0, slotList = [0, 1, 2, 3, 4, 5, 6])
+>>>>>>> 4c3a842a0509260924d01989a5c3c2256b2b8f23
 if (down == 1):
     print('SURF failed alignment.')
     print('Exiting...')

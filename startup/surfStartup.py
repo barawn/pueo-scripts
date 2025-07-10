@@ -91,7 +91,10 @@ for surfAddr in surfList:
             exit(1)
         print(f'TURFIO port#{surfAddr[0]} : {tio[surfAddr[0]]}')
         masks[surfAddr[0]] = 0
+    print(f'Pulling TURFIO port#{surfAddr[0]} slot {surfAddr[1]} ISERDES out of reset')
+    tio[surfAddr[0]].dalign[surfAddr[1]].iserdes_reset = 0
     masks[surfAddr[0]] |= 1<<(surfAddr[1])
+    
 
 for m in masks:
     print(f'Bitmask of SURFs to startup in TURFIO port#{m} is {hex(masks[m])}')
@@ -392,7 +395,8 @@ if not args.noturf:
         print(f'Aligning SURF#{sn} on TURFIO#{tn} through to TURF')
         eye = dev.ctl.tio[tn].bit[sn].locate_eyecenter()
         print(f'At TURF: TURFIO{tn} SURF{sn} : {eye[0]} ps {eye[1]} offset')
-        dev.ctl.tio[tn].bit[sn].apply_eye(eye)            
+        dev.ctl.tio[tn].bit[sn].apply_eye(eye)
+        dev.ctl.tio[tn].bit[sn].enable = 1
 else:
     print('Skipping TURF input align due to user request!')
 
