@@ -14,7 +14,6 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--tio", type=int)
 parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
-parser.add_argument("--threshold", type=int)
 
 args = parser.parse_args()
 
@@ -30,7 +29,6 @@ for slot in slotList:
 
     for i in range(49): 
         surf.levelone.write(0x1000, 2) 
-        surf.levelone.write(0x0800 + i*4, args.threshold) 
-        surf.levelone.write(0x1000, 1)
+
 
 print(f'Yippee, threshold {args.threshold}')
