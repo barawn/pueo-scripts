@@ -23,17 +23,7 @@ slotList = list(map(int,args.slots.split(',')))
 
 dev = PueoTURF(None, 'Ethernet')
 
-if args.tio == 0: 
-    dev.trig.scaler.gate_sel = dev.trig.GpiSelect.TURFIO0
-elif args.tio ==1: 
-    dev.trig.scaler.gate_sel = dev.trig.GpiSelect.TURFIO1
-elif args.tio == 2:
-    dev.trig.scaler.gate_sel = dev.trig.GpiSelect.TURFIO2
-elif args.tio == 3: 
-    dev.trig.scaler.gate_sel = dev.trig.GpiSelect.TURFIO3
-else: 
-    print('Yea, you have to choose 0, 1, 2, or 3')
-    sys.exit()
+dev.trig.scaler.gate_sel = dev.trig.GpiSelect.TURFIO3
 
 for slot in slotList: 
-    dev.trig.scaler.gate_en = 1 << (slot)
+    dev.trig.scaler.gate_en = 1 << (8 * args.tio + slot)
