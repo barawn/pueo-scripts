@@ -28,4 +28,5 @@ for slot in slotList:
     surf = PueoSURF((tio, slot), 'TURFIO')
     
     print(f'SURF {slot} Threshold: {surf.levelone.read(0x0800)}')
-    print(dev.trig.scaler.scalers(verbose = True))
+
+print(dev.trig.scaler.scalers(verbose = True))
