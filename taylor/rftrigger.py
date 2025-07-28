@@ -34,7 +34,7 @@ dev.trig.mask = 201326559
 
 es.open()
 dev.trig.runcmd(dev.trig.RUNCMD_RESET)
-time.sleep(1) 
+time.sleep(15) 
 dev.evstatus()
 
 for i in range(args.stop): 
