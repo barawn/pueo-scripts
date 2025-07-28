@@ -8,7 +8,7 @@ from pueo.turfio import PueoTURFIO
 from pueo.surf import PueoSURF
 from EventTester import EventServer
 import time
-import numpy as np
+
 
 dev = PueoTURF(None, 'Ethernet')
 
@@ -20,5 +20,5 @@ for i in range(0, 60):
     slot6.append(dev.trig.scaler.read(29 * 4))
     time.sleep(1)
 
-print(f'Average scaler SURF 16: {np.mean(slot5)}')
-print(f'Average scaler SURF 18: {np.mean(slot6)}')
+print(f'Average scaler SURF 16: {sum(slot5) / len(slot5) }')
+print(f'Average scaler SURF 18: {sum(slot6) / len(slot6) }')
