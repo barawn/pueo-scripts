@@ -6,11 +6,11 @@ import time
 
 
 tio1 = (0, 0x58)
-surf1 = [(5, 0x94)]
+surf1 = (5, 0x94)
 
 
 tio2 = (3, 0x48)
-surf2 = [ (5, 0x92) ]
+surf2 = (5, 0x92) 
 
 
 
