@@ -13,13 +13,10 @@ import time
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--tio", type=int)
-parser.add_argument("--slot", type=str)
+parser.add_argument("--slot", type=int)
 parser.add_argument("--threshold", type=int)
 
 args = parser.parse_args()
-
-slotList = list(map(int,args.slots.split(',')))
-
 
 dev = PueoTURF(None, 'Ethernet')
 
