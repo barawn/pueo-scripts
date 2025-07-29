@@ -15,6 +15,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--tio", type=int)
 parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
+parser.add_argument("--undo", action='store_true')
 
 args = parser.parse_args()
 
@@ -25,5 +26,9 @@ dev = PueoTURF(None, 'Ethernet')
 
 dev.trig.scaler.gate_sel = dev.trig.GpiSelect.TURFIO3
 
+
 for slot in slotList: 
-    dev.trig.scaler.gate_en = 1 << (8 * args.tio + slot)
+    if not args.undo:
+        dev.trig.scaler.gate_en = 1 << (8 * args.tio + slot)
+    else: 
+        dev.trig.scaler.gate_en = 0 
