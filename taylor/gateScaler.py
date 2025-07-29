@@ -26,9 +26,10 @@ dev = PueoTURF(None, 'Ethernet')
 
 dev.trig.scaler.gate_sel = dev.trig.GpiSelect.TURFIO3
 
-
+gate_en_val = 0
 for slot in slotList: 
     if not args.undo:
-        dev.trig.scaler.gate_en = 1 << (8 * args.tio + slot)
+        gate_en_val += 1 << (8 * args.tio + slot)
     else: 
         dev.trig.scaler.gate_en = 0 
+dev.trig.scaler.gate_en = gate_en_val
