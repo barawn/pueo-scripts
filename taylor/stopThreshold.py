@@ -31,4 +31,4 @@ for slot in slotList:
         surf.levelone.write(0x1000, 2) 
 
 
-print(f'Yippee, threshold {args.threshold}')
+

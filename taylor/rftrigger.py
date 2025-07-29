@@ -19,18 +19,7 @@ args = parser.parse_args()
 dev = PueoTURF()
 es = EventServer()
 
-tio1 = PueoTURFIO((dev, 0), 'TURFGTP')
-tio2 = PueoTURFIO((dev, 3), 'TURFGTP')
-
-surf1 = PueoSURF((tio1, 5), 'TURFIO')
-surf2 = PueoSURF((tio2, 5), 'TURFIO')
-
-if surf1.trig_clock_en != 1 or surf2.trig_clock_en != 1: 
-    print("Yo, the RF stuff ain't set up right")
-    sys.exit(1)
-
-
-dev.trig.mask = 201326559
+dev.trig.mask = 201326591 # for just surf 26
 
 es.open()
 dev.trig.runcmd(dev.trig.RUNCMD_RESET)
