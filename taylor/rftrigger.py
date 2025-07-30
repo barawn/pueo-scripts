@@ -19,11 +19,12 @@ args = parser.parse_args()
 dev = PueoTURF()
 es = EventServer()
 
+# dev.trig.mask = 67772159
 dev.trig.mask = 201326591 # for just surf 26
 
 es.open()
 dev.trig.runcmd(dev.trig.RUNCMD_RESET)
-time.sleep(15) 
+time.sleep(5) 
 dev.evstatus()
 
 for i in range(args.stop): 

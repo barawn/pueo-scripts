@@ -25,7 +25,7 @@ dev = PueoTURF(None, 'Ethernet')
 tio = PueoTURFIO((dev, args.tio), 'TURFGTP')
 
 for slot in slotList: 
-    surf = PueoSURF((tio, slot), 'TURFIO');
+    surf = PueoSURF((tio, slot), 'TURFIO')
     
     print(f'SURF {slot} Threshold: {surf.levelone.read(0x0800)}')
 
