@@ -24,7 +24,7 @@ dev.trig.mask = 201326591 # for just surf 26
 
 es.open()
 dev.trig.runcmd(dev.trig.RUNCMD_RESET)
-time.sleep(5) 
+time.sleep(25) 
 dev.evstatus()
 
 for i in range(args.stop): 

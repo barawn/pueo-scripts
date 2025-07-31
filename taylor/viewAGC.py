@@ -12,4 +12,4 @@ for i in range(8): #loop over channels
     lt=surf.levelone.read(0x400c+0x400*i)/65536
     scale=surf.levelone.read(0x4010+0x400*i)
     offset=surf.levelone.read(0x4014+0x400*i)
-    print(f"Ch {i:2} Done: {done:9x} Var:{sqr:11.3e} GT:{gt:11.3e} LT:{lt:11.3e} Scale:{scale:11d} Offset:{offset:11d}")
+    print(f"Ch {i:2} Var:{sqr:11.3e} GT:{gt:11.3e} LT:{lt:11.3e} Scale:{scale:11d} Offset:{offset:11d}")
