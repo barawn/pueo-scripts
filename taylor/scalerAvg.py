@@ -20,5 +20,5 @@ for i in range(0, 60):
     slot6.append(dev.trig.scaler.read(29 * 4))
     time.sleep(1)
 
-print(f'Average scaler SURF 16: {sum(slot5) / len(slot5) }')
-print(f'Average scaler SURF 18: {sum(slot6) / len(slot6) }')
+print(f'Average scaler SURF Slot 4: {sum(slot5) / len(slot5) }')
+print(f'Average scaler SURF Slot 5: {sum(slot6) / len(slot6) }')
