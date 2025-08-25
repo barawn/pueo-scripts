@@ -28,7 +28,7 @@ elif args.tio == '1':
             (3, 0x9a),
             (4, 0x87),
             (5, 0x85), 
-            (6, 0x9c)]
+            (6, 0x91)]
 elif args.tio == '2':
     tios = (2, 0x40)
     surfs = [ (0, 0x89),
