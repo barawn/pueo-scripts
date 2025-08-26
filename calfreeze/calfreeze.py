@@ -9,7 +9,6 @@ from pueo.turf import PueoTURF
 from pueo.turfio import PueoTURFIO
 from pueo.surf import PueoSURF
 from pyrfdc import PyRFDC
-
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -35,7 +34,6 @@ surf = PueoSURF((tio, slot_num), 'TURFIO', param_file=args.paramfile)
 surf.cal_path_enable = 1
 if not isinstance(surf.rfdc, PyRFDC):
     raise Exception("you don't have pyrfdc/libunivrfdc/paramfiles setup")
-
 for i in range(8):
     
     tile_id = i//2
