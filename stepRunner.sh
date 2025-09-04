@@ -15,7 +15,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo -e "\033[1;32m--- End Output ---\033[0m"
             eval "$line"
             status=$?
-            if [ $status -eq 0 ]; then
+            if echo "$output" | grep -q "TURFIO bridge error"; then
+                echo -e "\033[1;31m❌ Detected TURFIO bridge error. Consider rebooting the TURF.\033[0m
+            elif [ $status -eq 0 ]; then
                 echo -e "\033[1;32m Success\033[0m"
             else
                 echo -e "\033[1;31m Error: Command failed with exit code $status\033[0m"
