@@ -32,7 +32,7 @@ tio = PueoTURFIO((dev, args.tio), 'TURFGTP')
 for slot in slotList: 
     surf = PueoSURF((tio, slot), 'TURFIO')
     surf.trig_clock_en = 1
-    surf.levelone.write(0x1008, 0x00000)
-    surf.levelone.write(0x100C, 0x80000000)
+    surf.levelone.write(0x2008, 0x00000)
+    surf.levelone.write(0x200C, 0x80000000)
 
 print('Okeedokee, clocks started, all beams unmasked!')
