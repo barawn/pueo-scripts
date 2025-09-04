@@ -31,7 +31,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo -e "\033[1;32m--- End Output ---\033[0m"
 
             if [ $errorCode -ne 0 ]; then
-                python3 fix_error.py $errorCode
+                python3 fixError.py $errorCode
             fi
             ;;
         [Qq])
