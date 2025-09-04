@@ -16,7 +16,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             eval "$line"
             status=$?
             if echo "$output" | grep -q "TURFIO bridge error"; then
-                echo -e "\033[1;31m❌ Detected TURFIO bridge error. Consider rebooting the TURF.\033[0m"
+                echo -e "\033[1;31 Detected TURFIO bridge error. Consider rebooting the TURF.\033[0m"
+            elif echo "$output" | grep -q "GTP link"; then
+                echo -e "\033[1;31m Detected GTP link error. Consider rebooting the TURF.\033[0m"
             elif [ $status -eq 0 ]; then
                 echo -e "\033[1;32m Success\033[0m"
             else
