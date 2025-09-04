@@ -8,6 +8,9 @@ from pueo.turfio import PueoTURFIO
 from pueo.surf import PueoSURF
 from EventTester import EventServer
 import time
+import sys
+import argparse
+from itertools import chain
 
 
 parser = argparse.ArgumentParser()
@@ -22,12 +25,14 @@ slotList = list(map(int,args.slots.split(',')))
 
 dev = PueoTURF(None, 'Ethernet')
 
+dev.trig.offset = 36
+print('Default trig offset is 36 clocks!')
 tio = PueoTURFIO((dev, args.tio), 'TURFGTP')
 
 for slot in slotList: 
     surf = PueoSURF((tio, slot), 'TURFIO')
-    
-    print(f'SURF {slot} Threshold:    {surf.levelone.read(0x0800)}')
-    print(f'SURF {slot} SubThreshold: {surf.levelone.read(0x0A00)}')
+    surf.trig_clock_en = 1
+    surf.levelone.write(0x1008, 0x00000)
+    surf.levelone.write(0x100C, 0x80000000)
 
-print(dev.trig.scaler.scalers(verbose = True))
+print('Okeedokee, clocks started, all beams unmasked!')
