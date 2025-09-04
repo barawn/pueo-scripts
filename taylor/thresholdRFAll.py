@@ -29,12 +29,12 @@ dev = PueoTURF(None, 'Ethernet')
 
 tio = PueoTURFIO((dev, args.tio), 'TURFGTP')
 
-surf.levelone.write(0x2004, 0x100)# Reset trigger generator
-surf.levelone.write(0x2004, 0x000)# Reset trigger generator
-print(f'Trigger Generator Reset')
 
 for slot in slotList: 
     surf = PueoSURF((tio, slot), 'TURFIO')
+    surf.levelone.write(0x2004, 0x100)# Reset trigger generator
+    surf.levelone.write(0x2004, 0x000)# Reset trigger generator
+    print(f'Trigger Generator Reset on Slot {slot}')
 
     if(args.threshold>0):
         for i in range(49): 
@@ -58,7 +58,7 @@ for slot in slotList:
     if(args.unmask):
         surf.levelone.write(0x2008,0x00000)
         surf.levelone.write(0x200c,0x80000000)
-        print(f'Masks set to {surf.levelone.read(0x20c):08X} {surf.levelone.read(0x208):08X}')
+        print(f'Masks set to {surf.levelone.read(0x200c):08X} {surf.levelone.read(0x2008):08X}')
         
 if(args.threshold > 0 and args.subthreshold > 0):
     print(f'Yippee, threshold {args.threshold} and subthreshold {args.subthreshold}')
