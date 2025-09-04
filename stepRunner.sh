@@ -13,7 +13,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     case "$confirm" in
         [Yy])
             echo -e "\033[1;32m--- End Output ---\033[0m"
-            eval "$line"
+            output=$(eval "$line" 2>&1)
             status=$?
             if echo "$output" | grep -q "TURFIO bridge error"; then
                 echo -e "\033[1;31 Detected TURFIO bridge error. Consider rebooting the TURF.\033[0m"
