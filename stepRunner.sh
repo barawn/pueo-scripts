@@ -1,4 +1,11 @@
 #!/bin/bash
+
+MYBASE=/home/pueo
+MYSTARTUP=/home/pueo/pueo-scripts/taylor/ppy_startup.py
+export PYTHONSTARTUP=$MYSTARTUP
+export PYTHONPATH=$MYBASE/pyrfdc:$MYBASE/pueo-python:$MYBASE/pueo-utils/HskSerial:$MYBASE/pueo-utils/EventTester:$PYTHONPATH
+
+
 while IFS= read -r line || [[ -n "$line" ]]; do
     echo -e "\n\033[1;34mNext command:\033[0m $line"
     
