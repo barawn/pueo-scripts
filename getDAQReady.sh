@@ -32,10 +32,6 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         continue
     fi
 
-    output=$(eval "$line" 2>&1)
-    status=$?
-    errorCode=0
-
     read -p "Execute this line? [y/N/q to quit] " confirm < /dev/tty
 
     case "$confirm" in
@@ -43,32 +39,39 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo -e "\033[1;32m--- Output ---\033[0m"
             output=$(eval "$line" 2>&1)
             status=$?
+            errorCode=0
             echo "$output"
-        if echo "$output" | grep -q "TURFIO bridge error"; then
-            echo -e "\033[1;31 Detected TURFIO bridge error. Consider rebooting the TURF.\033[0m"
-        elif echo "$output" | grep -q "GTP link 0"; then
-            echo -e "\033[1;31m Detected GTP link 0 error. Attempting error handling now!.\033[0m"
-            errorCode=1
-        elif echo "$output" | grep -q "GTP link 1"; then
-            echo -e "\033[1;31m Detected GTP link 1 error. Attempting error handling now!.\033[0m"
-            errorCode=2
-        elif echo "$output" | grep -q "GTP link 2"; then
-            echo -e "\033[1;31m Detected GTP link 2 error. Attempting error handling now!.\033[0m"
-            errorCode=3
-        elif echo "$output" | grep -q "GTP link 3"; then
-            echo -e "\033[1;31m Detected GTP link 3 error. Attempting error handling now!.\033[0m"
-            errorCode=4
-        elif [ $status -eq 0 ]; then
-            echo -e "\033[1;32m Success\033[0m"
-        else
-            echo -e "\033[1;31m Error: Command failed with exit code $status\033[0m"
-        fi
-        echo -e "\033[1;32m--- End Output ---\033[0m"
+            if echo "$output" | grep -q "TURFIO bridge error"; then
+                echo -e "\033[1;31 Detected TURFIO bridge error. Consider rebooting the TURF.\033[0m"
+            elif echo "$output" | grep -q "GTP link 0"; then
+                echo -e "\033[1;31m Detected GTP link 0 error. Attempting error handling now!.\033[0m"
+                errorCode=1
+            elif echo "$output" | grep -q "GTP link 1"; then
+                echo -e "\033[1;31m Detected GTP link 1 error. Attempting error handling now!.\033[0m"
+                errorCode=2
+            elif echo "$output" | grep -q "GTP link 2"; then
+                echo -e "\033[1;31m Detected GTP link 2 error. Attempting error handling now!.\033[0m"
+                errorCode=3
+            elif echo "$output" | grep -q "GTP link 3"; then
+                echo -e "\033[1;31m Detected GTP link 3 error. Attempting error handling now!.\033[0m"
+                errorCode=4
+            elif [ $status -eq 0 ]; then
+                echo -e "\033[1;32m Success\033[0m"
+            else
+                echo -e "\033[1;31m Error: Command failed with exit code $status\033[0m"
+            fi
+            echo -e "\033[1;32m--- End Output ---\033[0m"
 
-        if [ $errorCode -ne 0 ]; then
-            python3 fixError.py $errorCode
-        fi
-        ;;
+            if [ $errorCode -ne 0 ]; then
+                python3 fixError.py $errorCode
+                echo -e "\033[1;33m🔁 Restarting script from line $line_num...\033[0m"
+                echo $((line_num - 1)) > "$progress_file"
+                exec "$0"
+            else
+                echo -e "\033[1;32m Success\033[0m"
+                echo $line_num > "$progress_file"
+            fi
+            ;;
     [Qq])
             echo -e "\033[1;31mQuitting...\033[0m"
             break
