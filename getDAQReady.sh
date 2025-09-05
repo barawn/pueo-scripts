@@ -46,7 +46,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             retrycount=0
             success=false
             errorCode=0
-            while [ $retry_count -le $max_retries ]; do
+            while [ $retrycount -le $retry ]; do
                 output=$(eval "$line" 2>&1)
                 status=$?
                 
