@@ -11,9 +11,14 @@ MYSTARTUP=/home/pueo/pueo-scripts/taylor/ppy_startup.py
 export PYTHONSTARTUP=$MYSTARTUP
 export PYTHONPATH=$MYBASE/pyrfdc:$MYBASE/pueo-python:$MYBASE/pueo-utils/HskSerial:$MYBASE/pueo-utils/EventTester:$PYTHONPATH
 
-
 progress_file=".progress"
 start_line=0
+
+# Check for restart flag
+if [[ "$1" == "--restart" ]]; then
+    echo "Restarting from beginning..."
+    rm -f "$progress_file"
+fi
 
 if [ -f "$progress_file" ]; then
     start_line=$(cat "$progress_file")
