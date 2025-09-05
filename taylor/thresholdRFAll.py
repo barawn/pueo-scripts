@@ -17,6 +17,8 @@ parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
 parser.add_argument("--threshold", type=int, default=-1)
 parser.add_argument("--subthreshold", type=int, default=-1)
 parser.add_argument("--unmask", action="store_true")#untested
+parser.add_argument("--nbeams", type=int, default=2)
+parser.add_argument("--resetTrigGen", action="store_true")
 
 #parser.add_argument("--freeze", action='store_true') # No servo in V2
 
@@ -32,18 +34,19 @@ tio = PueoTURFIO((dev, args.tio), 'TURFGTP')
 
 for slot in slotList: 
     surf = PueoSURF((tio, slot), 'TURFIO')
-    surf.levelone.write(0x2004, 0x100)# Reset trigger generator
-    surf.levelone.write(0x2004, 0x000)# Reset trigger generator
-    print(f'Trigger Generator Reset on Slot {slot}')
+    if(args.resetTrigGen):
+        surf.levelone.write(0x2004, 0x100)# Reset trigger generator
+        surf.levelone.write(0x2004, 0x000)# Reset trigger generator
+        print(f'Trigger Generator Reset on Slot {slot}')
 
     if(args.threshold>0):
-        for i in range(49): 
+        for i in range(args.nbeams): 
             #surf.levelone.write(0x1000, 2)# Pause servo (no servo in V2) 
             surf.levelone.write(0x800 + i*4, args.threshold) #
             #if not args.freeze: 
             #    surf.levelone.write(0x1000, 1)
     if(args.subthreshold>0):
-        for i in range(49): 
+        for i in range(args.nbeams): 
             #surf.levelone.write(0x1000, 2)# Pause servo (no servo in V2) 
             surf.levelone.write(0xA00 + i*4, args.subthreshold) #
             #if not args.freeze: 
@@ -57,7 +60,7 @@ for slot in slotList:
     
     if(args.unmask):
         surf.levelone.write(0x2008,0x00000)
-        surf.levelone.write(0x200c,0x80000000)
+        surf.levelone.write(0x200c,0x00000000)
         print(f'Masks set to {surf.levelone.read(0x200c):08X} {surf.levelone.read(0x2008):08X}')
         
 if(args.threshold > 0 and args.subthreshold > 0):
