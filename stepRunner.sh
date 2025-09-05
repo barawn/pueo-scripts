@@ -13,16 +13,16 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 echo -e "\033[1;31 Detected TURFIO bridge error. Consider rebooting the TURF.\033[0m"
             elif echo "$output" | grep -q "GTP link 0"; then
                 echo -e "\033[1;31m Detected GTP link 0 error. Attempting error handling now!.\033[0m"
-                errorCode = 1
+                errorCode=1
             elif echo "$output" | grep -q "GTP link 1"; then
                 echo -e "\033[1;31m Detected GTP link 1 error. Attempting error handling now!.\033[0m"
-                errorCode = 2
+                errorCode=2
             elif echo "$output" | grep -q "GTP link 2"; then
                 echo -e "\033[1;31m Detected GTP link 2 error. Attempting error handling now!.\033[0m"
-                errorCode = 3
+                errorCode=3
             elif echo "$output" | grep -q "GTP link 3"; then
                 echo -e "\033[1;31m Detected GTP link 3 error. Attempting error handling now!.\033[0m"
-                errorCode = 4
+                errorCode=4
             elif [ $status -eq 0 ]; then
                 echo -e "\033[1;32m Success\033[0m"
             else
