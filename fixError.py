@@ -17,6 +17,8 @@ def handle_error(code):
     elif code == 99:
         print("General command failure: Logging and alerting...")
         # Add your actual fix logic here
+    elif code==100: 
+        print('oh god say your prayers')
     else:
         print(f"Unknown error code: {code}. No action taken.")
 
