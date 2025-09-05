@@ -16,8 +16,8 @@ dev = PueoTURF(None, 'Ethernet')
 slot5 = []
 slot6 = []
 for i in range(0, 5):#60): 
-    slot5.append(dev.trig.scaler.read(28 * 4))
-    slot6.append(dev.trig.scaler.read(29 * 4))
+    slot5.append(dev.trig.scaler.read(28* 4))
+    slot6.append(dev.trig.scaler.read(29* 4))
     time.sleep(1)
 print(slot5)
 print(slot6)
