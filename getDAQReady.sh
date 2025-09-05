@@ -127,7 +127,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             else
                 echo -e "\033[1;32m Success\033[0m"
                 python3 fixError.py 100
-                echo $line_num > "$progress_file"
+                # echo $line_num > "$progress_file"
             fi
             ;;
     [Qq])
