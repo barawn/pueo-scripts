@@ -1,5 +1,5 @@
 import sys
-# from ..pueo-utils.HskSerial.HskSerial import HskEthernet, HskPacket
+from HskSerial.HskSerial import HskEthernet, HskPacket
 def handle_error(code):
     hsk = HskEthernet()
     if code == 1:
