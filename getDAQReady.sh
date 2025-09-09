@@ -97,7 +97,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
 
-                    tn=$(echo "$output" | grep -oP 'port#\K\d+')
+                    tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
                     echo -e "$tn" 
                     echo -e "$sn"
                     errorCode=50 
