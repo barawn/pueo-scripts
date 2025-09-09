@@ -91,28 +91,22 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     errorCode=100
             
                 elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
-
-
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
-
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
-
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
-                    echo -e "$tn" 
-                    echo -e "$sn"
                     errorCode=50 
                 elif echo "$output" | grep -q "did not become ready"; then
 
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
                     
-                    sn=$(echo "$output" | grep -oP 'slot#\K[0-9]+')
-                    tn=$(echo "$output" | grep -oP 'port#\K[0-9]+')
+                    sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
+                    tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
                     errorCode=51 
                 elif echo "$output" | grep -q "never requested"; then 
                 # SURF slot#1 on TURFIO port#3 is not accessible!
                     echo -e "\033[1;31m SURF never requested in/out c.\033[0m"
-                    sn=$(echo "$output" | grep -oP 'slot#\K[0-9]+')
-                    tn=$(echo "$output" | grep -oP 'port#\K[0-9]+')
+                    sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
+                    tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
                     errorCode=52
                 elif [ "$status" -eq 0 ]; then
                     echo "DEBUG: status=$status"
