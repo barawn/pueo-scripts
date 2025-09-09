@@ -79,7 +79,7 @@ def handle_error(code, tio=False, slot=False):
         print(selectedPMBusAddr)
         # hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
         time.sleep(10)
-    elif code == 51: 
+    elif code == 51 or code == 52 : 
         print('Sending eRestart')
         selectedTurfio = (tios[tio])
         if tio == 0: 
@@ -93,11 +93,11 @@ def handle_error(code, tio=False, slot=False):
 
         print(selectedTurfio, selectedSurf)
         # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
-    elif code == 52: 
-        print('Handling n')
-        print(hex(tios[tio]))
-        print(hex(pmbusslot[slot]))
-        # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
+    # elif code == 52: 
+    #    print('Handling n')
+    #    print(hex(tios[tio]))
+    #    print(hex(pmbusslot[slot]))
+    #    # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
     elif code == 99:
         print("What just happened...")
     elif code==100: 
