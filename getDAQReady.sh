@@ -101,12 +101,18 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
+                    echo -e "$sn"
+                    echo -e "$tn"
+
                     errorCode=51 
                 elif echo "$output" | grep -q "never requested"; then 
                 # SURF slot#1 on TURFIO port#3 is not accessible!
                     echo -e "\033[1;31m SURF never requested in/out c.\033[0m"
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
+
+                    echo -e "$sn"
+                    echo -e "$tn"
                     errorCode=52
                 elif [ "$status" -eq 0 ]; then
                     echo "DEBUG: status=$status"
