@@ -31,6 +31,13 @@ if [[ "$1" == "--restart" ]]; then
     rm -f "$progress_file"
 fi
 
+# Reboot the TURF 
+if [[ "$2" == "--reboot" ]]; then
+    echo "Rebooting TURF!" 
+    errorCode=100
+    python3 fixError.py $errorCode
+fi
+
 # Detect if there is a progress file
 if [ -f "$progress_file" ]; then
     start_line=$(cat "$progress_file")
