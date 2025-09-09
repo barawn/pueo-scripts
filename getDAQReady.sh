@@ -31,7 +31,7 @@ if [[ "$1" == "--restart" ]]; then
     rm -f "$progress_file"
 fi
 
-# Reboot the TURF 
+# Reboot the TURF because I'm annoyed I keep having to go back and forth with it
 if [[ "$2" == "--reboot" ]]; then
     echo "Rebooting TURF!" 
     errorCode=100
@@ -73,8 +73,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 output=$(eval "$line" 2>&1)
                 status=$?
                 
-                
-                # echo "$output"
+                # leave for debug for right now
+                echo "$output"
                 if echo "$output" | grep -q "GTP link 0"; then
                     echo -e "\033[1;31m Detected GTP link 0 error.\033[0m"
                     errorCode=1
