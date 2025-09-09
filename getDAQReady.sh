@@ -95,19 +95,19 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
                     sn=$(echo "$output" | grep -oP 'slot#\K[0-9]+')
                     tn=$(echo "$output" | grep -oP 'port#\K[0-9]+')
-                    errorCode = 50 
+                    errorCode=50 
                 elif echo "$output" | grep -q "did not become ready"; then
 
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
                     
                     sn=$(echo "$output" | grep -oP 'slot#\K[0-9]+')
                     tn=$(echo "$output" | grep -oP 'port#\K[0-9]+')
-                    errorCode = 51 
+                    errorCode=51 
                 elif echo "$output" | grep -q "never requested"; then 
                     echo -e "\033[1;31m SURF never requested in/out c.\033[0m"
                     sn=$(echo "$output" | grep -oP 'slot#\K[0-9]+')
                     tn=$(echo "$output" | grep -oP 'port#\K[0-9]+')
-                    errorCode = 52
+                    errorCode=52
                 elif [ "$status" -eq 0 ]; then
                     echo "DEBUG: status=$status"
                     echo -e "\033[1;32m Success\033[0m"
