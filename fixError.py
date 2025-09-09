@@ -92,6 +92,8 @@ def handle_error(code, tio=False, slot=False):
             selectedSurf = surfsTio3[slot]
 
         print(selectedTurfio, selectedSurf)
+        hsk.send(HskPacket(selectedTurfio, 'eEnable', data = [0x40, 0x40]))
+        hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
         # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
     # elif code == 52: 
     #    print('Handling n')
