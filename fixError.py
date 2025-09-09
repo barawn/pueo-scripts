@@ -47,7 +47,8 @@ def handle_error(code, tio=False, slot=False):
         print(selectedTurfio)
         selectedPMBusAddr = hex(pmbusslot[slot])
         print(selectedPMBusAddr)
-        # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
+        hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
+        time.sleep(10)
     elif code == 51: 
         print('Handling n')
         print(hex(tios[tio]))
