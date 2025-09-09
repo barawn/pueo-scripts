@@ -89,12 +89,16 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 elif echo "$output" | grep -q "TURFIO bridge error"; then
                     echo -e "\033[1;31 Detected TURFIO bridge error.\033[0m"
                     errorCode=100
-                elif echo "$output" | grep -q "is not accessible!"; then
+            
+                elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
+
 
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
 
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+')
-                    tn=$(echo "$output" | grep -oP 'port#\K\d++')
+                    tn=$(echo "$output" | grep -oP 'port#\K\d+')
+                    echo -e "$tn" 
+                    echo -e "$sn"
                     errorCode=50 
                 elif echo "$output" | grep -q "did not become ready"; then
 
