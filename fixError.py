@@ -23,6 +23,36 @@ def handle_error(code, tio=False, slot=False):
             2 : 0x40 , 
             3 : 0x48 } 
     
+    surfsTio0 = { 0 : 0x97 , 
+             1 : 0xa0 , 
+             2 : 0x99 , 
+             3 : 0x8d ,
+             4 : 0x9d , 
+             5 : 0x94 ,
+             6 : 0x8a  }
+    
+    surfsTio1 = { 0 : 0x8c , 
+             1 : 0x95 , 
+             2 : 0x9f , 
+             3 : 0x9a ,
+             4 : 0x87 , 
+             5 : 0x85 ,
+             6 : 0x9a0 }
+
+    surfsTio2 = { 0 : 0x89 , 
+             1 : 0x88 , 
+             2 : 0x9e , 
+             3 : 0x8b ,
+             4 : 0xa1 , 
+             5 : 0x98  }
+    
+    surfsTio3 = { 0 : 0x93 , 
+             1 : 0x9b , 
+             2 : 0x96 , 
+             3 : 0x83 ,
+             4 : 0x90 , 
+             5 : 0x92  }
+    
     hsk = HskEthernet()
     if code == 1:
         print("Handling GTP link 0 error: Restarting GTP interface...")
@@ -50,9 +80,18 @@ def handle_error(code, tio=False, slot=False):
         # hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
         time.sleep(10)
     elif code == 51: 
-        print('Handling n')
-        print(hex(tios[tio]))
-        print(hex(pmbusslot[slot]))
+        print('Sending eRestart')
+        selectedTurfio = (tios[tio])
+        if tio == 0: 
+            selectedSurf = surfsTio0[slot]
+        elif tio == 1: 
+            selectedSurf = surfsTio1[slot]
+        elif tio == 2: 
+            selectedSurf = surfsTio2[slot]
+        elif tio == 3: 
+            selectedSurf = surfsTio3[slot]
+
+        print(selectedTurfio, selectedSurf)
         # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
     elif code == 52: 
         print('Handling n')

@@ -96,7 +96,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
                     errorCode=50 
                 elif echo "$output" | grep -q "did not become ready"; then
-
+                    # THIS ONE IS RESTART!!!!!!
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
                     
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
