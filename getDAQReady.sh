@@ -55,6 +55,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
             # set starting variables per loop
             retrycount=0
+            turfretry=0
             success=false
             errorCode=0
             sn=0 
@@ -86,11 +87,18 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
 
-                    # Extract slot and port using regex
                     sn=$(echo "$output" | grep -oP 'slot#\K[0-9]+')
                     tn=$(echo "$output" | grep -oP 'port#\K[0-9]+')
                     errorCode = 50 
-                elif [ $status -eq 0 ]; then
+                elif echo "$output" | grep -q "did not become ready"; then
+
+                    echo -e "\033[1;31m SURF not booted properly.\033[0m"
+                    
+                    sn=$(echo "$output" | grep -oP 'slot#\K[0-9]+')
+                    tn=$(echo "$output" | grep -oP 'port#\K[0-9]+')
+                    errorCode = 51 
+                elif [ "$status" -eq 0 ]; then
+                    echo "DEBUG: status=$status"
                     echo -e "\033[1;32m Success\033[0m"
                     success=true
                     break
@@ -129,6 +137,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 python3 fixError.py 100
                 echo $line_num > "$progress_file"
                 retrycount=0
+                ((turfretry++))
             fi
             ;;
     [Qq])
