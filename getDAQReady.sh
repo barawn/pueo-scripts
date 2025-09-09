@@ -64,8 +64,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             turfretry=0
             success=false
             errorCode=0
-            sn=0 
-            tn=0
+            
 
             # while retries not exhausted
             while [ $retrycount -le $retry ]; do
@@ -95,7 +94,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
                     errorCode=50 
-                elif echo "$output" | grep -q "did not become ready"; then
+                elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ did not become ready!"; then
                     # THIS ONE IS RESTART!!!!!!
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
                     
