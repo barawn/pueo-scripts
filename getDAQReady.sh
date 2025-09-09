@@ -133,7 +133,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     fi
                     
                     cmd+=")'"
-
+                    echo -e "$cmd"
                     eval "$cmd"
 
                     echo -e "\033[1;33m Restarting script from line $line_num...\033[0m"
