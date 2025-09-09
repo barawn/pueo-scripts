@@ -41,7 +41,17 @@ def handle_error(code, tio=False, slot=False):
         hsk.send(HskPacket(0x48, 'eReloadFirmware', data=[0,0,0,0]))
         time.sleep(5)
     elif code == 50: 
-        print('Handling ')
+        print('Handling n')
+        print(hex(tios[tio]))
+        print(hex(pmbusslot[slot]))
+        # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
+    elif code == 51: 
+        print('Handling n')
+        print(hex(tios[tio]))
+        print(hex(pmbusslot[slot]))
+        # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
+    elif code == 52: 
+        print('Handling n')
         print(hex(tios[tio]))
         print(hex(pmbusslot[slot]))
         # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
