@@ -95,7 +95,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
 
-                    sn=$(echo "$output" | grep -oP 'slot#\K\d+')
+                    sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
+
                     tn=$(echo "$output" | grep -oP 'port#\K\d+')
                     echo -e "$tn" 
                     echo -e "$sn"
