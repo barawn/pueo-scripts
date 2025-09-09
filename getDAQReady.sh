@@ -33,7 +33,6 @@ fi
 
 # Reboot the TURF because I'm annoyed I keep having to go back and forth with it
 if [[ "$2" == "--reboot" ]]; then
-    echo "Rebooting TURF!" 
     errorCode=100
     python3 fixError.py $errorCode
 fi
