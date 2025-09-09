@@ -57,18 +57,22 @@ def handle_error(code, tio=False, slot=False):
     if code == 1:
         print("Handling GTP link 0 error: Restarting GTP interface...")
         hsk.send(HskPacket(0x58, 'eReloadFirmware', data=[0,0,0,0]))
+        pkt = hsk.receive()
         time.sleep(5)
     elif code ==2: 
         print("Handling GTP link 1 error: Restarting GTP interface...")
         hsk.send(HskPacket(0x50, 'eReloadFirmware', data=[0,0,0,0]))
+        pkt = hsk.receive()
         time.sleep(5)
     elif code ==3: 
         print("Handling GTP link 2 error: Restarting GTP interface...")
         hsk.send(HskPacket(0x40, 'eReloadFirmware', data=[0,0,0,0]))
+        pkt = hsk.receive()
         time.sleep(5)
     elif code == 4: 
         print("Handling GTP link 3 error: Restarting GTP interface...")
         hsk.send(HskPacket(0x48, 'eReloadFirmware', data=[0,0,0,0]))
+        pkt = hsk.receive()
         time.sleep(5)
     elif code == 50: 
         print('Sending ePMBus to power cycle individual SURF')
@@ -93,7 +97,10 @@ def handle_error(code, tio=False, slot=False):
 
         print(selectedTurfio, selectedSurf)
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data = [0x40, 0x40]))
+        pkt = hsk.receive()
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
+        pkt = hsk.receive()
+        time.sleep(5)
         # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
     # elif code == 52: 
     #    print('Handling n')
