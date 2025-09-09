@@ -101,6 +101,7 @@ def handle_error(code, tio=False, slot=False):
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
         pkt = hsk.receive()
         time.sleep(5)
+        print('im done!')
         # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
     # elif code == 52: 
     #    print('Handling n')
