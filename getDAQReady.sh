@@ -73,7 +73,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 status=$?
                 
                 # leave for debug for right now
-                echo "$output"
+                # echo "$output"
                 if echo "$output" | grep -q "GTP link 0"; then
                     echo -e "\033[1;31m Detected GTP link 0 error.\033[0m"
                     errorCode=1
@@ -92,13 +92,14 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     errorCode=100
             
                 elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
-                    echo -e "\033[1;31m SURF not booted properly.\033[0m"
+                    echo -e "\033[1;31m SURF not booted properly. Attempting power cycle \033[0m"
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
                     errorCode=50 
+
                 elif echo "$output" | grep -zq "SURF#[0-9]\+ on TURFIO#[0-9]\+ did not become ready!"; then
                     # THIS ONE IS RESTART!!!!!!
-                    echo -e "\033[1;31m SURF not booted properly.\033[0m"
+                    echo -e "\033[1;31m SURF not requesting training properly \033[0m"
                     
                     sn=$(echo "$output" | grep -oP 'SURF#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'TURFIO#\K\d+' | tail -n 1)
@@ -108,7 +109,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     errorCode=51 
                 elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ never requested in training!"; then 
                 # SURF slot#1 on TURFIO port#3 is not accessible!
-                    echo -e "\033[1;31m SURF never requested in/out c.\033[0m"
+                    echo -e "\033[1;31m SURF never requested in training c.\033[0m"
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
 
@@ -117,7 +118,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     errorCode=52
                 elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ never requested out training!"; then 
                 # SURF slot#1 on TURFIO port#3 is not accessible!
-                    echo -e "\033[1;31m SURF never requested in/out c.\033[0m"
+                    echo -e "\033[1;31m SURF never requested out training c.\033[0m"
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
 
@@ -125,7 +126,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "$tn"
                     errorCode=52
                 elif [ "$status" -eq 0 ]; then
-                    echo "DEBUG: status=$status"
+                    # echo "DEBUG: status=$status"
                     echo -e "\033[1;32m Success\033[0m"
                     success=true
                     break
@@ -149,7 +150,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     fi
                     
                     cmd+=")'"
-                    echo -e "$cmd"
+                    # echo -e "$cmd"
                     eval "$cmd"
 
                     echo -e "\033[1;33m Restarting script from line $line_num...\033[0m"
