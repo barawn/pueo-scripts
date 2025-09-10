@@ -98,8 +98,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     # THIS ONE IS RESTART!!!!!!
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
                     
-                    sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
-                    tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
+                    sn=$(echo "$output" | grep -oP 'SURF#\K\d+' | tail -n 1)
+                    tn=$(echo "$output" | grep -oP 'TURFIO#\K\d+' | tail -n 1)
                     echo -e "$sn"
                     echo -e "$tn"
 
