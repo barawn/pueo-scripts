@@ -54,7 +54,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     fi
 
     read -p "Execute this line? [y/N/q to quit] " confirm < /dev/tty
-
+    errorCount=0
     case "$confirm" in
         [Yy])
             echo -e "\033[1;32m--- Output ---\033[0m"
@@ -64,6 +64,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             turfretry=0
             success=false
             errorCode=0
+            
             
 
             # while retries not exhausted
@@ -76,6 +77,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 if echo "$output" | grep -q "GTP link 0"; then
                     echo -e "\033[1;31m Detected GTP link 0 error.\033[0m"
                     errorCode=1
+
                 elif echo "$output" | grep -q "GTP link 1"; then
                     echo -e "\033[1;31m Detected GTP link 1 error.\033[0m"
                     errorCode=2
@@ -133,7 +135,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 echo -e "\033[1;32m--- End Output ---\033[0m"
 
                 if [ $errorCode -ne 0 ]; then
-            
+
                     cmd="python3 -c 'from fixError import handle_error; handle_error($errorCode"
 
                     # Add tio if it's set
@@ -152,6 +154,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
                     echo -e "\033[1;33m Restarting script from line $line_num...\033[0m"
                     ((retrycount++))
+                    ((errorCount++))
                     
                 fi
             done 
@@ -163,6 +166,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 echo $line_num > "$progress_file"
                 retrycount=0
                 ((turfretry++))
+                ((errorCount++))
             fi
             ;;
     [Qq])
@@ -178,9 +182,6 @@ done < DAQstart.sh
 # Calculate the elapsed time
 elapsed_seconds=$((SECONDS - start_time))
 
-# Convert seconds to a more human-readable format (optional)
-# This uses 'date' command to format the duration
-# Note: This requires GNU date for the -ud "@$elapsed_seconds" syntax
 elapsed_formatted=$(date -ud "@$elapsed_seconds" +'%M min %S sec')
-
+echo "DAQ set-up completed with $errorCount errors"
 echo "Elapsed time: $elapsed_formatted"
