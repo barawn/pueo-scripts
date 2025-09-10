@@ -21,7 +21,7 @@ progress_file=".progress"
 # Info on start number/line number you are on
 start_line=0
 line_num=0
-
+elapsed_time=0
 # how many retries do you want to allow for
 retry=3
 
@@ -94,7 +94,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
                     errorCode=50 
-                elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ did not become ready!"; then
+                elif echo "$output" | grep -zq "SURF#[0-9]\+ on TURFIO#[0-9]\+ did not become ready!"; then
                     # THIS ONE IS RESTART!!!!!!
                     echo -e "\033[1;31m SURF not booted properly.\033[0m"
                     
