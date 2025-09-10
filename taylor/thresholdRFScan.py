@@ -58,10 +58,11 @@ with open(args.filename, "w") as outfile:
             time.sleep(0.1)
             while(surf.levelone.read(0x1804) == toggle):
                 time.sleep(0.1)
+            print(f"Scanned {threshold_value:d}")
             for idx in range(args.nbeams):
                 rate=surf.levelone.read(0x400+4*idx)
                 trigger_rate = rate & 0x0000FFFF
                 subthreshold_rate = (rate & 0xFFFF0000) >> 16
                 outfile.write(f"{args.tio}, {slot}, {idx}, {threshold_value}, {trigger_rate}, {subthreshold_rate}\n")
-        print(f"Scanned {threshold_value:d}")
-        print(f"{args.tio}, {slot}, {idx}, {threshold_value}, {trigger_rate}, {subthreshold_rate}\n")
+                print(f"{args.tio}, {slot}, {idx}, {threshold_value}, {trigger_rate}, {subthreshold_rate}")
+            print("\n")
