@@ -102,8 +102,6 @@ def handle_error(code, tio=False, slot=False):
         time.sleep(1) 
         print(selectedSurf)
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
-        pkt = hsk.receive()
-        print(pkt.pretty())
         time.sleep(5)
         print('im done!')
         # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
