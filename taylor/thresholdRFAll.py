@@ -60,7 +60,7 @@ for slot in slotList:
     
     if(args.unmask):
         surf.levelone.write(0x2008,0x00000)
-        surf.levelone.write(0x200c,0x00000000)
+        surf.levelone.write(0x200c,0x8000000)
         print(f'Masks set to {surf.levelone.read(0x200c):08X} {surf.levelone.read(0x2008):08X}')
         
 if(args.threshold > 0 and args.subthreshold > 0):

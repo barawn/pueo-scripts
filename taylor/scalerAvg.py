@@ -12,7 +12,7 @@ import time
 
 dev = PueoTURF(None, 'Ethernet')
 
-# turfio 3 slots 5 and 6 
+# turfio 3 slots 4 and 5 
 slot5 = []
 slot6 = []
 for i in range(0, 5):#60): 

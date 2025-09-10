@@ -20,3 +20,4 @@ updating/updateSF_firmsoft.sh
 updating/updateSF_r0.4.0.sh
 updating/updateSF_r0.4.1.sh
 *~
+.progress
