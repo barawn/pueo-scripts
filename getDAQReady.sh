@@ -90,6 +90,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 elif echo "$output" | grep -q "TURFIO bridge error"; then
                     echo -e "\033[1;31 Detected TURFIO bridge error.\033[0m"
                     errorCode=100
+
             
                 elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
                     echo -e "\033[1;31m SURF not booted properly. Attempting power cycle \033[0m"
@@ -131,7 +132,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     success=true
                     break
                 else
-                    errorCode=99
+                    errorCode=100
                 fi
                 echo -e "\033[1;32m--- End Output ---\033[0m"
 
@@ -152,9 +153,22 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     cmd+=")'"
                     # echo -e "$cmd"
                     eval "$cmd"
+                    if [ $errorCode -eq 100 ]; then
+                        # Reset progress file to 0
+                        echo 0 > "$progress_file"
 
-                    echo -e "\033[1;33m Restarting script from line $line_num...\033[0m"
-                    ((retrycount++))
+                        # Reset counters
+                        retrycount=0
+                        turfretry=0
+                        line_num=0
+
+                        # Restart the script
+                        exec "$0"
+                     
+                    else
+                        echo -e "\033[1;33m Restarting script from line $line_num...\033[0m"
+                        ((retrycount++))
+                    fi
                     ((errorCount++))
                     
                 fi
@@ -162,11 +176,17 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             if [ "$success" = true ]; then
                 echo $line_num > "$progress_file"
             else
-                echo -e "\033[1;32m Success\033[0m"
                 python3 fixError.py 100
-                echo $line_num > "$progress_file"
+                # Reset progress file to 0
+                echo 0 > "$progress_file"
+
+                # Reset counters
                 retrycount=0
-                ((turfretry++))
+                turfretry=0
+                line_num=0
+
+                # Restart the script
+                exec "$0"
                 ((errorCount++))
             fi
             ;;

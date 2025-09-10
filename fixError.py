@@ -95,23 +95,13 @@ def handle_error(code, tio=False, slot=False):
         elif tio == 3: 
             selectedSurf = surfsTio3[slot]
 
-        print(selectedTurfio, selectedSurf)
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data = [0x40, 0x40]))
         pkt = hsk.receive()
-        print(pkt.pretty())
         time.sleep(1) 
-        print(selectedSurf)
+    
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
         time.sleep(5)
-        print('im done!')
-        # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
-    # elif code == 52: 
-    #    print('Handling n')
-    #    print(hex(tios[tio]))
-    #    print(hex(pmbusslot[slot]))
-    #    # hsk.send(HskPacket(hex(tios[tio]), 'ePMBus', data = [0x00, hex(pmbusslot[slot]), 0xD9]))
-    elif code == 99:
-        print("What just happened...")
+
     elif code==100: 
         # from Payton's startup script (thank youuuuu)
         
