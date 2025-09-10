@@ -100,6 +100,7 @@ def handle_error(code, tio=False, slot=False):
         pkt = hsk.receive()
         print(pkt.pretty())
         time.sleep(1) 
+        print(selectedSurf)
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
         pkt = hsk.receive()
         print(pkt.pretty())
