@@ -99,6 +99,7 @@ def handle_error(code, tio=False, slot=False):
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data = [0x40, 0x40]))
         pkt = hsk.receive()
         print(pkt.pretty())
+        time.sleep(1) 
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
         pkt = hsk.receive()
         print(pkt.pretty())
