@@ -82,7 +82,7 @@ def handle_error(code, tio=False, slot=False):
         selectedPMBusAddr = (pmbusslot[slot])
         print(selectedPMBusAddr)
         hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
-        time.sleep(10)
+        time.sleep(20)
     elif code == 51 or code == 52 : 
         print('Sending eRestart')
         selectedTurfio = (tios[tio])

@@ -41,7 +41,7 @@ fi
 if [ -f "$progress_file" ]; then
     start_line=$(cat "$progress_file")
 fi
-
+errorCount=0
 # Begin the loop, yo! 
 while IFS= read -r line || [[ -n "$line" ]]; do
     echo -e "\n\033[1;34mNext command:\033[0m $line"
@@ -54,7 +54,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     fi
 
     read -p "Execute this line? [y/N/q to quit] " confirm < /dev/tty
-    errorCount=0
+    
     case "$confirm" in
         [Yy])
             echo -e "\033[1;32m--- Output ---\033[0m"
