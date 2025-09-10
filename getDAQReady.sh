@@ -175,3 +175,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     esac
 
 done < DAQstart.sh
+# Calculate the elapsed time
+elapsed_seconds=$((SECONDS - start_time))
+
+# Convert seconds to a more human-readable format (optional)
+# This uses 'date' command to format the duration
+# Note: This requires GNU date for the -ud "@$elapsed_seconds" syntax
+elapsed_formatted=$(date -ud "@$elapsed_seconds" +'$((%s/3600/24)) days %H hr %M min %S sec')
+
+echo "Elapsed time: $elapsed_formatted"
