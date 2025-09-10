@@ -69,5 +69,5 @@ with open(args.filename, "w") as outfile:
                 print(f"TIO:{args.tio:2d}, SLOT:{slot:2d}, BEAM:{idx:2d}, THRESH:{threshold_value:6d}, SCALER:{trigger_rate:5d}, SUBSCALER:{subthreshold_rate:5d}")
             scaler_count = dev.trig.scaler.read((23+idx)* 4)# Slot 5 # was 28
             outfile.write(f"{args.tio}, {slot}, {threshold_value}, {scaler_count}\n")
-            print(f"\nTIO:{args.tio:2d}, SLOT:{slot:2d}, THRESHOLD:{threshold_value:7d}, FULL_SCALER:{scaler_count:7d}\n")
+            print(f"\nTIO:{args.tio:2d}, SLOT:{slot:2d}, THRESHOLD:{threshold_value:10d}, FULL_SCALER:{scaler_count:7d}\n")
         print("\n\n**********************")
