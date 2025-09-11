@@ -21,18 +21,25 @@ progress_file=".progress"
 # Info on start number/line number you are on
 start_line=0
 line_num=0
+
+# Start a timer 
 elapsed_time=0
+
 # how many retries do you want to allow for
 retry=3
 
+# Start a counter for any and all errors 
+errorCount=0
+
 # Restart flag because the progress file holds info 
-if [[ "$1" == "--restart" ]]; then
+# This actually might be a little silly to do to be honest
+if [[ " $@ " =~ " --restart " ]]; then
     echo "Fresh start!"
     rm -f "$progress_file"
 fi
 
 # Reboot the TURF because I'm annoyed I keep having to go back and forth with it
-if [[ "$2" == "--reboot" ]]; then
+if [[ " $@ " =~ "--reboot" ]]; then
     errorCode=100
     python3 fixError.py $errorCode
 fi
@@ -41,7 +48,7 @@ fi
 if [ -f "$progress_file" ]; then
     start_line=$(cat "$progress_file")
 fi
-errorCount=0
+
 # Begin the loop, yo! 
 while IFS= read -r line || [[ -n "$line" ]]; do
     echo -e "\n\033[1;34mNext command:\033[0m $line"
@@ -72,12 +79,13 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 output=$(eval "$line" 2>&1)
                 status=$?
                 
-                # leave for debug for right now
-                # echo "$output"
+                if [[ " $@ " =~ " --verbose " ]]; then
+                    echo "$output"
+                fi
+        
                 if echo "$output" | grep -q "GTP link 0"; then
                     echo -e "\033[1;31m Detected GTP link 0 error.\033[0m"
                     errorCode=1
-
                 elif echo "$output" | grep -q "GTP link 1"; then
                     echo -e "\033[1;31m Detected GTP link 1 error.\033[0m"
                     errorCode=2
@@ -201,6 +209,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
 done < DAQstart.sh
 # Calculate the elapsed time
+
+rm -f "$progress_file"
 elapsed_seconds=$((SECONDS - start_time))
 
 elapsed_formatted=$(date -ud "@$elapsed_seconds" +'%M min %S sec')
