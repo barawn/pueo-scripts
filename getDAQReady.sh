@@ -105,7 +105,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "\033[1;31m SURF not booted properly. Attempting power cycle \033[0m"
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
-                    if [ "$pmbustry" -eq 0 ]; then; then
+                    if [ "$pmbustry" -eq 0 ]; then
                         errorCode=50
                         pmbustry=1
                     else
