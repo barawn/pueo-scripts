@@ -11,7 +11,7 @@ import sys
 import os
 import signal
 
-from HskSerial.HskSerial import HskEthernet, HskPacket
+from HskSerial import HskEthernet, HskPacket
 
 hsk = HskEthernet()
 
