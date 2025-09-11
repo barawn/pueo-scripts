@@ -135,11 +135,11 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "$tn"
                     errorCode=52
                 elif echo "$output" | grep -zq "TURFIO sync complete"; then 
-                    echo -e "\033[1;32m Success\033[0m"
+                    echo -e "\033[1;32m Success TURFIO \033[0m"
                     success=true
                     break
                 elif echo "$output" | grep -zq "All trained SURFs are now live"; then 
-                    echo -e "\033[1;32m Success\033[0m"
+                    echo -e "\033[1;32m Success SURF \033[0m"
                     success=true
                     break
                 else
