@@ -100,7 +100,9 @@ for i in range(0,4):
         val = (surf[j][1])
         if hsk_harder(val, 'ePingPong') is None:
             print(f"SURF SLOT#{surf[j][0]} on TURFIO PORT#{tios[i][0]} failed to respond!0")
-        else: 
-            print('ping successful!')
+            sys.exit()
+
+print('All SURFs booted and ready')
+    
             
    

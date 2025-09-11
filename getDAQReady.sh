@@ -124,7 +124,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
                     echo -e "$sn"
                     echo -e "$tn"
-                    errorCode=50
+                    errorCode=52
                 elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ never requested out training!"; then 
                 # SURF slot#1 on TURFIO port#3 is not accessible!
                     echo -e "\033[1;31m SURF never requested out training c.\033[0m"
@@ -134,6 +134,14 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "$sn"
                     echo -e "$tn"
                     errorCode=52
+                elif echo "$output" | grep -zq "SURF SLOT#[0-9]\+ on TURFIO PORT#[0-9]\+ failed to respond"; then 
+                    echo -e "\033[1;31m SURF never booted \033[0m"
+                    sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
+                    tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
+
+                    echo -e "$sn"
+                    echo -e "$tn"
+                    errorCode=50
                 elif echo "$output" | grep -zq "TURFIO sync complete"; then 
                     echo -e "\033[1;32m Success TURFIO \033[0m"
                     success=true
@@ -143,6 +151,10 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     errorCode=100
                 elif echo "$output" | grep -zq "All trained SURFs are now live"; then 
                     echo -e "\033[1;32m Success SURF \033[0m"
+                    success=true
+                    break
+                elif echo "$output" | grep -zq "All SURFs booted and ready"; then
+                    echo -e "\033[1;32m Booted SURFS \033[0m"
                     success=true
                     break
                 elif echo "$output" | grep -zq "All SURFs aligned to 120"; then 

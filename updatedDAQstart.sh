@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "Have you rebooted the TURF? If not exit and run minicom."
 taylor/ppython startup/turfManualStartup.py 
+taylor/ppython taylor/pingPongReq.py
 taylor/ppython startup/surfStartup.py --tio 3 --slots 0,1,2,3,4,5 --enable
 taylor/ppython startup/surfStartup.py --tio 2 --slots 0,1,2,3,4,5 --enable
 taylor/ppython startup/surfStartup.py --tio 1 --slots 0,1,2,3,4,5,6 --enable
