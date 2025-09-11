@@ -95,11 +95,11 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 elif echo "$output" | grep -q "GTP link 3"; then
                     echo -e "\033[1;31m Detected GTP link 3 error.\033[0m"
                     errorCode=4
+                    
                 elif echo "$output" | grep -q "TURFIO bridge error"; then
                     echo -e "\033[1;31 Detected TURFIO bridge error.\033[0m"
                     errorCode=100
 
-            
                 elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
                     echo -e "\033[1;31m SURF not booted properly. Attempting power cycle \033[0m"
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
@@ -205,7 +205,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 line_num=0
 
                 # Restart the script
-                exec "$0"
+                # exec "$0"
                 ((errorCount++))
             fi
             ;;
@@ -218,7 +218,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             ;;
     esac
 
-done < DAQstart.sh
+done < updatedDAQstart.sh
 # Calculate the elapsed time
 
 rm -f "$progress_file"
