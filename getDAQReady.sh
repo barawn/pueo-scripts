@@ -138,8 +138,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "\033[1;32m Success TURFIO \033[0m"
                     success=true
                     break
-                elif [[ "$line" =~ eStartState ]]; then
+                elif echo "$output" | grep -zq "eStartState"; then
                     pair=$(echo "$line" | grep -oP 'fe:\s+\K[0-9a-fA-F]+\s+[0-9a-fA-F]+')
+                    echo -e "$line"
                     if [[ "$pair" != "fe 13" ]]; then
                         errorCode=100
                     else   
