@@ -75,15 +75,17 @@ def handle_error(code, tio=False, slot=False):
         pkt = hsk.receive()
         time.sleep(5)
     elif code == 50: 
-        print('Sending ePMBus to power cycle individual SURF')
+        
         
         selectedTurfio = (tios[tio])
-        print(selectedTurfio)
+        # print(selectedTurfio)
         selectedPMBusAddr = (pmbusslot[slot])
-        print(selectedPMBusAddr)
+        # print(selectedPMBusAddr)
+        print(f'Sending ePMBus to power cycle SURF (TIO {hex(selectedTurfio)}: RACK Addr {hex(selectedPMBusAddr)})')
         hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
         time.sleep(20)
-    elif code == 51 or code == 52 : 
+
+    elif code == 51: 
         print('Sending eRestart')
         selectedTurfio = (tios[tio])
         if tio == 0: 
