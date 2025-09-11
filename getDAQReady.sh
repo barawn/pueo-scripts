@@ -147,11 +147,6 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                         echo -e 'mts done yo'
                         break
                     fi
-            invalid=true
-        fi
-    fi
-                    success=true
-                    break
                 elif echo "$output" | grep -zq "All trained SURFs are now live"; then 
                 else
                     errorCode=100
