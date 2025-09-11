@@ -71,6 +71,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             turfretry=0
             success=false
             errorCode=0
+            pmbustry=0
             
             
 
@@ -104,7 +105,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "\033[1;31m SURF not booted properly. Attempting power cycle \033[0m"
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
                     tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
-                    errorCode=50
+                    if [ "$pmbustry" -eq 0 ]; then; then
+                        errorCode=50
+                        pmbustry=1
+                    else
+                        errorCode=51
+                    fi
 
                 elif echo "$output" | grep -zq "SURF#[0-9]\+ on TURFIO#[0-9]\+ did not become ready!"; then
                     # THIS ONE IS RESTART!!!!!!
