@@ -12,6 +12,7 @@
 # just sources all the scripts that we will need 
 MYBASE=/home/pueo
 MYSTARTUP=/home/pueo/pueo-scripts/taylor/ppy_startup.py
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/pueo/pyrfdc/libunivrfdc/
 export PYTHONSTARTUP=$MYSTARTUP
 export PYTHONPATH=$MYBASE/pyrfdc:$MYBASE/pueo-python:$MYBASE/pueo-utils/HskSerial:$MYBASE/pueo-utils/EventTester:$PYTHONPATH
 
@@ -64,7 +65,6 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     
     case "$confirm" in
         [Yy])
-            echo -e "\033[1;32m--- Output ---\033[0m"
 
             # set starting variables per loop
             retrycount=0
@@ -138,14 +138,25 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "\033[1;32m Success TURFIO \033[0m"
                     success=true
                     break
-                elif echo "$output" | grep -zq "All trained SURFs are now live"; then 
-                    echo -e "\033[1;32m Success SURF \033[0m"
+                elif [[ "$line" =~ eStartState ]]; then
+                    pair=$(echo "$line" | grep -oP 'fe:\s+\K[0-9a-fA-F]+\s+[0-9a-fA-F]+')
+                    if [[ "$pair" != "fe 13" ]]; then
+                        errorCode=100
+                    else   
+                        success=true
+                        echo -e 'mts done yo'
+                        break
+                    fi
+            invalid=true
+        fi
+    fi
                     success=true
                     break
+                elif echo "$output" | grep -zq "All trained SURFs are now live"; then 
                 else
                     errorCode=100
                 fi
-                echo -e "\033[1;32m--- End Output ---\033[0m"
+    
 
                 if [ $errorCode -ne 0 ]; then
 
@@ -218,4 +229,4 @@ elapsed_seconds=$((SECONDS - start_time))
 
 elapsed_formatted=$(date -ud "@$elapsed_seconds" +'%M min %S sec')
 echo "DAQ set-up completed with $errorCount errors"
-echo "Elapsed time: $elapsed_formatted"
+echo "Elapsed time: $elapsed_formatted"s
