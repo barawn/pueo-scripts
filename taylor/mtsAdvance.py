@@ -65,9 +65,7 @@ for s in surfs:
     pkt = hsk.receive()
     print(pkt.pretty())
     val = vars(pkt)['data']
-    if val == b'\xfe\x13': 
-        print(val)
-        print('passed')
+    if val != b'\xfe\x13': 
+        print('All SURFs aligned to 120')
     else: 
-        print(val)
-        print('failed')
+        print('A SURF failed to align')
