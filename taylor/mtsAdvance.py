@@ -64,3 +64,9 @@ for s in surfs:
     hsk.send(HskPacket(s[1], 'eStartState'))
     pkt = hsk.receive()
     print(pkt.pretty())
+    val = vars(pkt)['data']
+    if val != 'b\xfe\x13': 
+        print(val)
+        print('ah')
+    else: 
+        print(val)
