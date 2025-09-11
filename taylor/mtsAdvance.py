@@ -3,6 +3,7 @@
 from HskSerial import HskEthernet, HskPacket
 import argparse
 import time 
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--tio", type=str, default="0,1,2,3", 
@@ -65,7 +66,10 @@ for s in surfs:
     pkt = hsk.receive()
     print(pkt.pretty())
     val = vars(pkt)['data']
-    if val != b'\xfe\x13': 
-        print('All SURFs aligned to 120')
+    if val == b'\xfe\x13': 
+        pass
     else: 
-        print('A SURF failed to align')
+        print('A SURF failed to MTS align')
+        sys.exit()
+
+print('All SURFs aligned to 120')

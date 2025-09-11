@@ -138,18 +138,15 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "\033[1;32m Success TURFIO \033[0m"
                     success=true
                     break
-                elif echo "$output" | grep -zq "eStartState"; then
-                    pair=$(echo "$line" | grep -oP 'fe:\s+\K[0-9a-fA-F]+\s+[0-9a-fA-F]+')
-                    echo -e "$line"
-                    if [[ "$pair" != "fe 13" ]]; then
-                        errorCode=100
-                    else   
-                        success=true
-                        echo -e 'mts done yo'
-                        break
-                    fi
+                elif echo "$output" | grep -zq "A SURF failed to MTS align"; then
+                    echo -e "\033[1;31m SURF failed MTS alignment.\033[0m"
+                    errorCode=100
                 elif echo "$output" | grep -zq "All trained SURFs are now live"; then 
                     echo -e "\033[1;32m Success SURF \033[0m"
+                    success=true
+                    break
+                elif echo "$output" | grep -zq "All SURFs aligned to 120"; then 
+                    echo -e "\033[1;32m Success SURF MTS \033[0m"
                     success=true
                     break
                 else
