@@ -134,8 +134,11 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "$sn"
                     echo -e "$tn"
                     errorCode=52
-                elif [ "$status" -eq 0 ]; then
-                    # echo "DEBUG: status=$status"
+                elif echo "$output" | grep -zq "TURFIO sync complete"; then 
+                    echo -e "\033[1;32m Success\033[0m"
+                    success=true
+                    break
+                elif echo "$output" | grep -zq "All trained SURFs are now live"; then 
                     echo -e "\033[1;32m Success\033[0m"
                     success=true
                     break
