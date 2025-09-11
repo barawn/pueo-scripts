@@ -65,8 +65,9 @@ for s in surfs:
     pkt = hsk.receive()
     print(pkt.pretty())
     val = vars(pkt)['data']
-    if val != 'b\xfe\x13': 
+    if val == b'\xfe\x13': 
         print(val)
-        print('ah')
+        print('passed')
     else: 
         print(val)
+        print('failed')
