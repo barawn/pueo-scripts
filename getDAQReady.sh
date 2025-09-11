@@ -142,8 +142,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     errorCode=51
                 elif echo "$output" | grep -zq "SURF SLOT#[0-9]\+ on TURFIO PORT#[0-9]\+ failed to respond"; then 
                     echo -e "\033[1;31m SURF never booted \033[0m"
-                    sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
-                    tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
+                    sn=$(echo "$output" | grep -oP 'SLOT#\K\d+' | tail -n 1)
+                    tn=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
 
                     echo -e "$sn"
                     echo -e "$tn"
