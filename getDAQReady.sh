@@ -148,6 +148,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                         break
                     fi
                 elif echo "$output" | grep -zq "All trained SURFs are now live"; then 
+                    echo -e "\033[1;32m Success SURF \033[0m"
+                    success=true
+                    break
                 else
                     errorCode=100
                 fi
