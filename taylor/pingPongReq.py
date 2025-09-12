@@ -99,6 +99,8 @@ for i in range(0,4):
         if hsk_harder(val, 'ePingPong') is None:
             hsk.send(HskPacket(tio, 'eEnable', data=[0x40, 0x40]))
             pkt = hsk.receive()
+        if hsk_harder(val, 'ePingPong') is None:
+            
             print(f"SURF SLOT#{surf[j][0]} on TURFIO PORT#{tios[i][0]} failed to respond!")
             sys.exit()
 
