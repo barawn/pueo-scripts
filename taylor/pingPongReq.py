@@ -27,7 +27,7 @@ def on_int(signum, frame):
 signal.signal(signal.SIGALRM, on_timeout)
 signal.signal(signal.SIGINT, on_int)
 
-def hsk_harder(dest, cmd, data = None, timeout = 1, max_tries = 3):
+def hsk_harder(dest, cmd, data = None, timeout = 1, max_tries = 5):
     pkt = None
     ntimeout = 0
 #    time.sleep(0.1)
