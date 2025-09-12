@@ -16,7 +16,7 @@ parser.add_argument("--tio", type=int)
 parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
 parser.add_argument("--nbeams", type=int, default=2) 
 parser.add_argument("--min", type=int, default=1000)
-parser.add_argument("--max", type=int, default=10000)
+parser.add_argument("--max", type=int, default=12000)
 parser.add_argument("--step", type=int, default=500)
 # parser.add_argument("--filename", default = "thresh_scan.csv")
 

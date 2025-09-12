@@ -43,7 +43,7 @@ with open(args.filename, "w") as outfile:
             surf = surfs[slot]
             # Mask all but two beams
             surf.levelone.write(0x2008,0xFFFFC)
-            surf.levelone.write(0x200c,0xFFFFFFFF)
+            surf.levelone.write(0x200c,0x8FFFFFFF)
             print(f"Masks are {surf.levelone.read(0x2008):X} and {surf.levelone.read(0x200C):X}")
             if(threshold_value>0):
                 for idx in range(nbeams): 
