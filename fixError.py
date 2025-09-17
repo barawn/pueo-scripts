@@ -27,7 +27,6 @@ def handle_error(code, tio=False, slot=False):
              1 : 0xa0 , 
              2 : 0x99 , 
              3 : 0x8d ,
-             4 : 0x9d , 
              5 : 0x94 ,
              6 : 0x8a  }
     
@@ -78,14 +77,26 @@ def handle_error(code, tio=False, slot=False):
         
         
         selectedTurfio = (tios[tio])
-        # print(selectedTurfio)
         selectedPMBusAddr = (pmbusslot[slot])
-        # print(selectedPMBusAddr)
+        
+        # stolen from paytons code
+        hsk.send(HskPacket(selectedTurfio, 'eCurrents'))
+        data = hsk.receive().data
+        currents = []
+        """ for iter in range(1, 16, 2):
+            val = (int.from_bytes(data[iter:iter+2], byteorder='big') )
+            
+            I = (val - 2048)*12.51/4.762
+            # lets add tiers :D
+            if I < 0 or I > 1000: 
+                # either hotswap has died or TURFIO is refusing to admit that that is there 
+                hsk.send(HskPacket(selectedTurfio, 'eReloadFirmware', data=[0,0,0,0]))
+                pkt = hsk.receive()"""
 
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data=[0x40, 0x40]))
         pkt = hsk.receive()
         print(f'Sending ePMBus to power cycle SURF (TIO {hex(selectedTurfio)}: RACK Addr {hex(selectedPMBusAddr)})')
-        hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
+        # hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
         time.sleep(20)
         
 
