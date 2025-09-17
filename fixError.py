@@ -48,7 +48,7 @@ def handle_error(code, tio=False, slot=False):
     surfsTio3 = { 0 : 0x93 , 
              1 : 0x9b , 
              2 : 0x96 , 
-             3 : 0x83 ,
+             3 : 0x8e ,
              4 : 0x90 , 
              5 : 0x92  }
     
