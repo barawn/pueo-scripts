@@ -103,6 +103,8 @@ def handle_error(code, tio=False, slot=False):
     elif code == 51: 
         print('Sending eRestart')
         selectedTurfio = (tios[tio])
+        print(selectedTurfio)
+       
         if tio == 0: 
             selectedSurf = surfsTio0[slot]
         elif tio == 1: 
@@ -112,6 +114,7 @@ def handle_error(code, tio=False, slot=False):
         elif tio == 3: 
             selectedSurf = surfsTio3[slot]
 
+        print(selectedSurf)
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data = [0x40, 0x40]))
         pkt = hsk.receive()
         time.sleep(1) 
