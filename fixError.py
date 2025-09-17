@@ -96,7 +96,8 @@ def handle_error(code, tio=False, slot=False):
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data=[0x40, 0x40]))
         pkt = hsk.receive()
         print(f'Sending ePMBus to power cycle SURF (TIO {hex(selectedTurfio)}: RACK Addr {hex(selectedPMBusAddr)})')
-        # hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
+        hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
+        pkt = hsk.receive()
         time.sleep(20)
         
 
