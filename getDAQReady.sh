@@ -83,7 +83,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 if [[ " $@ " =~ " --verbose " ]]; then
                     echo "$output"
                 fi
-        
+                
+                # ugh i could reduce this to one line if i really wanted huh...
                 if echo "$output" | grep -q "GTP link 0"; then
                     echo -e "\033[1;31m Detected GTP link 0 error.\033[0m"
                     errorCode=1
@@ -165,6 +166,10 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     break
                 elif echo "$output" | grep -zq "All SURFs aligned to 120"; then 
                     echo -e "\033[1;32m Success SURF MTS \033[0m"
+                    success=true
+                    break
+                elif echo "$output" | grep -zq "Cal path frozen successfully"; then
+                    echo -e "\033[1;32m Cal path frozen \033[0m"
                     success=true
                     break
                 else
