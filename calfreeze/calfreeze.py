@@ -48,3 +48,4 @@ for i in range(8):
     print(f'Channel {i}: freeze state {after.CalFrozen}')
 
 surf.cal_path_enable = 0 
+print('Cal path frozen successfully')
