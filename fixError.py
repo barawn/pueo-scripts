@@ -56,22 +56,18 @@ def handle_error(code, tio=False, slot=False):
     if code == 1:
         print("Handling GTP link 0 error: Restarting GTP interface...")
         hsk.send(HskPacket(0x58, 'eReloadFirmware', data=[0,0,0,0]))
-        pkt = hsk.receive()
         time.sleep(5)
     elif code ==2: 
         print("Handling GTP link 1 error: Restarting GTP interface...")
         hsk.send(HskPacket(0x50, 'eReloadFirmware', data=[0,0,0,0]))
-        pkt = hsk.receive()
         time.sleep(5)
     elif code ==3: 
         print("Handling GTP link 2 error: Restarting GTP interface...")
         hsk.send(HskPacket(0x40, 'eReloadFirmware', data=[0,0,0,0]))
-        pkt = hsk.receive()
         time.sleep(5)
     elif code == 4: 
         print("Handling GTP link 3 error: Restarting GTP interface...")
         hsk.send(HskPacket(0x48, 'eReloadFirmware', data=[0,0,0,0]))
-        pkt = hsk.receive()
         time.sleep(5)
     elif code == 50: 
         
@@ -91,10 +87,14 @@ def handle_error(code, tio=False, slot=False):
             if I < 0 or I > 1000: 
                 # either hotswap has died or TURFIO is refusing to admit that that is there 
                 hsk.send(HskPacket(selectedTurfio, 'eReloadFirmware', data=[0,0,0,0]))
-                pkt = hsk.receive()"""
+                pkt = hsk.receive()
+            elif I > 0 and I < 500 : 
+                # yea that SURF isn't booted right 
 
+                """
+            
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data=[0x40, 0x40]))
-        pkt = hsk.receive()
+        pkt = hsk.receive() # to receive the packet 
         print(f'Sending ePMBus to power cycle SURF (TIO {hex(selectedTurfio)}: RACK Addr {hex(selectedPMBusAddr)})')
         hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
         pkt = hsk.receive()
