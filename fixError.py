@@ -98,7 +98,7 @@ def handle_error(code, tio=False, slot=False):
         print(f'Sending ePMBus to power cycle SURF (TIO {hex(selectedTurfio)}: RACK Addr {hex(selectedPMBusAddr)})')
         hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
         pkt = hsk.receive()
-        time.sleep(10) # 20s worked lets try less?
+        time.sleep(25) # 20s worked lets try less?
         
 
     elif code == 51: 
