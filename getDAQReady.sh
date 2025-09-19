@@ -112,14 +112,14 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     errorCode=100
 
                 elif echo "$output" | grep -q "RX clock off"; then
-                    echo -e "\033[1;31No clock alignment attempt detected.\033[0m"
+                    echo -e "\033[1;31mNo clock alignment attempt detected.\033[0m"
                     success=true
                     break
                 elif echo "$output" | grep -q "Clock not on correctly! Restart recommended"; then
-                    echo -e "\033[1;31Clock slip detected. TURF reboot required.\033[0m"
+                    echo -e "\033[1;31mClock slip detected. TURF reboot required.\033[0m"
                     errorCode=100
                 elif echo "$output" | grep -q "All trigger clocks are reporting on and no LOL"; then
-                    echo -e "\033[1;31No clock slips detected and system ready for RF data!\033[0m"
+                    echo -e "\033[1;32mNo clock slips detected and system ready for RF data!\033[0m"
                     success=true
                     break
                 elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
