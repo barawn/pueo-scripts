@@ -27,6 +27,7 @@ def handle_error(code, tio=False, slot=False):
              1 : 0xa0 , 
              2 : 0x99 , 
              3 : 0x8d ,
+             4 : 0x9d ,
              5 : 0x94 ,
              6 : 0x8a  }
     
