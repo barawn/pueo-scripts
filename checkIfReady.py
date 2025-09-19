@@ -44,11 +44,17 @@ dev = PueoTURF()
 
 for i in range(0,4): 
     tio = PueoTURFIO((dev, i), 'TURFGTP')
-    surfv = surfs[i]
-    
+    print(i)
+    surfv = surfs[i] 
     for j in range(len(surfv)):
         val = (surfv[j][0])
-        surf = PueoSURF((tio, val), 'TURFIO')
+        print(j)
+        try:
+            surf = PueoSURF((tio, val), 'TURFIO')
+        except: 
+            print('RX clock off')
+            sys.exit()
+        
         lolval = surf.lol 
         rftrig = surf.trig_clock_en
         if lolval == 1 or rftrig == 0: 
