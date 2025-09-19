@@ -118,7 +118,14 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         elif echo "$output" | grep -q "All trigger clocks are reporting on and no LOL"; then
             echo -e "\033[1;32mNo clock slips detected and system ready for RF data!\033[0m"
             success=true
-            break
+            echo $line_num > "$progress_file"
+            rm -f "$error_state"
+            rm -f "$time_state"
+            elapsed_seconds=$((SECONDS + start_time))
+            elapsed_formatted=$(date -ud "@$elapsed_seconds" +'%M min %S sec')
+            echo "DAQ set-up completed with $errorCount errors"
+            echo "Elapsed time: $elapsed_formatted"s
+            exit 0
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
             echo -e "\033[1;31mSURF not booted.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
