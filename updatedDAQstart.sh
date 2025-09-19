@@ -1,4 +1,5 @@
 #!/bin/bash
+taylor/ppython checkIfReady.py
 taylor/ppython startup/turfManualStartup.py 
 taylor/ppython taylor/pingPongReq.py
 taylor/ppython startup/surfStartup.py --tio 3 --slots 0,1,2,3,4,5 --enable
@@ -19,3 +20,4 @@ taylor/ppython taylor/thresholdRFAll.py --threshold 13000 --subthreshold 11000 -
 taylor/ppython taylor/thresholdRFAll.py --threshold 13000 --subthreshold 11000 --tio 2 --slots 0,1,2,3,4,5 --unmask --nbeams 48
 taylor/ppython taylor/thresholdRFAll.py --threshold 13000 --subthreshold 11000 --tio 1 --slots 0,1,2,3,4,5,6 --unmask --nbeams 48
 taylor/ppython taylor/thresholdRFAll.py --threshold 13000 --subthreshold 11000 --tio 0 --slots 0,1,2,3,4,5,6 --unmask --nbeams 48
+taylor/ppython checkIfReady.py

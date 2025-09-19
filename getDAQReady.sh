@@ -23,14 +23,23 @@ progress_file=".progress"
 start_line=0
 line_num=0
 
-# Start a timer 
-elapsed_time=0
-
 # how many retries do you want to allow for
-retry=3
+retry=2
 
 # Start a counter for any and all errors 
-errorCount=0
+
+if [ -f "$error_state" ]; then
+    errorCount=$(<error_state.txt)
+else
+    errorCount=0
+fi
+
+if [ -f "$time_state" ]; then
+    start_time=$(<time_state.txt)
+else
+    start_time=0
+fi
+
 
 # Restart flag because the progress file holds info 
 # This actually might be a little silly to do to be honest
@@ -102,6 +111,16 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                     echo -e "\033[1;31Detected TURFIO bridge error.\033[0m"
                     errorCode=100
 
+                elif echo "$output" | grep -q "RX clock off"; then
+                    echo -e "\033[1;31No clock alignment attempt detected.\033[0m"
+                    success=true
+
+                elif echo "$output" | grep -q "Clock not on correctly! Restart recommended"; then
+                    echo -e "\033[1;31Clock slip detected. TURF reboot required.\033[0m"
+                    errorCode=100
+                elif echo "$output" | grep -q "All trigger clocks are reporting on and no LOL"; then
+                    echo -e "\033[1;31No clock slips detected and system ready for RF data!\033[0m"
+                    success=true
                 elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
                     echo -e "\033[1;31mSURF not booted.\033[0m"
                     sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
@@ -225,8 +244,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 line_num=0
 
                 # Restart the script
-                # exec "$0"
                 ((errorCount++))
+                echo "$errorCount" > error_state.txt
+                echo "$startTime" > time_state.txt
+
+                exec "$0"
+                
             fi
             ;;
     [Qq])
@@ -242,8 +265,11 @@ done < updatedDAQstart.sh
 # Calculate the elapsed time
 
 rm -f "$progress_file"
-elapsed_seconds=$((SECONDS - start_time))
+elapsed_seconds=$((SECONDS + start_time))
 
 elapsed_formatted=$(date -ud "@$elapsed_seconds" +'%M min %S sec')
 echo "DAQ set-up completed with $errorCount errors"
 echo "Elapsed time: $elapsed_formatted"s
+
+rm -f "$error_state"
+rm -f "$time_state"
