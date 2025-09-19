@@ -1,4 +1,3 @@
-#!/bin/bash
 taylor/ppython checkIfReady.py
 taylor/ppython startup/turfManualStartup.py 
 taylor/ppython taylor/pingPongReq.py
