@@ -105,8 +105,6 @@ def handle_error(code, tio=False, slot=False):
     elif code == 51: 
         print('Sending eRestart')
         selectedTurfio = (tios[tio])
-        print(selectedTurfio)
-       
         if tio == 0: 
             selectedSurf = surfsTio0[slot]
         elif tio == 1: 
@@ -115,12 +113,9 @@ def handle_error(code, tio=False, slot=False):
             selectedSurf = surfsTio2[slot]
         elif tio == 3: 
             selectedSurf = surfsTio3[slot]
-
-        print(selectedSurf)
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data = [0x40, 0x40]))
         pkt = hsk.receive()
         time.sleep(1) 
-    
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
         time.sleep(5)
 
@@ -128,7 +123,6 @@ def handle_error(code, tio=False, slot=False):
         # from Payton's startup script (thank youuuuu)
         
         print('Rebooting the TURF now. This will take ~60 seconds.')
-
         ## First thing is we are going to reset CPU and reboot the TURF
         os.system('/home/pueo/pueo-scripts/taylor/ppython /home/pueo/pueo-scripts/ftdi-turf-restart.py --cpu')
         time.sleep(60)
