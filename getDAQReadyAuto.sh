@@ -104,7 +104,10 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         elif echo "$output" | grep -q "TURFIO bridge error"; then
             echo -e "\033[1;31Detected TURFIO bridge error.\033[0m"
             errorCode=100
-
+        elif echo "$output" | grep -q "#!/bin/bash"; then
+            echo -e "\033[1;31mSTOP.\033[0m"
+            success=true
+            break
         elif echo "$output" | grep -q "RX clock off"; then
             echo -e "\033[1;31mNo clock alignment attempt detected.\033[0m"
             success=true
