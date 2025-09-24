@@ -16,7 +16,7 @@ parser.add_argument("--tio", type=int)
 parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
 parser.add_argument("--threshold", type=int, default=-1)
 parser.add_argument("--subthreshold", type=int, default=-1)
-parser.add_argument("--unmask", action="store_true")#untested
+parser.add_argument("--unmask", action="store_true")
 parser.add_argument("--nbeams", type=int, default=2)
 parser.add_argument("--resetTrigGen", action="store_true")
 

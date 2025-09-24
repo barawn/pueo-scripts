@@ -8,6 +8,10 @@
 # I am not ashamed (...yes i am)
 #                                      - Taylor 
 
+
+# switch to directory this is called from
+cd "$(dirname "$0")"
+
 # From Patrick's ppython 
 # just sources all the scripts that we will need 
 MYBASE=/home/pueo
