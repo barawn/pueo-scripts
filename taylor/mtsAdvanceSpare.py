@@ -10,16 +10,23 @@ pkt = hsk.receive()
 print('This takes 5 seconds to run! Be patient!')
 hsk.send(HskPacket(0xa3, 'eFwParams', data = b'\x01\x00\x00\x00\x78\x00'))
 pkt = hsk.receive()
+<<<<<<< HEAD
 hsk.send(HskPacket(0x9c, 'eFwParams', data = b'\x01\x00\x00\x00\x78\x00'))
 pkt = hsk.receive()
 hsk.send(HskPacket(0xa3, 'eStartState', data=[19]))
 pkt = hsk.receive()
 hsk.send(HskPacket(0x9c, 'eStartState', data=[19]))
+=======
+hsk.send(HskPacket(0xa3, 'eStartState', data=[19])) 
+>>>>>>> c03079aaa74eabb451e9ec81b0d32d669d78f63a
 pkt = hsk.receive()
 time.sleep(5)
 hsk.send(HskPacket(0xa3, 'eStartState'))
 pkt = hsk.receive()
 print(pkt.pretty())
+<<<<<<< HEAD
 hsk.send(HskPacket(0x9c, 'eStartState'))
 pkt = hsk.receive()
 print(pkt.pretty())
+=======
+>>>>>>> c03079aaa74eabb451e9ec81b0d32d669d78f63a

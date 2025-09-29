@@ -11,9 +11,8 @@ import time
 
 
 dev = PueoTURF()
-es = EventServer()
 
-dev.trig.offset = 27
+dev.trig.offset = 36
 
 tio1 = PueoTURFIO((dev, 0), 'TURFGTP')
 tio2 = PueoTURFIO((dev, 3), 'TURFGTP')
@@ -24,4 +23,9 @@ surf2 = PueoSURF((tio2, 5), 'TURFIO')
 surf1.trig_clock_en = 1
 surf2.trig_clock_en = 1
 
-print('Okeedokee, clocks started, offset 27!')
+surf1.levelone.write(0x1008, 0x00000)
+surf1.levelone.write(0x100C, 0x80000000)
+surf2.levelone.write(0x1008, 0x00000)
+surf2.levelone.write(0x100C, 0x80000000)
+
+print('Okeedokee, clocks started, all beams unmasked, offset 27!')

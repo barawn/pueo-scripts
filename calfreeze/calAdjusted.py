@@ -9,6 +9,7 @@ from pueo.turf import PueoTURF
 from pueo.turfio import PueoTURFIO
 from pueo.surf import PueoSURF
 from pyrfdc import PyRFDC
+import time
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -16,8 +17,6 @@ parser.add_argument("--tio", type=str, default="0",
                     help="which TURFIO to use")
 parser.add_argument("--slot", type=str, default="0",
                     help="which SURF slot to use")
-parser.add_argument("--paramfile", type=str, default="rfdc_gen3.pkl",
-                    help="parameter file to use")
 parser.add_argument("freeze", type=int,
                     help="freeze state either 0 or 1 maybe??")
 
@@ -30,10 +29,10 @@ freeze_state = int(args.freeze)
 
 dev = PueoTURF()
 tio = PueoTURFIO((dev,tio_num), 'TURFGTP')
-surf = PueoSURF((tio, slot_num), 'TURFIO', param_file=args.paramfile)
-surf.cal_path_enable = 1
+surf = PueoSURF((tio, slot_num), 'TURFIO', param_file='/home/pueo/pueo-scripts/taylor/rfdc_gen3.pkl')
 if not isinstance(surf.rfdc, PyRFDC):
     raise Exception("you don't have pyrfdc/libunivrfdc/paramfiles setup")
+time.sleep(30) 
 for i in range(8):
     
     tile_id = i//2
@@ -47,5 +46,4 @@ for i in range(8):
     after = surf.rfdc.GetCalFreeze(tile_id, block_id)
     print(f'Channel {i}: freeze state {after.CalFrozen}')
 
-surf.cal_path_enable = 0 
-print('Cal path frozen successfully')
+

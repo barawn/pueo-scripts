@@ -24,3 +24,6 @@ for i in range(0,(args.stop)):
     f = open(args.filename+'{}.pkl'.format(i), 'wb')
     pickle.dump(e,f)
     f.close()
+
+es.close()
+dev.trig.runcmd(dev.trig.RUNCMD_STOP) 

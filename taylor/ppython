@@ -3,7 +3,7 @@
 MYBASE=/home/pueo
 MYSTARTUP=/home/pueo/pueo-scripts/taylor/ppy_startup.py
 export PYTHONSTARTUP=$MYSTARTUP
-export PYTHONPATH=$MYBASE/pueo-python:$MYBASE/pueo-utils/HskSerial:$MYBASE/pueo-utils/EventTester:$PYTHONPATH
+export PYTHONPATH=$MYBASE/pyrfdc:$MYBASE/pueo-python:$MYBASE/pueo-utils/HskSerial:$MYBASE/pueo-utils/EventTester:$PYTHONPATH
 
 python3 "$@"
 

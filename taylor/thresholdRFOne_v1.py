@@ -9,21 +9,25 @@ from pueo.surf import PueoSURF
 from EventTester import EventServer
 import time
 
+
 parser = argparse.ArgumentParser()
-parser.add_argument('--threshold', type=int)
+
+parser.add_argument("--tio", type=int)
+parser.add_argument("--slot", type=int)
+parser.add_argument("--threshold", type=int)
+
 args = parser.parse_args()
 
+dev = PueoTURF(None, 'Ethernet')
 
-dev = PueoTURF()
+tio = PueoTURFIO((dev, args.tio), 'TURFGTP')
 
-tio1 = PueoTURFIO((dev, 0), 'TURFGTP')
 
-surf1 = PueoSURF((tio1, 5), 'TURFIO')
+surf = PueoSURF((tio, args.slot), 'TURFIO')
 
 for i in range(49): 
-    surf1.levelone.write(0x1000, 2) 
-    surf1.levelone.write(0x0800 + i*4, args.threshold) 
-    surf1.levelone.write(0x1000, 1)
+    surf.levelone.write(0x1000, 2) 
+    surf.levelone.write(0x0800 + i*4, args.threshold) 
+    surf.levelone.write(0x1000, 1)
 
 print(f'Yippee, threshold {args.threshold}')
-
