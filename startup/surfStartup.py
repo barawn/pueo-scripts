@@ -57,9 +57,12 @@ parser.add_argument("--noturf",
                     action='store_true',
                     help="don't train the TURF inputs, just TURFIO")
 parser.add_argument("--manual")
+parser.add_argument("--douteye", type=int,default=-1,
+                    help="use this specific dout eye")
 
 args = parser.parse_args()
 color = exciting if not args.boring else boring
+douteye = None if args.douteye == -1 else args.douteye
 
 slotList = list(map(int,args.slots.split(',')))
 
@@ -343,7 +346,13 @@ for i in range(4):
             test_dout = doutEyes[i][j]
             test_cout = coutEyes[i][j]
 
-def find_eye(eyes, test, label):
+def find_eye(eyes, test, label, choice=None):
+    if choice is not None:
+        if choice in eyes:
+            print(f'Using eye {choice} by choice.')
+            return choice
+        else:
+            raise ValueError(f'cannot use {choice} because not all have it')                
     if len(eyes) > 1:
         print(f'Multiple {label} eyes found, choosing one with smallest delay')
         min = None
@@ -362,7 +371,7 @@ def find_eye(eyes, test, label):
     elif len(eyes):
         return list(eyes)[0]
 
-usingDoutEye = find_eye(commonDoutEye, test_dout, 'DOUT')
+usingDoutEye = find_eye(commonDoutEye, test_dout, 'DOUT', douteye)
 usingCoutEye = find_eye(commonCoutEye, test_cout, 'COUT')
     
 trainedSurfs = []
@@ -428,7 +437,7 @@ for i in range(4):
             sys.exit(1)
         if tio[i].surfturf.surf_misaligned & tioCompleteMask[i]:
             print(color.BOLD + color.RED +
-                  'A trained SURF is misaligned: {hex(tio[i].surfturf.surf_misaligned & tioCompleteMask[i])}' +
+                  f'A trained SURF is misaligned: {hex(tio[i].surfturf.surf_misaligned & tioCompleteMask[i])}' +
                   color.END)
             sys.exit(1)
 
