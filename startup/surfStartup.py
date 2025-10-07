@@ -428,7 +428,7 @@ for i in range(4):
             sys.exit(1)
         if tio[i].surfturf.surf_misaligned & tioCompleteMask[i]:
             print(color.BOLD + color.RED +
-                  'A trained SURF is misaligned: {hex(tio[i].surfturf.surf_misaligned & tioCompleteMask[i])}' +
+                  f'A trained SURF is misaligned: {hex(tio[i].surfturf.surf_misaligned & tioCompleteMask[i])}' +
                   color.END)
             sys.exit(1)
 
