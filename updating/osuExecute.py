@@ -45,7 +45,7 @@ print(f'Sending {args.filename} to be executed! : MD5 {filemd5(args.filename)}')
 # SURF SLOT #[s], HSK ADDRESS[es]
 tios = (0, 0x48)
 
-surfs = [ (6, 0xa3) ]
+surfs = [ (2, 0x86) ]
 
 # get the housekeeping path
 hsk = HskEthernet()
