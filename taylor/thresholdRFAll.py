@@ -17,6 +17,7 @@ parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
 parser.add_argument("--threshold", type=int, default=-1)
 parser.add_argument("--subthreshold", type=int, default=-1)
 parser.add_argument("--unmask", action="store_true")
+parser.add_argument("--mask", action="store_true")
 parser.add_argument("--nbeams", type=int, default=2)
 parser.add_argument("--resetTrigGen", action="store_true")
 
@@ -62,7 +63,10 @@ for slot in slotList:
         surf.levelone.write(0x2008,0x00000)
         surf.levelone.write(0x200c,0x8000000)
         print(f'Masks set to {surf.levelone.read(0x200c):08X} {surf.levelone.read(0x2008):08X}')
-        
+    elif(args.mask):
+        surf.levelone.write(0x2008,0x8FFFFFF)
+        surf.levelone.write(0x200c,0x8FFFFFF)
+        print(f'Masks set to {surf.levelone.read(0x200c):08X} {surf.levelone.read(0x2008):08X}')    
 if(args.threshold > 0 and args.subthreshold > 0):
     print(f'Yippee, threshold {args.threshold} and subthreshold {args.subthreshold}')
 elif(args.threshold > 0):
