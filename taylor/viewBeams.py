@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 dev =PueoTURF()
 tio=PueoTURFIO((dev,args.tio),'TURFGTP')
-surf=PueoSURF((tio,5),'TURFIO')
+surf=PueoSURF((tio,6),'TURFIO')
 for i in range(args.nbeams):
     rate=surf.levelone.read(0x400+4*i)
     trigger_rate = rate & 0x0000FFFF
