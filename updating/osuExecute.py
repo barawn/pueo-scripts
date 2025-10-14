@@ -43,10 +43,9 @@ print(f'Sending {args.filename} to be executed! : MD5 {filemd5(args.filename)}')
 # I NEED:
 # TURFIO SLOT #, HSK ADDRESS
 # SURF SLOT #[s], HSK ADDRESS[es]
-tios = (0, 0x40)
+tios = (0, 0x48)
 
-surfs = [ (0, 0x81),
-          (3, 0xA3) ]
+surfs = [ (6, 0xa3) ]
 
 # get the housekeeping path
 hsk = HskEthernet()
