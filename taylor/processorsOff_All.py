@@ -53,7 +53,6 @@ elif args.tio == 'spare':
 hsk = HskEthernet()
 hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
 pkt = hsk.receive()
-print('This takes 5 seconds to run! Be patient!')
 for s in surfs:
     hsk.send(HskPacket(s[1], 'eSleep', data = [0x85]))
     pkt = hsk.receive()
