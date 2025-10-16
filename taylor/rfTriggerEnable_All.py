@@ -12,7 +12,7 @@ if dev.trig.running == 1:
     es.close()
     dev.trig.runcmd(dev.trig.RUCNMD_STOP)
 
-dev.trig.mask = 0 # unmasks all SURFs
+dev.trig.mask = 2113536 # unmasks all MI SURFs
 
 es.open()
 dev.trig.runcmd(dev.trig.RUNCMD_RESET)

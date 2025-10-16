@@ -12,7 +12,7 @@ if dev.trig.running == 1:
     es.close()
     dev.trig.runcmd(dev.trig.RUCNMD_STOP)
 
-dev.trig.mask = 268435455 # masks off all SURFs
+dev.trig.mask = 268435455 # masks off all SURFs (LF + MI)
 
 es.open()
 dev.trig.runcmd(dev.trig.RUNCMD_RESET)
