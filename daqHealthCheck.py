@@ -67,7 +67,7 @@ for i in range(4):
                     lol |= ( surf.lol << j)
                     clk|= ( surf.trig_clk_en << j)
                 except: 
-                    lol |= ( 0 << j)
+                    lol |= ( 1 << j)
                     clk |= ( 0 << j)
     except: 
         if i ==1: 
