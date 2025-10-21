@@ -85,6 +85,7 @@ for i in range(4):
     
 print(bin(lol)) 
 print(bin(clk)) 
+print(dev.trig.mask)
 
             
 """
