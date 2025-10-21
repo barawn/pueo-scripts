@@ -65,7 +65,7 @@ for i in range(4):
                 try: 
                     surf = PueoSURF((tio, j), 'TURFIO')
                     lol |= ( surf.lol << j)
-                    clk|= ( surf.lol << j)
+                    clk|= ( surf.trig_clk_en << j)
                 except: 
                     lol |= ( 1 << j)
                     clk |= ( 1 << j)
@@ -85,9 +85,7 @@ for i in range(4):
     
 print(bin(lol)) 
 print(bin(clk)) 
-print(dev.trig.mask)
-
-            
+print(bin(dev.trig.mask))
 """
 for i in range(4): 
     tio = PueoTURFIO((dev, i), 'TURFGTP') 
