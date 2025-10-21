@@ -71,7 +71,10 @@ for i in range(4):
                 lol |= ( 1 << j)  
     if i == 0 or i == 1: 
         for j in range(7): 
-            surf = PueoSURF((tio, j), 'TURFIO')
+            try: 
+                surf = PueoSURF((tio, j), 'TURFIO')
+            except: 
+                lol |= ( 1 << j)  
             lol |= ( surf.lol << j) 
     else: 
         for k in range(7): 
