@@ -76,7 +76,8 @@ for i in range(4):
         elif i ==3: 
             for j in range(21,28): 
                 lol |= ( 1 << j)  
-      
+    
+print(lol)
             
 """
 for i in range(4): 
