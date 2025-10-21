@@ -67,21 +67,21 @@ for i in range(4):
                     lol |= ( surf.lol << j)
                     clk|= ( surf.trig_clk_en << j)
                 except: 
-                    lol |= ( 1 << j)
-                    clk |= ( 1 << j)
+                    lol |= ( 0 << j)
+                    clk |= ( 0 << j)
     except: 
         if i ==1: 
             for j in range(7,14): 
-                lol |= ( 1 << j) 
-                clk |= ( 1 << j) 
+                lol |= ( 0 << j) 
+                clk |= ( 0 << j) 
         elif i ==2: 
             for j in range(14,21): 
-                lol |= ( 1 << j)
-                clk |= ( 1 << j)
+                lol |= ( 0 << j)
+                clk |= ( 0 << j)
         elif i ==3: 
             for j in range(21,28): 
-                lol |= ( 1 << j)  
-                clk |= ( 1 << j)
+                lol |= ( 0 << j)  
+                clk |= ( 0 << j)
     
 print(bin(lol)) 
 print(bin(clk)) 
