@@ -56,6 +56,7 @@ tios = [ tio3 ]
 surfs = [ surf3 ]
 dev = PueoTURF()
 lol = 0
+clk = 0 
 for i in range(4): 
     try: 
         tio = PueoTURFIO((dev, i), 'TURFGTP') 
@@ -64,20 +65,27 @@ for i in range(4):
                 try: 
                     surf = PueoSURF((tio, j), 'TURFIO')
                     lol |= ( surf.lol << j)
+                    clk|= ( surf.lol << j)
                 except: 
                     lol |= ( 1 << j)
+                    clk |= ( 1 << j)
     except: 
         if i ==1: 
             for j in range(7,14): 
                 lol |= ( 1 << j) 
+                clk |= ( 1 << j) 
         elif i ==2: 
             for j in range(14,21): 
                 lol |= ( 1 << j)
+                clk |= ( 1 << j)
         elif i ==3: 
             for j in range(21,28): 
                 lol |= ( 1 << j)  
+                clk |= ( 1 << j)
     
-print(lol)
+print(bin(lol)) 
+print(bin(clk)) 
+
             
 """
 for i in range(4): 
@@ -85,7 +93,7 @@ for i in range(4):
     if i == 0 or i == 1: 
         for j in range(7): 
             surf = PueoSURF((tio, j), 'TURFIO')
-            lol |= ( surf.lol << j) 
+            lol |= ( surf.lol << surfs[i][]) 
     else: 
         for k in range(): 
             surf = PueoSURF((tio, k), 'TURFIO')
