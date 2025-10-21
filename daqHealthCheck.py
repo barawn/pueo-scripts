@@ -59,6 +59,13 @@ lol = 0
 for i in range(4): 
     try: 
         tio = PueoTURFIO((dev, i), 'TURFGTP') 
+        if i == 0 or i == 1: 
+            for j in range(7): 
+                try: 
+                    surf = PueoSURF((tio, j), 'TURFIO')
+                    lol |= ( surf.lol << j)
+                except: 
+                    lol |= ( 1 << j)
     except: 
         if i ==1: 
             for j in range(7,14): 
@@ -69,17 +76,8 @@ for i in range(4):
         elif i ==3: 
             for j in range(21,28): 
                 lol |= ( 1 << j)  
-    if i == 0 or i == 1: 
-        for j in range(7): 
-            try: 
-                surf = PueoSURF((tio, j), 'TURFIO')
-            except: 
-                lol |= ( 1 << j)  
-            lol |= ( surf.lol << j) 
-    else: 
-        for k in range(7): 
-            surf = PueoSURF((tio, k), 'TURFIO')
-            lol |= ( surf.lol << k) 
+      
+            
 """
 for i in range(4): 
     tio = PueoTURFIO((dev, i), 'TURFGTP') 
