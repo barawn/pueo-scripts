@@ -64,10 +64,11 @@ for i in range(4):
             for j in range(7): 
                 try: 
                     surf = PueoSURF((tio, j), 'TURFIO')
-                    lol |= ( surf.lol << j)
-                    clk|= ( surf.trig_clk_en << j)
+                    lol |= (surf.lol << j ) 
+                    value = surf.trig_clock_en
+                    clk |= (surf.trig_clock_en << j ) 
                 except: 
-                    lol |= ( 1 << j)
+                    lol |= ( 0 << j)
                     clk |= ( 0 << j)
     except: 
         if i ==1: 
