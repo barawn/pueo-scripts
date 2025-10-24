@@ -26,6 +26,6 @@ for slot in slotList:
     hsk.send(HskPacket(surf, 'eFwNext', data =f"/lib/firmware/{args.fwslot}".encode()))
     pkt = hsk.receive().data
     if pkt == b'':
-        print(f'SURF Slot {(surf1[slot][0])} sent eError... no /mnt/bitstream/{args.fwslot}')
+        print(f'SURF Slot {slot} sent eError... no /mnt/bitstream/{args.fwslot}')
     else:
         hsk.send(HskPacket(surf, 'eRestart', data=[0]))
