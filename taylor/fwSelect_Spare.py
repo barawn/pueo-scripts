@@ -21,7 +21,8 @@ hsk.send(HskPacket(tio, 'eEnable', data=[0x40, 0x40]))
 pkt = hsk.receive()
 
 for slot in slotList: 
-    surf = surf1[slot][1]
+    newsurf = dict(surf1)
+    surf = newsurf[slot]
     hsk.send(HskPacket(surf, 'eFwNext', data =f"/lib/firmware/{args.fwslot}".encode()))
     pkt = hsk.receive().data
     if pkt == b'':
