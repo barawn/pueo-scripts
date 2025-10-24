@@ -56,7 +56,7 @@ for i in range(0,4):
     pkt = hsk.receive()
     for j in range(len(surf)):
         val = (surf[j][1])
-        hsk.send(HskPacket(val, 'eEnable', data =f"/lib/firmware/{args.fwslot}".encode()))
+        hsk.send(HskPacket(val, 'eFwNext', data =f"/lib/firmware/{args.fwslot}".encode()))
         pkt = hsk.receive()
         hsk.send(HskPacket(val, 'eRestart', data=[0]))
 
