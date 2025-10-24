@@ -16,7 +16,9 @@ surf = [
 tio = tio[1]
 hsk.send(HskPacket(tio, 'eEnable', data=[0x40, 0x40]))
 pkt = hsk.receive()
+print(pkt)
 for j in range(len(surf)):
     hsk.send(HskPacket(surf[j][1], 'eFwNext', data =f"/lib/firmware/{args.fwslot}".encode()))
     pkt = hsk.receive()
+    print(pkt)
     hsk.send(HskPacket(surf[j][1], 'eRestart', data=[0]))
