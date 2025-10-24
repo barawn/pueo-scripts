@@ -22,3 +22,4 @@ for j in range(len(surf)):
     pkt = hsk.receive()
     print(pkt)
     hsk.send(HskPacket(surf[j][1], 'eRestart', data=[0]))
+    print('here to prove it')
