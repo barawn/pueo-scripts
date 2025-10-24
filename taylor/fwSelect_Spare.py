@@ -13,11 +13,10 @@ surf = [
         (3, 0x9c),
         (6, 0xa3) ]
 
-for i in range(0,4): 
-    tio = tio[1]
-    hsk.send(HskPacket(tio, 'eEnable', data=[0x40, 0x40]))
+tio = tio[1]
+hsk.send(HskPacket(tio, 'eEnable', data=[0x40, 0x40]))
+pkt = hsk.receive()
+for j in range(len(surf)):
+    hsk.send(HskPacket(surf[j][1], 'eEnable', data =f"/lib/firmware/{args.fwslot}".encode()))
     pkt = hsk.receive()
-    for j in range(len(surf)):
-        hsk.send(HskPacket(surf[j][1], 'eEnable', data =f"/lib/firmware/{args.fwslot}".encode()))
-        pkt = hsk.receive()
-        hsk.send(HskPacket(surf[j][1], 'eRestart', data=[0]))
+    hsk.send(HskPacket(surf[j][1], 'eRestart', data=[0]))
