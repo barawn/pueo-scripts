@@ -19,7 +19,11 @@ pkt = hsk.receive()
 print(pkt)
 for j in range(len(surf)):
     hsk.send(HskPacket(surf[j][1], 'eFwNext', data =f"/lib/firmware/{args.fwslot}".encode()))
-    pkt = hsk.receive()
+    pkt = hsk.receive().data
     print(pkt)
-    hsk.send(HskPacket(surf[j][1], 'eRestart', data=[0]))
-    print('here to prove it')
+    if pkt == b'':
+        print('SURF fucked up')
+        continue
+    else:
+        hsk.send(HskPacket(surf[j][1], 'eRestart', data=[0]))
+        print('here to prove it')
