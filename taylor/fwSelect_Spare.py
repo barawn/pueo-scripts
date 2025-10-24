@@ -5,18 +5,8 @@ import argparse
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--fwslot", type=int)
-hsk = HskEthernet()
-args = parser.parse_args()
-
-
-import argparse
-
-parser = argparse.ArgumentParser()
-
 parser.add_argument("--slots", type=str, default='3,6')
-parser.add_argument('--disable',
-                    action='store_true')
-
+hsk = HskEthernet()
 args = parser.parse_args()
 
 slotList = list(map(int,args.slots.split(',')))
