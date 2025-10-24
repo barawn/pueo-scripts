@@ -8,18 +8,33 @@ parser.add_argument("--fwslot", type=int)
 hsk = HskEthernet()
 args = parser.parse_args()
 
+
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--slots", type=str, default='3,6')
+parser.add_argument('--disable',
+                    action='store_true')
+
+args = parser.parse_args()
+
+slotList = list(map(int,args.slots.split(',')))
+
 tio = (0, 0x48)
-surf = [ 
+surf1 = [ 
         (3, 0x9c),
         (6, 0xa3) ]
 
 tio = tio[1]
 hsk.send(HskPacket(tio, 'eEnable', data=[0x40, 0x40]))
 pkt = hsk.receive()
-for j in range(len(surf)):
-    hsk.send(HskPacket(surf[j][1], 'eFwNext', data =f"/lib/firmware/{args.fwslot}".encode()))
+
+for slot in slotList: 
+    surf = surf1[slot][1]
+    hsk.send(HskPacket(surf, 'eFwNext', data =f"/lib/firmware/{args.fwslot}".encode()))
     pkt = hsk.receive().data
     if pkt == b'':
-        print(f'SURF Slot {(surf[j][0])} sent eError... no /mnt/bitstream/{args.fwslot}')
+        print(f'SURF Slot {(surf1[slot][0])} sent eError... no /mnt/bitstream/{args.fwslot}')
     else:
-        hsk.send(HskPacket(surf[j][1], 'eRestart', data=[0]))
+        hsk.send(HskPacket(surf, 'eRestart', data=[0]))
