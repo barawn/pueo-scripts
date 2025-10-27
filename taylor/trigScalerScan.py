@@ -73,14 +73,16 @@ with open(args.filename, "w") as outfile:
                     subthreshold_rate = (rate & 0xFFFF0000) >> 16
                     beam_values[idx].append(trigger_rate)
             for idx in range(nbeams):
-                beam_avg = sum(beam_values[idx])/float(len(beam_values[idx]))
+                beam_avg = float(sum(beam_values[idx]))/float(len(beam_values[idx]))
                 outfile.write(f"beam, {args.tio}, {slot}, {idx}, {threshold_value}, {beam_avg}\n")
-                print(f"TIO:{args.tio:2d}, SLOT:{slot:2d}, BEAM:{idx:2d}, THRESH:{threshold_value:6d}, SCALER:{beam_avg:6f}")
+                print(f"TIO:{args.tio:2d}, SLOT:{slot:2d}, BEAM:{idx:2f}, THRESH:{threshold_value:6d}, SCALER:{beam_avg:6f}")
 
             trig_values = []
             for i in range(args.avg):
                 time.sleep(2) # time to accumulate
-                trig_values.append(dev.trig.scaler.read((24+slot)* 4))# Slot 5 # was 28
+                #trig_values.append(dev.trig.scaler.read((24+slot)* 4))# Slot 5 # was 28
+                # for spare
+                trig_values.append(dev.trig.scaler.read((0+slot)* 4))# Slot 5 # was 28
             trig_avg=sum(trig_values)/float(len(trig_values))
             outfile.write(f"trig, {args.tio}, {slot}, {threshold_value}, {trig_avg}\n")
             print(f"\nTIO:{args.tio:2d}, SLOT:{slot:2d}, THRESHOLD:{threshold_value:10d}, FULL_SCALER:{trig_avg:6f}\n")
