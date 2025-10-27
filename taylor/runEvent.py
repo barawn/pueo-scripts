@@ -26,4 +26,5 @@ for i in range(0,(args.stop)):
     f.close()
 
 es.close()
-dev.trig.runcmd(dev.trig.RUNCMD_STOP) 
+dev.trig.runcmd(dev.trig.RUNCMD_STOP)
+print('Done!') 
