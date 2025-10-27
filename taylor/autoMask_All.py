@@ -11,7 +11,13 @@ import argparse
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--trigrate", type=int)
+parser.add_argument("--removesurf",  type=str)
 args = parser.parse_args()
+
+removed = list(map(int,args.removesurf.split(',')))
+
+for j in range(len(removed)): 
+    premask |= (1 << removed[j])
 
 dev = PueoTURF()
 # need to sample which are masked off already? 
@@ -28,8 +34,12 @@ for i in range(len(surfs)):
         print(f'Masking off!')
         maskoff.append(i)
 
-for j in range(len(maskoff)): 
+for j in range(len(maskoff)):
     premask |= (1 << maskoff[j])
+
+for k in range(27): 
+    if k not in maskoff and k not in removed: 
+        premask &= ~(1 << 7)
 
 print(f'After: {bin(premask)}') 
 
