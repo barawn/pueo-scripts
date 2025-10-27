@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 dev = PueoTURF()
 # need to sample which are masked off already? 
-premask = bin(dev.trig.mask())
+premask = (dev.trig.mask)
 
 print(f'Before: {bin(premask)}')
 
@@ -29,7 +29,7 @@ for i in range(len(surfs)):
         maskoff.append(i)
 
 for j in range(len(maskoff)): 
-    premask &= ~(1 << maskoff[j])
+    premask |= (1 << maskoff[j])
 
 print(f'After: {bin(premask)}') 
 
