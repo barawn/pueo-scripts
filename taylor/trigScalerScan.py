@@ -43,7 +43,6 @@ with open(args.filename, "w") as outfile:
         for slot in slotList:
             print(f"-----SLOT {slot}-----")
             surf = surfs[slot]
-            # Mask all but two beams
             surf.levelone.write(0x2008,0x00000)#0xFFFFC)
             surf.levelone.write(0x200c,0x80000000)#0x8FFFFFFF)
             print(f"Masks are {surf.levelone.read(0x2008):X} and {surf.levelone.read(0x200C):X}")

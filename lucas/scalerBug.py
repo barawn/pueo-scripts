@@ -41,6 +41,8 @@ with open("scaler_debug.txt","w") as f:
         time.sleep(0.5)
         surf.levelone.write(0x2008,0x00000000)
         surf.levelone.write(0x200c,0x80000000)
+        surf.levelone.write(0x1800, 2)# Apply new thresholds 
+
         f.write("Unmasked all beams.\n")
         f.write(f"Masks set to {surf.levelone.read(0x200c):08X} {surf.levelone.read(0x2008):08X}\n")    
         time.sleep(5)
