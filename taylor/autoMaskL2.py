@@ -38,7 +38,7 @@ if l2rate >= args.trigrate:
     maxL1Trig = l1surfs[maxIndex]
     for i in adjIndices:
         print(f"SURF Value {l1surfs[i]}")
-    print(f'Max L1 trigger found, gotta mask that off')
+    print(f'Max L1 trigger found: {maxL1Trig}, gotta mask that off')
     maskoff.append(maxIndex)
 
     
