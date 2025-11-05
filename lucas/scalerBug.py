@@ -13,7 +13,7 @@ import time
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--tio", type=int, default=0)
-parser.add_argument("--slots", type=str, default="6")
+parser.add_argument("--slots", type=str, default="5")
 
 args = parser.parse_args()
 
@@ -23,7 +23,7 @@ dev = PueoTURF(None, 'Ethernet')
 
 tio = PueoTURFIO((dev, args.tio), 'TURFGTP')
 
-def scaler_monitor(dev, period=1, n=10):
+def scaler_monitor(dev, period=1, n=3):
     for i in range(n):
         time.sleep(period)
         print(f"Scaler reads {dev.trig.scaler.scaler(4*slot)}")    

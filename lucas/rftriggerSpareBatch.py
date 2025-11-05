@@ -15,6 +15,7 @@ parser.add_argument('--stop', type=int)
 parser.add_argument('--filename')
 args = parser.parse_args()
 
+events = []
 
 dev = PueoTURF()
 es = EventServer()
@@ -42,9 +43,10 @@ dev.evstatus()
 
 for i in range(args.stop): 
     e = es.event_receive()
-    f = open(f'{args.filename}_{i}.pkl', 'wb')
-    pickle.dump(e,f)
-    f.close()
+    events.append(e)
+f = open(f'{args.filename}.pkl', 'wb')
+pickle.dump(events,f)
+f.close()
 
 for i in range(449):
     es.es.recv(1032)

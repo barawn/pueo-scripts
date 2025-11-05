@@ -10,3 +10,5 @@ import time
 dev = PueoTURF()
 
 print(dev.trig.scaler.scalers(verbose = True))
+print("L2:")
+print(dev.trig.scaler.leveltwos(verbose=True))

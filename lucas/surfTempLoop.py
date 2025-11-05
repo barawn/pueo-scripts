@@ -10,3 +10,5 @@ while True:
     print(hsk.receive().pretty())
     hsk.send(HskPacket(0xa3,'eTemps')); 
     print(hsk.receive().pretty())
+    hsk.send(HskPacket(0x60,'eTemps')); 
+    print(hsk.receive().pretty())
