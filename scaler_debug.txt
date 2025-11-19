@@ -1,0 +1,29 @@
+Unmasked all beams.
+Masks set to 00000000 00000000
+Scaler reads 0
+Masking only lower mask
+Masks set to 00000000 0003FFFF
+Scaler reads 0
+
+Masking upper mask, lower mask unchanged
+Masks set to 3FFFFFFF 0003FFFF
+Scaler reads 0
+
+Masking lower mask (again), upper mask unchanged
+Masks set to 3FFFFFFF 0003FFFF
+Scaler reads 0
+
+Masking upper mask (again), upper mask unchanged
+Masks set to 3FFFFFFF 0003FFFF
+Scaler reads 0
+
+UNMasking only lower mask
+Masks set to 3FFFFFFF 00000000
+Scaler reads 0
+
+UNMasking upper mask, lower mask unchanged
+Masks set to 00000000 00000000
+Scaler reads 0
+
+UNMasking lower mask (again), upper mask unchanged
+Masks set to 00000000 00000000

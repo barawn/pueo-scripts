@@ -21,9 +21,12 @@ eventStartup((dev, es), args.mask)
 for i in range(0,(args.stop)): 
     dev.trig.soft_trig()
     e = es.event_receive()
-    f = open(args.filename+'{}.pkl'.format(i), 'wb')
-    pickle.dump(e,f)
-    f.close()
+    with open(args.filename+'{}.pkl'.format(i), 'wb') as f:
+        print(e)
+        print(args.filename+'{}.pkl'.format(i))
+        pickle.dump(e,f)
+    #f.close()
 
 es.close()
-dev.trig.runcmd(dev.trig.RUNCMD_STOP) 
+dev.trig.runcmd(dev.trig.RUNCMD_STOP)
+print('Done!') 

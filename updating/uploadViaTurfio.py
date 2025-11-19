@@ -39,10 +39,9 @@ print(f'Sending {args.filename} : MD5 {filemd5(args.filename)}')
 # I NEED:
 # TURFIO SLOT #, HSK ADDRESS
 # SURF SLOT #[s], HSK ADDRESS[es]
-tios = (0, 0x40)
+tios = (0, 0x48)
 
-surfs = [ (0, 0x81),
-          (5, 0xA3) ]
+surfs = [ (2, 0x86) ]
 
 # get the housekeeping path
 hsk = HskEthernet()
@@ -78,7 +77,7 @@ except Exception as e:
     print("caught an exception during upload??")
     print(repr(e))
     
-time.sleep(0.1)
+time.sleep(10)
 for s in surfList:
     hsk.send(HskPacket(surfAddrDict[s], 'eJournal', data="-u pyfwupd -o cat -n 1"))
     pkt = hsk.receive()
