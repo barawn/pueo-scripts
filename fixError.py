@@ -99,7 +99,7 @@ def handle_error(code, tio=False, slot=False):
         print(f'Sending ePMBus to power cycle SURF (TIO {hex(selectedTurfio)}: RACK Addr {hex(selectedPMBusAddr)})')
         hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
         pkt = hsk.receive()
-        time.sleep(25) # 20s worked lets try less?
+        time.sleep(30) # 20s worked lets try less?
         
 
     elif code == 51: 
@@ -117,7 +117,7 @@ def handle_error(code, tio=False, slot=False):
         pkt = hsk.receive()
         time.sleep(1) 
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
-        time.sleep(5)
+        time.sleep(10)
 
     elif code==100: 
         # from Payton's startup script (thank youuuuu)

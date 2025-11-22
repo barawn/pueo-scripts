@@ -7,8 +7,7 @@ import time
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--tio", type=int)
-parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
+parser.add_argument("--tio", type=str)
 parser.add_argument('--fwslot', type=int, default=0,choices=[0,1,2])
 args = parser.parse_args()
 
@@ -55,10 +54,12 @@ elif args.tio == 'spare':
 hsk = HskEthernet()
 hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
 pkt = hsk.receive()
+print('I am here')
 for s in surfs:
+    print('WHY')
     hsk.send(HskPacket(s[1], 'eFwNext', data=f"/lib/firmware/{args.fwslot}"))
     pkt = hsk.receive()
     hsk.send(HskPacket(s[1], 'eRestart', data=[0])) 
-    pkt = hsk.receive()
+    print(f'SURF{s} Done!')
 time.sleep(5)
 print(f'Firmware loaded from /mnt/bitstreams/{args.fwslot}')

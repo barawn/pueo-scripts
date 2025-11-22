@@ -3,7 +3,7 @@ import time
 import csv
 from datetime import datetime
 
-filename = 'v0r6p30_powertest2.csv'
+filename = 'v0r6p32_powertest4.csv'
 stoptime = 600
 headers = [ 'tio','time', 'tfiov', 'sf0vin','sf0vout','sf1vin','sf1vout','sf2vin',
            'sf2vout','sf3vin','sf3vout','sf4vin','sf4vout','sf5vin','sf5vout',
