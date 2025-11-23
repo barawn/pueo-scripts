@@ -20,11 +20,12 @@ dev = PueoTURF()
 es = EventServer()
 
 # dev.trig.mask = 67772159
-dev.trig.mask = 201326591 # for just surf 26
+#dev.trig.mask = 201326591 # for just surf 26
+dev.trig.mask = 0
 
 es.open()
 dev.trig.runcmd(dev.trig.RUNCMD_RESET)
-time.sleep(25) 
+#time.sleep(25) 
 dev.evstatus()
 
 for i in range(args.stop): 

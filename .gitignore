@@ -6,6 +6,7 @@ LF_tests/
 *.gz
 *.xz
 *.csv
+*.swp
 journal/output
 metal_output/
 output_files/

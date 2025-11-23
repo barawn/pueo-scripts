@@ -8,6 +8,12 @@
 # I am not ashamed (...yes i am)
 #                                      - Taylor 
 
+# TO DO ON HERE: 
+# [] Timeout --> maybe add a counter that maxes out after 5 minutes? 
+# [] Restart Startup --> SURF Slot 5 is being real wonk. Let's fix that 
+# [] TURF someone stealing 
+
+
 
 # switch to directory this is called from
 cd "$(dirname "$0")"
@@ -78,18 +84,18 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     success=false
     errorCode=0
     pmbustry=0
-    
-    
+  
+ 
 
     # while retries not exhausted
     while [ $retrycount -le $retry ]; do
         output=$(eval "$line" 2>&1)
         status=$?
-        
+       
         if [[ " $@ " =~ " --verbose " ]]; then
             echo "$output"
         fi
-        
+       
         # ugh i could reduce this to one line if i really wanted huh...
         if echo "$output" | grep -q "GTP link 0"; then
             echo -e "\033[1;31mDetected GTP link 0 error.\033[0m"
@@ -102,8 +108,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             errorCode=3
         elif echo "$output" | grep -q "GTP link 3"; then
             echo -e "\033[1;31mDetected GTP link 3 error.\033[0m"
-            errorCode=4
-            
+            errorCode=4          
         elif echo "$output" | grep -q "TURFIO bridge error"; then
             echo -e "\033[1;31mDetected TURFIO bridge error.\033[0m"
             errorCode=100
@@ -125,6 +130,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo "DAQ set-up completed with $errorCount errors"
             echo "Elapsed time: $elapsed_formatted"s
             exit 0
+        elif echo "$output" | grep -q "OSError: [Errno 98] Address already in use"; then
+            echo -e "\033[1;31mSomeone is using the TURF. Kick them off then try again\033[0m"
+            exit 0 
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
             echo -e "\033[1;31mSURF not booted.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
@@ -225,16 +233,13 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
                 # Restart the script
                 exec "$0"
-                
-                
             else
                 echo -e "\033[1;33m Restarting script from line $line_num...\033[0m"
                 ((retrycount++))
             fi
             ((errorCount++))
-            
         fi
-    done 
+    done
     if [ "$success" = true ]; then
         echo $line_num > "$progress_file"
     else
@@ -251,11 +256,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         ((errorCount++))
         echo "$errorCount" > error_state.txt
         echo "$startTime" > time_state.txt
-
         exec "$0"
-        
     fi
-    
+  
 
 done < updatedDAQstart.sh
 # Calculate the elapsed time

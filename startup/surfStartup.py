@@ -162,7 +162,7 @@ if not args.auto:
         loopno = 0
         # it should take a few seconds because it needs to program its clocks
         while not(tio[tn].surfturf.train_in_req & (1<<sn)) and loopno < TRAIN_WAIT_LOOPS:
-            time.sleep(0.1)
+            time.sleep(5)
             loopno = loopno + 1
         if loopno == TRAIN_WAIT_LOOPS:
             print(color.BOLD + color.RED +
