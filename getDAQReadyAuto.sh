@@ -9,9 +9,9 @@
 #                                      - Taylor 
 
 # TO DO ON HERE: 
-# [] Timeout --> maybe add a counter that maxes out after 5 minutes? 
-# [] Restart Startup --> SURF Slot 5 is being real wonk. Let's fix that 
-# [] TURF someone stealing 
+# []  Timeout --> maybe add a counter that maxes out after 5 minutes? 
+# []  Restart Startup --> SURF Slot 5 is being real wonk. Let's fix that 
+# [x] TURF someone stealing 
 
 
 
@@ -51,7 +51,7 @@ else
 fi
 
 
-# Restart flag because the progress file holds info 
+# Restart flag because the progress file holds info
 # This actually might be a little silly to do to be honest
 if [ -f "$progress_file" ]; then
     rm -f "$progress_file"
@@ -84,18 +84,14 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     success=false
     errorCode=0
     pmbustry=0
-  
- 
 
     # while retries not exhausted
     while [ $retrycount -le $retry ]; do
         output=$(eval "$line" 2>&1)
         status=$?
-       
         if [[ " $@ " =~ " --verbose " ]]; then
             echo "$output"
         fi
-       
         # ugh i could reduce this to one line if i really wanted huh...
         if echo "$output" | grep -q "GTP link 0"; then
             echo -e "\033[1;31mDetected GTP link 0 error.\033[0m"
@@ -108,7 +104,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             errorCode=3
         elif echo "$output" | grep -q "GTP link 3"; then
             echo -e "\033[1;31mDetected GTP link 3 error.\033[0m"
-            errorCode=4          
+            errorCode=4
         elif echo "$output" | grep -q "TURFIO bridge error"; then
             echo -e "\033[1;31mDetected TURFIO bridge error.\033[0m"
             errorCode=100
@@ -143,14 +139,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             else
                 errorCode=51
             fi
-
         elif echo "$output" | grep -zq "SURF#[0-9]\+ on TURFIO#[0-9]\+ did not become ready!"; then
             # eRestart
             echo -e "\033[1;31mSURF never requested in training\033[0m"
             sn=$(echo "$output" | grep -oP 'SURF#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'TURFIO#\K\d+' | tail -n 1)
-            errorCode=51 
-
+            errorCode=51
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ never requested in training!"; then 
             # eRestart
             echo -e "\033[1;31mSURF never requested in training c.\033[0m"
@@ -163,20 +157,20 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
             errorCode=51
-        elif echo "$output" | grep -zq "SURF SLOT#[0-9]\+ on TURFIO PORT#[0-9]\+ failed to respond"; then 
+        elif echo "$output" | grep -zq "SURF SLOT#[0-9]\+ on TURFIO PORT#[0-9]\+ failed to respond"; then
             # ePMBus
             echo -e "\033[1;31mSURF did not boot properly \033[0m"
             sn=$(echo "$output" | grep -oP 'SLOT#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
             errorCode=50
-        elif echo "$output" | grep -zq "TURFIO sync complete"; then 
+        elif echo "$output" | grep -zq "TURFIO sync complete"; then
             echo -e "\033[1;32mTURFIOs successfully clocking \033[0m"
             success=true
             break
         elif echo "$output" | grep -zq "A SURF failed to MTS align"; then
             echo -e "\033[1;31mSURF failed MTS alignment\033[0m"
             errorCode=100
-        elif echo "$output" | grep -zq "All trained SURFs are now live"; then 
+        elif echo "$output" | grep -zq "All trained SURFs are now live"; then
             echo -e "\033[1;32mSURFs successfully clocking \033[0m"
             success=true
             break
@@ -184,7 +178,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo -e "\033[1;32mAll SURFs booted properly \033[0m"
             success=true
             break
-        elif echo "$output" | grep -zq "All SURFs aligned to 120"; then 
+        elif echo "$output" | grep -zq "All SURFs aligned to 120"; then
             echo -e "\033[1;32mMTS aligned to 120 \033[0m"
             success=true
             break
@@ -196,7 +190,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo -e "\033[1;32mRF Trigger clocks enabled \033[0m"
             success=true
             break
-        elif echo "$output" | grep -zq "Yippee, threshold [0-9]\+ and subthreshold [0-9]\+"; then 
+        elif echo "$output" | grep -zq "Yippee, threshold [0-9]\+ and subthreshold [0-9]\+"; then
             echo -e "\033[1;32mBaseline thresholds set and beams unmasked \033[0m"
             success=true
             break
@@ -204,9 +198,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             errorCode=100
         fi
 
-
         if [ $errorCode -ne 0 ]; then
-
             cmd="python3 -c 'from fixError import handle_error; handle_error($errorCode"
 
             # Add tio if it's set
