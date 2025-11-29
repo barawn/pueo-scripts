@@ -54,7 +54,8 @@ hsk = HskEthernet()
 hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
 pkt = hsk.receive()
 for s in surfs:
-    hsk.send(HskPacket(s[1], 'eSleep', data = [0x85]))
+    hsk.send(HskPacket(s[1], 'eSleep', data = [0x82]))
     pkt = hsk.receive()
 
 hsk.send(HskPacket(tios[1], 'eEnable', [0x40, 0x00])); pkt = hsk.receive()
+print('All SURF processors off!') 
