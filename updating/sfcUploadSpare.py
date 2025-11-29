@@ -41,7 +41,7 @@ print(f'Sending {args.filename} : MD5 {filemd5(args.filename)}')
 # SURF SLOT #[s], HSK ADDRESS[es]
 tios = (0, 0x48)
 
-surfs = [ (2, 0x86) ]
+surfs = [ (3, 0xa3), (4,0xa4) ]
 
 # get the housekeeping path
 hsk = HskEthernet()
@@ -79,9 +79,10 @@ except Exception as e:
     
 time.sleep(10)
 for s in surfList:
-    hsk.send(HskPacket(surfAddrDict[s], 'eJournal', data="-u pyfwupd -o cat -n 1"))
+    hsk.send(HskPacket(surfAddrDict[s], 'eJournal', data="-u pyfwupd -o cat -n 1000"))
     pkt = hsk.receive()
     print("eJournal:", pkt.pretty(asString=True))
+    print("***")
     
 for s in surfList:
     hsk.send(HskPacket(surfAddrDict[s], 'eDownloadMode', data=[0]))
