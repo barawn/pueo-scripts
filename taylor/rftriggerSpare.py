@@ -21,13 +21,13 @@ es = EventServer()
 
 tio1 = PueoTURFIO((dev, 0), 'TURFGTP')
 
-surf1 = PueoSURF((tio1, 4), 'TURFIO')
+surf1 = PueoSURF((tio1, 3), 'TURFIO')
 
 if surf1.trig_clock_en != 1 : 
     print("Yo, the RF stuff ain't set up right")
     sys.exit(1) 
 
-surf2 = PueoSURF((tio1, 5), 'TURFIO')
+surf2 = PueoSURF((tio1, 4), 'TURFIO')
 
 if surf2.trig_clock_en != 1 : 
     print("Yo, the RF stuff ain't set up right")
