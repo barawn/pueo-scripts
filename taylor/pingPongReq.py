@@ -1,8 +1,3 @@
-
-"""from HskSerial import HskEthernet, HskPacket
-import time
-"""
-# Stolen from Cosmin!!! 
 #! /usr/bin/env python3
 
 import time
@@ -13,8 +8,6 @@ import signal
 import argparse
 
 from HskSerial import HskEthernet, HskPacket
-
-hsk = HskEthernet()
 
 five_oclock = False
 def on_timeout(signum,frame):
