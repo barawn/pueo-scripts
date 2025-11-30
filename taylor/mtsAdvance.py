@@ -64,7 +64,7 @@ for s in slotList:
     hsk.send(HskPacket(surfs[s][1], 'eStartState', data=[19])) 
     pkt = hsk.receive()
 time.sleep(5)
-for s in surfs:
+for s in slotList:
     hsk.send(HskPacket(surfs[s][1], 'eStartState'))
     pkt = hsk.receive()
     print(pkt.pretty())
