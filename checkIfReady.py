@@ -55,15 +55,25 @@ elif args.tio == 't':
 dev = PueoTURF()
  
 tio = PueoTURFIO((dev, tios[0]), 'TURFGTP')
+rxClockOff = 0
 
 for s in slotList:
     val = (surfs[s][0])
     try:
         surf = PueoSURF((tio, val), 'TURFIO')
     except: 
-        print('RX clock off')
-        sys.exit()
+        rxClockOff += 1
     
+if rxClockOff == len(surfs):
+    print('RX clock off on all SURFs')
+    sys.exit()
+elif rxClockOff != len(surfs) and rxClockOff != 0: 
+    print('RX clock off on only a few SURFs. Restart recommended!')
+    sys.exit
+    
+
+for s in slotList:
+    val = (surfs[s][0])
     lolval = surf.lol 
     rftrig = surf.trig_clock_en
     if lolval == 1 or rftrig == 0: 
