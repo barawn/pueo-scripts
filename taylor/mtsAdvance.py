@@ -8,9 +8,11 @@ import sys
 parser = argparse.ArgumentParser()
 parser.add_argument("--tio", type=str, default="0,1,2,3", 
         help="comma-separated list of TURFIOs to initialize")
-
+parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
 
 args = parser.parse_args()
+
+slotList = list(map(int,args.slots.split(',')))
 
 if args.tio == '0':
     tios = (0, 0x58)
@@ -55,14 +57,15 @@ hsk = HskEthernet()
 hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
 pkt = hsk.receive()
 print('This takes 5 seconds to run! Be patient!')
-for s in surfs:
-    hsk.send(HskPacket(s[1], 'eFwParams', data = b'\x01\x00\x00\x00\x78\x00'))
+for s in slotList:
+
+    hsk.send(HskPacket(surfs[s][1], 'eFwParams', data = b'\x01\x00\x00\x00\x78\x00'))
     pkt = hsk.receive()
-    hsk.send(HskPacket(s[1], 'eStartState', data=[19])) 
+    hsk.send(HskPacket(surfs[s][1], 'eStartState', data=[19])) 
     pkt = hsk.receive()
 time.sleep(5)
 for s in surfs:
-    hsk.send(HskPacket(s[1], 'eStartState'))
+    hsk.send(HskPacket(surfs[s][1], 'eStartState'))
     pkt = hsk.receive()
     print(pkt.pretty())
     val = vars(pkt)['data']
