@@ -70,7 +70,7 @@ if rxClockOff == len(surfs):
     sys.exit()
 elif rxClockOff != len(surfs) and rxClockOff != 0: 
     print('RX clock off on only a few SURFs. Restart recommended!')
-    sys.exit
+    sys.exit()
     
 
 for s in slotList:
