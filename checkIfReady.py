@@ -62,6 +62,7 @@ for s in slotList:
     try:
         surf = PueoSURF((tio, val), 'TURFIO')
     except: 
+        print('im here')
         rxClockOff += 1
     
 if rxClockOff == len(surfs):
