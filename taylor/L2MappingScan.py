@@ -1,17 +1,18 @@
 from pueo.turf import PueoTURF
 from pueo.turfio import PueoTURFIO
 from pueo.surf import PueoSURF
+from EventTester import EventServer
 import time
 import csv
 
 
-filename = 'hello.csv'
+filename = 'thresholdScanL2take2.csv'
 
-highthreshold = 1200
-highsub = 1000
+highthreshold = 15000
+highsub = 10000
 
-lowthreshold = 800
-lowsub = 200
+lowthreshold = 5000
+lowsub = 1000
 
 headers = ['tio', 'slot0', 'slot1', 'slot2', 'slot3', 'slot4', 'slot5','tio0slot0', 'tio0slot1', 
            'tio0slot2', 'tio0slot3', 'tio0slot4', 'tio0slot5', 'LF',
@@ -22,13 +23,16 @@ headers = ['tio', 'slot0', 'slot1', 'slot2', 'slot3', 'slot4', 'slot5','tio0slot
            'VPol1','VPol2','VPol3','VPol4','VPol5','VPol6','VPol7','VPol8','VPol9','VPol10','VPol11']
 
 dev = PueoTURF(None, 'Ethernet')
-
+dev.trig.rf_trig_en = 0 
+es = EventServer()
+es.open()
+dev.trig.runcmd(dev.trig.RUNCMD_RESET)
 def thresholds(surf,threshold,subthreshold): 
     for i in range(48): 
         surf.levelone.write(0x800 + i*4, threshold) #
         surf.levelone.write(0xA00 + i*4, subthreshold) #
         surf.levelone.write(0x1800, 2)# Apply new thresholds 
-        time.sleep(0.1)
+    time.sleep(0.1)
 
 def thresholdCheck(dev): 
     thresholdVals = []
@@ -45,7 +49,7 @@ def thresholdCheck(dev):
             thresholdVals.append(0)
     return thresholdVals
 
-def surfThresholdSet(surf0, surf1): 
+def surfThresholdSet(surf0, surf1,lowthreshold,lowsub,highthreshold,highsub): 
     thresholds(surf0, lowthreshold, lowsub)
     thresholds(surf1, lowthreshold, lowsub)
     time.sleep(5)
@@ -53,6 +57,7 @@ def surfThresholdSet(surf0, surf1):
     L1trigs = dev.trig.scaler.scalers()
     vals = thresholdCheck(dev)
     thresholds(surf0, highthreshold, highsub)
+    time.sleep(3)
     return L1trigs, L2trigs, vals
 
 
@@ -74,16 +79,18 @@ TIO 2:  0   1   2   3   4   5
 """
 with open(filename, 'w', newline='') as csvfile:
     csv_writer = csv.writer(csvfile)
+    csv_writer.writerow(headers)
     for t in range(4):
         tio = PueoTURFIO((dev,t), 'TURFGTP')
         if t == 0: 
-            for s in range(5,-1,-1): 
+            for s in range(6,-1,-1): 
                 surf0 = PueoSURF((tio, s), 'TURFIO')
                 if s != 0: 
-                    surf1 = PueoSURF((tio, s+1), 'TURFIO')
+                    surf1 = PueoSURF((tio, s-1), 'TURFIO')
                 else: # if its the last SURF in the RACK, goes to next tio
-                    surf1 = PueoSURF((1, 0), 'TURFIO')
-                L1trigs, L2trigs, vals = surfThresholdSet(surf0,surf1)
+                    tio1 = PueoTURFIO((dev, 1), 'TURFGTP') 
+                    surf1 = PueoSURF((tio1, 0), 'TURFIO')
+                L1trigs, L2trigs, vals = surfThresholdSet(surf0,surf1,lowthreshold,lowsub,highthreshold,highsub)
                 new_data = [t, *vals, *L1trigs, *L2trigs]
                 csv_writer.writerow(new_data)
         elif t == 1: 
@@ -93,8 +100,9 @@ with open(filename, 'w', newline='') as csvfile:
                 if s != 5: 
                     surf1 = PueoSURF((tio, s+1), 'TURFIO')
                 else: # if its the last SURF in the RACK, goes to previous tio
-                    surf1 = PueoSURF((0, 0), 'TURFIO')
-                L1trigs, L2trigs, vals = surfThresholdSet(surf0,surf1)
+                    tio1 = PueoTURFIO((dev, 0), 'TURFGTP') 
+                    surf1 = PueoSURF((tio1, 0), 'TURFIO')
+                L1trigs, L2trigs, vals = surfThresholdSet(surf0,surf1,lowthreshold,lowsub,highthreshold,highsub)
                 new_data = [t, *vals, *L1trigs, *L2trigs]
                 csv_writer.writerow(new_data)
         elif t+1 == 3: 
@@ -104,17 +112,22 @@ with open(filename, 'w', newline='') as csvfile:
                 if s != 5: 
                     surf1 = PueoSURF((tio, s+1), 'TURFIO')
                 else: # if its the last SURF in the RACK, goes to previous tio
-                    surf1 = PueoSURF((3, 0), 'TURFIO')
-                L1trigs, L2trigs, vals = surfThresholdSet(surf0,surf1)
+                    tio1 = PueoTURFIO((dev,3), 'TURFGTP') 
+                    surf1 = PueoSURF((tio1, 0), 'TURFIO')
+                L1trigs, L2trigs, vals = surfThresholdSet(surf0,surf1,lowthreshold,lowsub,highthreshold,highsub)
                 new_data = [t, *vals, *L1trigs, *L2trigs]
                 csv_writer.writerow(new_data)
         else: 
             for s in range(5,-1,-1): 
                 surf0 = PueoSURF((tio, s), 'TURFIO')
                 if s != 0: 
-                    surf1 = PueoSURF((tio, s+1), 'TURFIO')
+                    surf1 = PueoSURF((tio, s-1), 'TURFIO')
                 else: # if its the last SURF in the RACK, goes to next tio
-                    surf1 = PueoSURF((2, 5), 'TURFIO')
-                L1trigs, L2trigs, vals = surfThresholdSet(surf0,surf1)
+                    tio1 = PueoTURFIO((dev,2), 'TURFGTP') 
+                    surf1 = PueoSURF((tio1, 5), 'TURFIO')
+                L1trigs, L2trigs, vals = surfThresholdSet(surf0,surf1,lowthreshold,lowsub,highthreshold,highsub)
                 new_data = [t, *vals, *L1trigs, *L2trigs]
                 csv_writer.writerow(new_data)
+
+es.close()
+dev.trig.runcmd(dev.trig.RUNCMD_STOP) 
