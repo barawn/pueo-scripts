@@ -103,7 +103,7 @@ for s in slotList:
         hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
         pkt = hsk.receive()
     if hsk_harder(val, 'ePingPong') is None:
-        print(f"SURF SLOT#{surfs[s][0]} on TURFIO PORT#{tios[1]} failed to respond!")
+        print(f"SURF SLOT#{surfs[s][0]} on TURFIO PORT#{tios[0]} failed to respond!")
         sys.exit()
 
 print('All SURFs booted and ready')
