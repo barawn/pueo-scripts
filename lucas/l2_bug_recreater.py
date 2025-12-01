@@ -107,10 +107,6 @@ for i in range(449):
 
 es.close()
 dev.trig.runcmd(dev.trig.RUNCMD_STOP)
-outfile.write("turfio mask, frag size, frag source mask,
-        pps en, pps offset, rf offset, rf en, lf mask, 
-        photo en, photo prescale, mask, thresholds, 
-        subthreshold\n")
 print('REGISTER READ TIME, YO!')
 print(f'TURFIO MASK: {dev.event.mask}')
 print(f'FRAGMENT SIZE: {es.max_fragment}')
@@ -127,9 +123,16 @@ print(f'MASK AGAIN: {dev.trig.mask}')
 print(f'THRESHOLDS: {surf.levelone.read(0x800)}')
 print(f'SUBTHRESHOLDS: {surf.levelone.read(0xA00)}') 
 print(f'RUNDLY (for fun!): {dev.trig.rundly}')
-outfile.write("dev.event.mask, es.max_fragment, es.max_mask,
-        dev.trig.pps_trig_enable, dev.trig.pps_offset,
-        dev.trig.offset, dev.trig.rf_trig_en, 
-        dev.trig.mask, dev.trig.photo_en, 
-        dev.trig.photo_prescale, dev.trig.mask, 
-        surf.levelone.read(0x800), surf.levelone.read(0xA00)\n")
+outfile.write(f"TURFIO MASK: {dev.event.mask}\n
+            FRAGMENT SIZE: {es.max_fragment}\n
+            FRAGMENT SOURCE MASK: {es.max_mask}\n 
+            PPS ENABLE: {dev.trig.pps_trig_enable}\n
+            PPS OFFSET: {dev.trig.pps_offset}\n
+            RF OFFSET: {dev.trig.offset}\n
+            RF ENABLE: {dev.trig.rf_trig_en}\n
+            LF MASKING: {dev.trig.mask}\n
+            PHOTOSHUTTER ENABLE: {dev.trig.photo_en}\n
+            PHOTOSHUTTER PRESCALE: {dev.trig.photo_prescale}\n
+            MASK AGAIN: {dev.trig.mask}\n
+            THRESHOLDS: {surf.levelone.read(0x800)}\n
+            SUBTHRESHOLDS: {surf.levelone.read(0xA00)}\n")
