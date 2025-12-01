@@ -8,6 +8,7 @@ LF_tests/
 *.csv
 *.swp
 *.dat
+*.lock
 journal/output
 metal_output/
 output_files/

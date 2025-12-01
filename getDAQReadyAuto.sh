@@ -84,6 +84,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     success=false
     errorCode=0
     pmbustry=0
+    errorState=0
 
     # while retries not exhausted
     while [ $retrycount -le $retry ]; do
@@ -92,7 +93,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         if [[ " $@ " =~ " --verbose " ]]; then
             echo "$output"
         fi
-        # ugh i could reduce this to one line if i really wanted huh...
+
+        # TURF GTP Errors 
         if echo "$output" | grep -q "GTP link 0"; then
             echo -e "\033[1;31mDetected GTP link 0 error.\033[0m"
             errorCode=1
@@ -105,16 +107,29 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         elif echo "$output" | grep -q "GTP link 3"; then
             echo -e "\033[1;31mDetected GTP link 3 error.\033[0m"
             errorCode=4
+        
+        # TURFIO Bridge Errors
         elif echo "$output" | grep -q "TURFIO bridge error"; then
             echo -e "\033[1;31mDetected TURFIO bridge error.\033[0m"
             errorCode=100
-        elif echo "$output" | grep -q "RX clock off"; then
+
+        # No clock align attempt
+        elif echo "$output" | grep -q "RX clock off on all SURFs"; then
             echo -e "\033[1;31mNo clock alignment attempt detected.\033[0m"
             success=true
             break
+        
+        # Clock slip
         elif echo "$output" | grep -q "Clock not on correctly! Restart recommended"; then
             echo -e "\033[1;31mClock slip detected. TURF reboot required.\033[0m"
             errorCode=100
+        
+        # Only a partially finished clocking scheme
+        elif echo "$output" | grep -q "RX clock off on only a few SURFs. Restart recommended!"; then
+            echo -e "\033[1;31mOnly a few SURFs have Rx Clock enabled. TURF reboot required.\033[0m"
+            errorCode=100
+        
+        # Clocking is done! 
         elif echo "$output" | grep -q "All trigger clocks are reporting on and no LOL"; then
             echo -e "\033[1;32mNo clock slips detected and system ready for RF data!\033[0m"
             success=true
@@ -126,9 +141,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo "DAQ set-up completed with $errorCount errors"
             echo "Elapsed time: $elapsed_formatted"s
             exit 0
-        elif echo "$output" | grep -q "OSError: [Errno 98] Address already in use"; then
-            echo -e "\033[1;31mSomeone is using the TURF. Kick them off then try again\033[0m"
-            exit 0 
+        
+        # Occasionally happens but tbh idk how to fix it
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
             echo -e "\033[1;31mSURF not booted.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
@@ -139,57 +153,81 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             else
                 errorCode=51
             fi
+        
+        # Needs a restart
         elif echo "$output" | grep -zq "SURF#[0-9]\+ on TURFIO#[0-9]\+ did not become ready!"; then
             # eRestart
             echo -e "\033[1;31mSURF never requested in training\033[0m"
             sn=$(echo "$output" | grep -oP 'SURF#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'TURFIO#\K\d+' | tail -n 1)
             errorCode=51
+        
+        # Needs a restart but *different*
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ never requested in training!"; then 
             # eRestart
             echo -e "\033[1;31mSURF never requested in training c.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
             errorCode=51
+        
+        # Third way a restart is needed 
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ never requested out training!"; then 
             # eRestart
             echo -e "\033[1;31m SURF never requested out training c.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
             errorCode=51
+        
+        # Needs a power cycle
         elif echo "$output" | grep -zq "SURF SLOT#[0-9]\+ on TURFIO PORT#[0-9]\+ failed to respond"; then
             # ePMBus
             echo -e "\033[1;31mSURF did not boot properly \033[0m"
             sn=$(echo "$output" | grep -oP 'SLOT#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
             errorCode=50
+        
+        # TURFIOs done! 
         elif echo "$output" | grep -zq "TURFIO sync complete"; then
             echo -e "\033[1;32mTURFIOs successfully clocking \033[0m"
             success=true
             break
+
+        # MTS failed????
         elif echo "$output" | grep -zq "A SURF failed to MTS align"; then
             echo -e "\033[1;31mSURF failed MTS alignment\033[0m"
             errorCode=100
+        
+        # SURFs done! 
         elif echo "$output" | grep -zq "All trained SURFs are now live"; then
             echo -e "\033[1;32mSURFs successfully clocking \033[0m"
             success=true
             break
+        
+        # SURFs powered on! 
         elif echo "$output" | grep -zq "All SURFs booted and ready"; then
             echo -e "\033[1;32mAll SURFs booted properly \033[0m"
             success=true
             break
+
+        # MTS passed! 
         elif echo "$output" | grep -zq "All SURFs aligned to 120"; then
             echo -e "\033[1;32mMTS aligned to 120 \033[0m"
             success=true
             break
+        
+        # Cal path is done! 
         elif echo "$output" | grep -zq "Cal path frozen successfully"; then
             echo -e "\033[1;32mLF SURF cal path frozen \033[0m"
             success=true
             break
+
+        # Enable trigger clocks
         elif echo "$output" | grep -zq "Okeedokee, clocks started, all beams unmasked!"; then
             echo -e "\033[1;32mRF Trigger clocks enabled \033[0m"
             success=true
             break
+        
+        # Set baseline thresholds, unmask beams
         elif echo "$output" | grep -zq "Yippee, threshold [0-9]\+ and subthreshold [0-9]\+"; then
             echo -e "\033[1;32mBaseline thresholds set and beams unmasked \033[0m"
             success=true

@@ -1,8 +1,3 @@
-
-"""from HskSerial import HskEthernet, HskPacket
-import time
-"""
-# Stolen from Cosmin!!! 
 #! /usr/bin/env python3
 
 import time
@@ -10,10 +5,9 @@ import psycopg2
 import sys
 import os
 import signal
+import argparse
 
 from HskSerial import HskEthernet, HskPacket
-
-hsk = HskEthernet()
 
 five_oclock = False
 def on_timeout(signum,frame):
@@ -52,56 +46,65 @@ def hsk_harder(dest, cmd, data = None, timeout = 1, max_tries = 5):
     return pkt
 
 
-tio0 = (0, 0x58)
-surf0 = [ (0, 0x97),
-        (1, 0xa0),
-        (2, 0x99),
-        (3, 0x8d),
-        (4, 0x9d),
-        (5, 0x94),
-        (6, 0x8a) ]
+parser = argparse.ArgumentParser()
+parser.add_argument("--tio", type=str, default="0,1,2,3", 
+        help="comma-separated list of TURFIOs to initialize")
+parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
 
-tio1 = (1, 0x50)
-surf1 = [ (0, 0x8c),
-        (1, 0x95),
-        (2, 0x9f),
-        (3, 0x9a),
-        (4, 0x87),
-        (5, 0x85), 
-        (6, 0x91)]
+args = parser.parse_args()
 
-tio2 = (2, 0x40)
-surf2 = [ (0, 0x89),
-        (1, 0x88),
-        (2, 0x9e),
-        (3, 0x8b),
-        (4, 0xa1),
-        (5, 0x98)]
+slotList = list(map(int,args.slots.split(',')))
 
-tio3 = (3, 0x48)
-surf3 = [ (0, 0x93),
-        (1, 0x9b),
-        (2, 0x86),
-        (3, 0x8e),
-        (4, 0x90),
-        (5, 0x92) ]
+if args.tio == '0':
+    tios = (0, 0x58)
+    surfs = [ (0, 0x97),
+            (1, 0xa0),
+            (2, 0x99),
+            (3, 0x8d),
+            (4, 0x9d),
+            (5, 0x94),
+            (6, 0x8a) ]
+elif args.tio == '1':
+    tios = (1, 0x50)
+    surfs = [ (0, 0x8c),
+            (1, 0x95),
+            (2, 0x9f),
+            (3, 0x9a),
+            (4, 0x87),
+            (5, 0x85), 
+            (6, 0x91)]
+elif args.tio == '2':
+    tios = (2, 0x40)
+    surfs = [ (0, 0x89),
+            (1, 0x88),
+            (2, 0x9e),
+            (3, 0x8b),
+            (4, 0xa1),
+            (5, 0x98)]
+elif args.tio == '3':
+    tios = (3, 0x48)
+    surfs = [ (0, 0x93),
+            (1, 0x9b),
+            (2, 0x86),
+            (3, 0x8e),
+            (4, 0x90),
+            (5, 0x92) ]
+elif args.tio == 't':
+    tios = (3, 0x48)
+    surfs = [ (0, 0x93) ]
 
-tios = [tio0, tio1, tio2, tio3]
-surfs = [surf0, surf1, surf2, surf3]
 
 
-for i in range(0,4): 
-    tio = tios[i][1]
-    surf = surfs[i]
-    
-    for j in range(len(surf)):
-        val = (surf[j][1])
-        if hsk_harder(val, 'ePingPong', max_tries=1) is None:
-            hsk.send(HskPacket(tio, 'eEnable', data=[0x40, 0x40]))
-            pkt = hsk.receive()
-        if hsk_harder(val, 'ePingPong') is None:
-            print(f"SURF SLOT#{surf[j][0]} on TURFIO PORT#{tios[i][0]} failed to respond!")
-            sys.exit()
+hsk = HskEthernet()
+
+for s in slotList:    
+    val = (surfs[s][1])
+    if hsk_harder(val, 'ePingPong', max_tries=1) is None:
+        hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
+        pkt = hsk.receive()
+    if hsk_harder(val, 'ePingPong') is None:
+        print(f"SURF SLOT#{surfs[s][0]} on TURFIO PORT#{tios[0]} failed to respond!")
+        sys.exit()
 
 print('All SURFs booted and ready')
     
