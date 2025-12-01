@@ -123,16 +123,17 @@ print(f'MASK AGAIN: {dev.trig.mask}')
 print(f'THRESHOLDS: {surf.levelone.read(0x800)}')
 print(f'SUBTHRESHOLDS: {surf.levelone.read(0xA00)}') 
 print(f'RUNDLY (for fun!): {dev.trig.rundly}')
-outfile.write(f"TURFIO MASK: {dev.event.mask}\n
-            FRAGMENT SIZE: {es.max_fragment}\n
-            FRAGMENT SOURCE MASK: {es.max_mask}\n 
-            PPS ENABLE: {dev.trig.pps_trig_enable}\n
-            PPS OFFSET: {dev.trig.pps_offset}\n
-            RF OFFSET: {dev.trig.offset}\n
-            RF ENABLE: {dev.trig.rf_trig_en}\n
-            LF MASKING: {dev.trig.mask}\n
-            PHOTOSHUTTER ENABLE: {dev.trig.photo_en}\n
-            PHOTOSHUTTER PRESCALE: {dev.trig.photo_prescale}\n
-            MASK AGAIN: {dev.trig.mask}\n
-            THRESHOLDS: {surf.levelone.read(0x800)}\n
-            SUBTHRESHOLDS: {surf.levelone.read(0xA00)}\n")
+with open(args.filename, "w") as outfile:
+    outfile.write(f"TURFIO MASK: {dev.event.mask}\n
+                FRAGMENT SIZE: {es.max_fragment}\n
+                FRAGMENT SOURCE MASK: {es.max_mask}\n 
+                PPS ENABLE: {dev.trig.pps_trig_enable}\n
+                PPS OFFSET: {dev.trig.pps_offset}\n
+                RF OFFSET: {dev.trig.offset}\n
+                RF ENABLE: {dev.trig.rf_trig_en}\n
+                LF MASKING: {dev.trig.mask}\n
+                PHOTOSHUTTER ENABLE: {dev.trig.photo_en}\n
+                PHOTOSHUTTER PRESCALE: {dev.trig.photo_prescale}\n
+                MASK AGAIN: {dev.trig.mask}\n
+                THRESHOLDS: {surf.levelone.read(0x800)}\n
+                SUBTHRESHOLDS: {surf.levelone.read(0xA00)}\n")
