@@ -71,36 +71,16 @@ def handle_error(code, tio=False, slot=False):
         hsk.send(HskPacket(0x48, 'eReloadFirmware', data=[0,0,0,0]))
         time.sleep(5)
     elif code == 50: 
-        
-        
         selectedTurfio = (tios[tio])
         selectedPMBusAddr = (pmbusslot[slot])
         
         # stolen from paytons code
-        hsk.send(HskPacket(selectedTurfio, 'eCurrents'))
-        data = hsk.receive().data
-        currents = []
-        """ for iter in range(1, 16, 2):
-            val = (int.from_bytes(data[iter:iter+2], byteorder='big') )
-            
-            I = (val - 2048)*12.51/4.762
-            # lets add tiers :D
-            if I < 0 or I > 1000: 
-                # either hotswap has died or TURFIO is refusing to admit that that is there 
-                hsk.send(HskPacket(selectedTurfio, 'eReloadFirmware', data=[0,0,0,0]))
-                pkt = hsk.receive()
-            elif I > 0 and I < 500 : 
-                # yea that SURF isn't booted right 
-
-                """
-            
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data=[0x40, 0x40]))
         pkt = hsk.receive() # to receive the packet 
         print(f'Sending ePMBus to power cycle SURF (TIO {hex(selectedTurfio)}: RACK Addr {hex(selectedPMBusAddr)})')
         hsk.send(HskPacket(selectedTurfio, 'ePMBus', data = [0x00, selectedPMBusAddr, 0xD9]))
         pkt = hsk.receive()
-        time.sleep(30) # 20s worked lets try less?
-        
+        time.sleep(30) 
 
     elif code == 51: 
         print('Sending eRestart')
@@ -118,7 +98,6 @@ def handle_error(code, tio=False, slot=False):
         time.sleep(1) 
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
         time.sleep(10)
-
     elif code==100: 
         # from Payton's startup script (thank youuuuu)
         

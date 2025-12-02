@@ -55,7 +55,6 @@ hsk = HskEthernet()
 hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
 pkt = hsk.receive()
 for s in surfs:
-    print('WHY')
     hsk.send(HskPacket(s[1], 'eFwNext', data=f"/lib/firmware/{args.fwslot}"))
     pkt = hsk.receive()
     hsk.send(HskPacket(s[1], 'eRestart', data=[0])) 
