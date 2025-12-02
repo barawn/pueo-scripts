@@ -161,10 +161,22 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
             if [ "$pmbustry" -eq 0 ]; then
-                errorCode=50
                 pmbustry=1
+                if [ $fwFlag -eq 0 ]; then
+                    errorCode=50
+                elif [ $fwFlag -eq 1 ]; then
+                    errorCode=51
+                elif [ $fwFlag -eq 2 ]; then 
+                    errorCode=52
+                fi
             else
-                errorCode=51
+                if [ $fwFlag -eq 0 ]; then
+                    errorCode=60
+                elif [ $fwFlag -eq 1 ]; then
+                    errorCode=61
+                elif [ $fwFlag -eq 2 ]; then 
+                    errorCode=62
+                fi
             fi
         
         # Needs a restart
@@ -187,7 +199,13 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo -e "\033[1;31mSURF never requested in training c.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
-            errorCode=51
+            if [ $fwFlag -eq 0 ]; then
+              errorCode=60
+            elif [ $fwFlag -eq 1 ]; then
+              errorCode=61
+            elif [ $fwFlag -eq 2 ]; then 
+              errorCode=62
+            fi
         
         # Third way a restart is needed 
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ never requested out training!"; then 
@@ -195,7 +213,13 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo -e "\033[1;31m SURF never requested out training c.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
-            errorCode=51
+            if [ $fwFlag -eq 0 ]; then
+              errorCode=60
+            elif [ $fwFlag -eq 1 ]; then
+              errorCode=61
+            elif [ $fwFlag -eq 2 ]; then 
+              errorCode=62
+            fi
         
         # Needs a power cycle
         elif echo "$output" | grep -zq "SURF SLOT#[0-9]\+ on TURFIO PORT#[0-9]\+ failed to respond"; then
