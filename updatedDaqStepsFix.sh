@@ -2,18 +2,18 @@ taylor/ppython checkIfReady.py --tio 3 --slots 0,1,2,3,4,5
 taylor/ppython checkIfReady.py --tio 2 --slots 0,1,2,3,4,5
 taylor/ppython checkIfReady.py --tio 1 --slots 0,1,2,3,4,5,6
 taylor/ppython checkIfReady.py --tio 0 --slots 0,1,2,3,4,5,6
-taylor/ppython startup/turfManualStartup.py 
 taylor/ppython taylor/pingPongReq.py --tio 3 --slots 0,1,2,3,4,5
 taylor/ppython taylor/pingPongReq.py --tio 2 --slots 0,1,2,3,4,5
 taylor/ppython taylor/pingPongReq.py --tio 1 --slots 0,1,2,3,4,5,6
 taylor/ppython taylor/pingPongReq.py --tio 0 --slots 0,1,2,3,4,5,6
 taylor/ppython taylor/fwNext_All.py --tio 3 --fwslot $fwFlag
-taylor/ppython startup/surfStartup.py --tio 3 --slots 0,1,2,3,4,5 --enable
 taylor/ppython taylor/fwNext_All.py --tio 2 --fwslot $fwFlag
-taylor/ppython startup/surfStartup.py --tio 2 --slots 0,1,2,3,4,5 --enable
 taylor/ppython taylor/fwNext_All.py --tio 1 --fwslot $fwFlag
-taylor/ppython startup/surfStartup.py --tio 1 --slots 0,1,2,3,4,5,6 --enable
 taylor/ppython taylor/fwNext_All.py --tio 0 --fwslot $fwFlag
+taylor/ppython startup/turfManualStartup.py 
+taylor/ppython startup/surfStartup.py --tio 3 --slots 0,1,2,3,4,5 --enable
+taylor/ppython startup/surfStartup.py --tio 2 --slots 0,1,2,3,4,5 --enable
+taylor/ppython startup/surfStartup.py --tio 1 --slots 0,1,2,3,4,5,6 --enable
 taylor/ppython startup/surfStartup.py --tio 0 --slots 0,1,2,3,4,5,6 --enable
 taylor/ppython taylor/mtsAdvance.py --tio 3 --slots 0,1,2,3,4,5
 taylor/ppython taylor/mtsAdvance.py --tio 2 --slots 0,1,2,3,4,5

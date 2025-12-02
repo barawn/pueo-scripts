@@ -59,5 +59,5 @@ for s in surfs:
     pkt = hsk.receive()
     hsk.send(HskPacket(s[1], 'eRestart', data=[0])) 
     print(pkt)
-    time.sleep(0.5)
+    time.sleep(1)
 print(f'Firmware loaded from /mnt/bitstreams/{args.fwslot}')

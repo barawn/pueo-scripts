@@ -119,7 +119,7 @@ def handle_error(code, tio=False, slot=False):
         time.sleep(1) 
         hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
         time.sleep(10)
-        if errorCode == 60: 
+        if code == 60: 
             eFwSwap(selectedSurf, 0)
         elif code == 61: 
             eFwSwap(selectedSurf,1)

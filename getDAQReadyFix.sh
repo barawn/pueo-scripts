@@ -13,7 +13,7 @@
 # []  Restart Startup --> SURF Slot 5 is being real wonk. Let's fix that 
 # [x] TURF someone stealing 
 
-
+source configfile.conf
 
 # switch to directory this is called from
 cd "$(dirname "$0")"
@@ -63,17 +63,17 @@ if [[ " $@ " =~ "--reboot" ]]; then
     python3 fixError.py $errorCode
 fi
 
-if [[ " $@ " =~ "--fw0" ]]; then 
-    fwFlag=0
-fi
+# if [[ " $@ " =~ " --fw0 " ]]; then
+  #   fwFlag=0
+#fi
 
-if [[ " $@ " =~ "--fw1"]]; then 
-    fwFlag=1
-fi
+#if [[ " $@ " =~ " --fw1 " ]]; then 
+ #   fwFlag=1
+#fi
 
-if [[ " $@ " =~ "--fw2"]]; then 
-    fwFlag=2
-fi
+#if [[ " $@ " =~ " --fw2 " ]]; then 
+ #   fwFlag=2
+#fi
 
 
 # Detect if there is a progress file
@@ -103,9 +103,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     while [ $retrycount -le $retry ]; do
         output=$(eval "$line" 2>&1)
         status=$?
-        if [[ " $@ " =~ " --verbose " ]]; then
-            echo "$output"
-        fi
+        # if [[ " $@ " =~ " --verbose " ]]; then
+        echo "$output"
+        # fi
 
         # TURF GTP Errors 
         if echo "$output" | grep -q "GTP link 0"; then
@@ -320,7 +320,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     if [ "$success" = true ]; then
         echo $line_num > "$progress_file"
     else
-        python3 fixErrorFw.py 100
+        python3 fixErrorFw 100
         # Reset progress file to 0
         echo 0 > "$progress_file"
 
