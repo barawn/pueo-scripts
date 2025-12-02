@@ -21,8 +21,8 @@ dev = PueoTURF()
 es = EventServer()
 
 ## LUCAS EDIT HERE FOR THE THRESHOLDS
-thresholdOR = 6700
-thresholdAND = 9000
+thresholdOR = 18000
+thresholdAND = 6500
 
 
 for i in range(4):
@@ -66,7 +66,6 @@ if(args.maskLF):
 else:
     dev.trig.mask = 0b000000000000000000000000000
     
-dev.event.mask = 0b1110
 dev.trig.mask = 0
 if(args.orlogic):
     dev.trig.leveltwo_logic = 1
@@ -79,9 +78,16 @@ dev.trig.runcmd(dev.trig.RUNCMD_RESET)
 startCount = dev.trig.trigger_count
 start = time.time()
 L2_begin = dev.trig.scaler.leveltwos()
+last100 = L2_begin
 for i in range(args.stop):
-    if(i % 100 == 0):
+    print(i)
+    print(f"Trig count:{dev.trig.trigger_count}")
+    print(dev.trig.scaler.leveltwos())
+    if(i % 100 == 99):
         print(f'Mid Run L2: {dev.trig.scaler.leveltwos()}')
+        print(f'Event number {i}')
+        print(f'Average rate so far: {100.0/(time.time() - last100)}')
+        last100 = time.time()
     e = es.event_receive()
     f = open(f'{args.filename}_{i}.pkl', 'wb')
     pickle.dump(e,f)
@@ -124,16 +130,4 @@ print(f'THRESHOLDS: {surf.levelone.read(0x800)}')
 print(f'SUBTHRESHOLDS: {surf.levelone.read(0xA00)}') 
 print(f'RUNDLY (for fun!): {dev.trig.rundly}')
 with open(args.filename, "w") as outfile:
-    outfile.write(f"TURFIO MASK: {dev.event.mask}\n
-                FRAGMENT SIZE: {es.max_fragment}\n
-                FRAGMENT SOURCE MASK: {es.max_mask}\n 
-                PPS ENABLE: {dev.trig.pps_trig_enable}\n
-                PPS OFFSET: {dev.trig.pps_offset}\n
-                RF OFFSET: {dev.trig.offset}\n
-                RF ENABLE: {dev.trig.rf_trig_en}\n
-                LF MASKING: {dev.trig.mask}\n
-                PHOTOSHUTTER ENABLE: {dev.trig.photo_en}\n
-                PHOTOSHUTTER PRESCALE: {dev.trig.photo_prescale}\n
-                MASK AGAIN: {dev.trig.mask}\n
-                THRESHOLDS: {surf.levelone.read(0x800)}\n
-                SUBTHRESHOLDS: {surf.levelone.read(0xA00)}\n")
+    outfile.write(f"TURFIO MASK: {dev.event.mask}\nFRAGMENT SIZE: {es.max_fragment}\nFRAGMENT SOURCE MASK: {es.max_mask}\n PPS ENABLE: {dev.trig.pps_trig_enable}\nPPS OFFSET: {dev.trig.pps_offset}\nRF OFFSET: {dev.trig.offset}\nRF ENABLE: {dev.trig.rf_trig_en}\nLF MASKING: {dev.trig.mask}\n PHOTOSHUTTER ENABLE: {dev.trig.photo_en}\nPHOTOSHUTTER PRESCALE: {dev.trig.photo_prescale}\nMASK AGAIN: {dev.trig.mask}\nTHRESHOLDS: {surf.levelone.read(0x800)}\nSUBTHRESHOLDS: {surf.levelone.read(0xA00)}\n")
