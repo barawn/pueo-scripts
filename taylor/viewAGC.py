@@ -30,6 +30,6 @@ for slot in slotList:
         offset=surf.levelone.read(0x4014+0x400*i)
         if offset > 65536/2:
             offset -= 65536/2
-        print(f"Slot 0 Ch {i:2} Var:{sqr:11.3e} GT:{gt:11.3e} LT:{lt:11.3e} Scale:{scale:11d} Offset:{offset:11d}")
+        print(f"Slot {slot} Ch {i:2} Var:{sqr:11.3e} GT:{gt:11.3e} LT:{lt:11.3e} Scale:{scale:11f} Offset:{offset:11f}")
     print("")
  

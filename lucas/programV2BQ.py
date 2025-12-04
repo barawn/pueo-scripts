@@ -39,7 +39,7 @@ with open(args.coeffs, 'r') as coeff_file:
         except Exception as e:
             continue
         coeffs.append(signed_to_uint32(val))
-if(len(coeffs) != 31):
+if(len(coeffs) != 23):
     print(len(coeffs))
     raise Exception("Wrong number of coefficients in coefficient file")
 
@@ -116,7 +116,7 @@ for slot in slotList:
             surf.levelone.write(total_offset + 0x00, 0x10001) #Update
 
             surf.levelone.write(total_offset + 0x0, 0x810000) # Enable Bypass
-
+            print("BQ_ON")
         else:
             print("You didn't tell me on or off!")
             exit()
