@@ -1,13 +1,15 @@
 #! /usr/bin/env python3
 
 import time
-import psycopg2
+# import psycopg2
 import sys
 import os
 import signal
 import argparse
 
 from HskSerial import HskEthernet, HskPacket
+
+# The next part is stolen from Cosmin's code for the DAQ
 
 five_oclock = False
 def on_timeout(signum,frame):
@@ -45,9 +47,10 @@ def hsk_harder(dest, cmd, data = None, timeout = 1, max_tries = 5):
 
     return pkt
 
+# This next part is all me
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--tio", type=str, default="0,1,2,3", 
+parser.add_argument("--tio", type=str, default="0,1,2,3",
         help="comma-separated list of TURFIOs to initialize")
 parser.add_argument("--slots", type=str, default="0,1,2,3,4,5,6")
 
@@ -57,56 +60,59 @@ slotList = list(map(int,args.slots.split(',')))
 
 if args.tio == '0':
     tios = (0, 0x58)
-    surfs = [ (0, 0x97),
-            (1, 0xa0),
-            (2, 0x99),
-            (3, 0x8d),
-            (4, 0x9d),
-            (5, 0x94),
-            (6, 0x8a) ]
+    surfs = { 0: 0x97,
+            1: 0xa0,
+            2: 0x99,
+            3: 0x8d,
+            4: 0x9d,
+            5: 0X94,
+            6: 0x8a }
 elif args.tio == '1':
     tios = (1, 0x50)
-    surfs = [ (0, 0x8c),
-            (1, 0x95),
-            (2, 0x9f),
-            (3, 0x9a),
-            (4, 0x87),
-            (5, 0x85), 
-            (6, 0x91)]
+    surfs = { 0: 0x8c,
+            1: 0x95,
+            2: 0x9f,
+            3: 0x9a,
+            4: 0x87,
+            5: 0x85,
+            6: 0x91}
 elif args.tio == '2':
     tios = (2, 0x40)
-    surfs = [ (0, 0x89),
-            (1, 0x88),
-            (2, 0x9e),
-            (3, 0x8b),
-            (4, 0xa1),
-            (5, 0x98)]
+    surfs = { 0: 0x89,
+            1: 0x88,
+            2: 0x9e,
+            3: 0x8b,
+            4: 0xa1,
+            5: 0x98}
 elif args.tio == '3':
     tios = (3, 0x48)
-    surfs = [ (0, 0x93),
-            (1, 0x9b),
-            (2, 0x86),
-            (3, 0x8e),
-            (4, 0x90),
-            (5, 0x92) ]
+    surfs = { 0: 0x93,
+            1: 0x9b,
+            2: 0x86,
+            3: 0x8e,
+            4: 0x90,
+            5: 0x92 }
 elif args.tio == 't':
-    tios = (3, 0x48)
-    surfs = [ (0, 0x93) ]
+    tios = (0, 0x48)
+    surfs = { 3: 0xa3, 4: 0xa4 }
 
-
+# Code will just try to run through every SURF and if it
+# can't get a response --> send an error
 
 hsk = HskEthernet()
-
-for s in slotList:    
-    val = (surfs[s][1])
-    if hsk_harder(val, 'ePingPong', max_tries=1) is None:
+print(slotList)
+for s in slotList:
+    try:
+        # going to put this as a try in case slot arguments are wrong...
+        val = (surfs[s]) # val gives hsk addrs
+    except:
+        print(f'Slot argument {s} for TURFIO PORT#{args.tio} incorrect!')
+        sys.exit()
+    if hsk_harder(val, 'ePingPong', max_tries=1) is None: # try to ping a SURF, if fail, TURFIO enable
         hsk.send(HskPacket(tios[1], 'eEnable', data=[0x40, 0x40]))
         pkt = hsk.receive()
-    if hsk_harder(val, 'ePingPong') is None:
-        print(f"SURF SLOT#{surfs[s][0]} on TURFIO PORT#{tios[0]} failed to respond!")
+    if hsk_harder(val, 'ePingPong') is None: # report failure! 
+        print(f"SURF SLOT#{s} on TURFIO PORT#{tios[0]} failed to respond!")
         sys.exit()
 
 print('All SURFs booted and ready')
-    
-            
-   

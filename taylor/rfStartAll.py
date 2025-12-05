@@ -29,7 +29,7 @@ dev.trig.offset = 36
 print('Default trig offset is 36 clocks!')
 tio = PueoTURFIO((dev, args.tio), 'TURFGTP')
 
-for slot in slotList: 
+for slot in slotList:
     surf = PueoSURF((tio, slot), 'TURFIO')
     surf.trig_clock_en = 1
     surf.levelone.write(0x2008, 0x00000)
