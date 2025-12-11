@@ -56,7 +56,7 @@ def handle_error(code, tio=False, slot=False):
         hsk.send(HskPacket(surf, 'eFwNext', data=f"/lib/firmware/{slot}"))
         pkt = hsk.receive()
         hsk.send(HskPacket(surf, 'eRestart', data=[0]))
-        time.sleep(0.5)
+        time.sleep(10)
     
     hsk = HskEthernet()
     if code == 1:
@@ -74,6 +74,11 @@ def handle_error(code, tio=False, slot=False):
     elif code == 4: 
         print("Handling GTP link 3 error: Restarting GTP interface...")
         hsk.send(HskPacket(0x48, 'eReloadFirmware', data=[0,0,0,0]))
+        time.sleep(5)
+    elif code==12: 
+        print("Sending eReloadFirmware to TURFIO link")
+        selectedTurfio = (tios[tio])
+        hsk.send(HskPacket(selectedTurfio, 'eReloadFirmware', data=[0,0,0,0]))
         time.sleep(5)
     elif code == 49 or code == 50 or code == 51 or code == 52: 
         selectedTurfio = (tios[tio])
@@ -116,9 +121,9 @@ def handle_error(code, tio=False, slot=False):
             selectedSurf = surfsTio3[slot]
         hsk.send(HskPacket(selectedTurfio, 'eEnable', data = [0x40, 0x40]))
         pkt = hsk.receive()
-        time.sleep(1) 
-        hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
-        time.sleep(10)
+        time.sleep(1)
+        # hsk.send(HskPacket(selectedSurf, 'eRestart', data = [0]))
+        # time.sleep(10)
         if code == 60: 
             eFwSwap(selectedSurf, 0)
         elif code == 61: 

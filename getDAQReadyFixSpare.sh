@@ -20,9 +20,9 @@ cd "$(dirname "$0")"
 
 # From Patrick's ppython 
 # just sources all the scripts that we will need 
-MYBASE=/home/pueo/surfcomm/
-MYSTARTUP=/home/pueo/surfcomm/pueo-scripts/taylor/ppy_startup.py
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/pueo/surfcomm/pyrfdc/libunivrfdc/
+MYBASE=/home/pueo/
+MYSTARTUP=/home/pueo/pueo-scripts/taylor/ppy_startup.py
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/pueo/pyrfdc/libunivrfdc/
 export PYTHONSTARTUP=$MYSTARTUP
 export PYTHONPATH=$MYBASE/pyrfdc:$MYBASE/pueo-python:$MYBASE/pueo-utils/HskSerial:$MYBASE/pueo-utils/EventTester:$PYTHONPATH
 
@@ -49,13 +49,13 @@ if [ -f "errorLog.txt" ]; then
     fi
 fi 
 
-if [ -f "errorCount.txt" ]; then
+if [ -f errorCount.txt ]; then
     errorCount=$(<errorCount.txt)
 else
     errorCount=0
 fi
 
-if [ -f "startTime.txt" ]; then
+if [ -f startTime.txt ]; then
     start_time=$(<startTime.txt)
 else
     start_time=0
@@ -71,7 +71,7 @@ fi
 # Reboot the TURF because I'm annoyed I keep having to go back and forth with it
 if [[ " $@ " =~ "--reboot" ]]; then
     errorCode=100
-    python3 fixError.py $errorCode
+    python3 fixErrorFw.py $errorCode
 fi
 
 # if [[ " $@ " =~ " --fw0 " ]]; then
@@ -139,13 +139,25 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             errorCode=4
             errorState=4
             echo "$errorState" >> errorLog.txt
-        
+       
         # TURFIO Bridge Errors
         elif echo "$output" | grep -q "TURFIO bridge error"; then
             echo -e "\033[1;31mDetected TURFIO bridge error.\033[0m"
-            errorCode=99
-            errorState=5 
+            errorCode=100
+            errorState=5
             echo "$errorState" >> errorLog.txt
+
+        # Cheap fix... might work might now we shall find out now wont we? 
+        elif echo "$output" | grep -q "TURFIO PORT#[0-9]\+ link failed"; then 
+            tn=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
+            echo -e  "\033[1;31mLink to TURFIO PORT#$tn failed!\033[0m"
+            errorCode=12
+            errorState=15
+            echo "$errorState" >> errorLog.txt
+        elif echo "$output" | grep -q "All TURFIO links found!"; then
+            echo -e "\033[1;mAll TURFIO links confirmed\033[0m"
+            success=true
+            break
 
         # No clock align attempt
         elif echo "$output" | grep -q "RX clock off on all SURFs"; then
@@ -156,14 +168,14 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         # Clock slip
         elif echo "$output" | grep -q "Clock not on correctly! Restart recommended"; then
             echo -e "\033[1;31mClock slip detected. TURF reboot required.\033[0m"
-            errorCode=99
+            errorCode=100
             errorState=6
             echo "$errorState" >> errorLog.txt
         
         # Only a partially finished clocking scheme
         elif echo "$output" | grep -q "RX clock off on only a few SURFs. Restart recommended!"; then
             echo -e "\033[1;31mOnly a few SURFs have Rx Clock enabled. TURF reboot required.\033[0m"
-            errorCode=99
+            errorCode=100
             errorState=7
             echo "$errorState" >> errorLog.txt
         
@@ -172,19 +184,22 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             echo -e "\033[1;32mNo clock slips detected and system ready for RF data!\033[0m"
             success=true
             echo $line_num > "$progress_file"
-            rm -f "$error_state"
-            rm -f "$time_state"
+            rm -f errorCount.txt
+            rm -f startState.txt
             elapsed_seconds=$((SECONDS + startTime))
             elapsed_formatted=$(date -ud "@$elapsed_seconds" +'%M min %S sec')
             echo "DAQ set-up completed with $errorCount errors"
             echo "Elapsed time: $elapsed_formatted"s
+            keepError=0
+            echo "$keepError" > keepError.txt
             exit 0
         
         # Occasionally happens but tbh idk how to fix it
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ is not accessible!"; then
-            echo -e "\033[1;31mSURF not booted.\033[0m"
+            # echo -e "\033[1;31mSURF not booted.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
+            echo -e "\033[1;31mTURFIO PORT#$tn: SURF#$sn is not booted!\033[0m"
             if [ "$pmbustry" -eq 0 ]; then
                 pmbustry=1
                 if [ $fwFlag -eq 0 ]; then
@@ -213,9 +228,10 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         # Needs a restart
         elif echo "$output" | grep -zq "SURF#[0-9]\+ on TURFIO#[0-9]\+ did not become ready!"; then
             # eRestart
-            echo -e "\033[1;31mSURF never requested in training\033[0m"
+            # echo -e "\033[1;31mSURF never requested in training\033[0m"
             sn=$(echo "$output" | grep -oP 'SURF#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'TURFIO#\K\d+' | tail -n 1)
+            echo -e "\033[1;31mTURFIO PORT#$tn: SURF#$sn never requested in training\033[0m"
             if [ $fwFlag -eq 0 ]; then
               errorCode=60
             elif [ $fwFlag -eq 1 ]; then
@@ -230,9 +246,10 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         # Needs a restart but *different*
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ never requested in training!"; then 
             # eRestart
-            echo -e "\033[1;31mSURF never requested in training c.\033[0m"
+            #echo -e "\033[1;31mSURF never requested in training c.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
+            echo -e "\033[1;31mTURFIO PORT#$tn: SURF#$sn never requested in training\033[0m" 
             if [ $fwFlag -eq 0 ]; then
               errorCode=60
             elif [ $fwFlag -eq 1 ]; then
@@ -247,9 +264,10 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         # Third way a restart is needed 
         elif echo "$output" | grep -zq "SURF slot#[0-9]\+ on TURFIO port#[0-9]\+ never requested out training!"; then 
             # eRestart
-            echo -e "\033[1;31m SURF never requested out training c.\033[0m"
+            # echo -e "\033[1;31m SURF never requested out training c.\033[0m"
             sn=$(echo "$output" | grep -oP 'slot#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'port#\K\d+' | tail -n 1)
+            echo -e "\033[1;31mTURFIO PORT#$tn: SURF#$sn never requested out training\033[0m"
             if [ $fwFlag -eq 0 ]; then
               errorCode=60
             elif [ $fwFlag -eq 1 ]; then
@@ -264,9 +282,10 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         # Needs a power cycle
         elif echo "$output" | grep -zq "SURF SLOT#[0-9]\+ on TURFIO PORT#[0-9]\+ failed to respond"; then
             # ePMBus
-            echo -e "\033[1;31mSURF did not boot properly \033[0m"
+            # echo -e "\033[1;31mSURF did not boot properly \033[0m"
             sn=$(echo "$output" | grep -oP 'SLOT#\K\d+' | tail -n 1)
             tn=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
+            echo -e "\033[1;31mTURFIO PORT#$tn: SURF#$sn did not boot properly \033[0m"
             errorCode=49 #changed
             errorState=8
             errMessage="SURF $sn on TURFIO PORT#$tn: $errorState"
@@ -279,14 +298,19 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             break
 
         # MTS failed????
-        elif echo "$output" | grep -zq "A SURF failed to MTS align"; then
-            echo -e "\033[1;31mSURF failed MTS alignment\033[0m"
-            errorCode=99
+        elif echo "$output" | grep -zq "SURF#[0-9]\+ on TURFIO PORT#[0-9]\+ failed to MTS align"; then
+            surf=$(echo "$output" | grep -oP 'SURF#\K\d+' | tail -n 1)
+            turfio=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
+            errorCode=100
             errorState=10
-            echo "$errState" >> errorLog.txt
-        
-        elif echo "$output" | grep -zq "Firmware loaded from /mnt/bitstreams/[0-9]\+"; then
-            echo -e "\033[1;32mChanged the firmware \033[0m"
+            echo -e "\033[1;31mSURF#$surf on TURFIO PORT#$turfio failed to MTS align\033[0m"
+            errMessage="SURF $surf on TURFIO PORT#$turfio: $errorState"
+            echo "$errMessage" >> errorLog.txt
+        # need to add error catch!
+        elif echo "$output" | grep -zq "Firmware loaded from /mnt/bitstreams/[0-9]\+ on all SURFs on TURFIO PORT#[0-9]\+"; then
+            turfio=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
+            bitstream=$(echo "$output" | grep -oP 'bitstreams/#\K\d+' | tail -n 1)
+            echo -e "\033[1;32mTURFIO PORT#$turfio: Changed the firmware on all SURFs to /mnt/bitstreams/$bitstreams \033[0m"
             success=true 
             break
         # SURFs done! 
@@ -296,14 +320,16 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             break
         
         # SURFs powered on! 
-        elif echo "$output" | grep -zq "All SURFs booted and ready"; then
-            echo -e "\033[1;32mAll SURFs booted properly \033[0m"
+        elif echo "$output" | grep -zq "All SURFs on TURFIO PORT#[0-9]\+ booted and ready"; then
+            turfio=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
+            echo -e "\033[1;32mTURFIO PORT#$turfio: All SURFs booted properly \033[0m"
             success=true
             break
 
-        # MTS passed! 
-        elif echo "$output" | grep -zq "All SURFs aligned to 120"; then
-            echo -e "\033[1;32mMTS aligned to 120 \033[0m"
+        # MTS passed!
+        elif echo "$output" | grep -zq "All SURFs on TURFIO PORT#[0-9]\+ aligned to 120"; then
+            turfio=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
+            echo -e "\033[1;32mTURFIO PORT#$turfio: MTS for all SURFs aligned to 120 \033[0m"
             success=true
             break
         
@@ -314,8 +340,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             break
 
         # Enable trigger clocks
-        elif echo "$output" | grep -zq "Okeedokee, clocks started, all beams unmasked!"; then
-            echo -e "\033[1;32mRF Trigger clocks enabled \033[0m"
+        elif echo "$output" | grep -zq "Okeedokee, clocks started, all beams unmasked on TURFIO PORT#[0-9]\+!"; then
+            turfio=$(echo "$output" | grep -oP 'PORT#\K\d+' | tail -n 1)
+            echo -e "\033[1;32mTURFIO PORT#$turfio: RF Trigger clocks enabled\033[0m"
             success=true
             break
         
@@ -325,12 +352,11 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             success=true
             break
         else
-            errorCode=99
-            exit 0 
+            errorCode=100
         fi
 
         if [ $errorCode -ne 0 ]; then
-            cmd="python3 -c 'from fixErrorFwSpare import handle_error; handle_error($errorCode"
+            cmd="python3 -c 'from fixErrorFw import handle_error; handle_error($errorCode"
 
             # Add tio if it's set
             if [ -n "$tn" ]; then
@@ -345,10 +371,9 @@ while IFS= read -r line || [[ -n "$line" ]]; do
             cmd+=")'"
             # echo -e "$cmd"
             eval "$cmd"
-            if [ $errorCode -eq 99 ]; then
+            if [ $errorCode -eq 100 ]; then
                 # Reset progress file to 0
                 echo 0 > "$progress_file"
-                exit 0
                 # Reset counters
                 retrycount=0
                 turfretry=0
@@ -360,16 +385,16 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 # Restart the script
                 exec "$0"
             else
-                echo -e "\033[1;33m Restarting script from line $line_num...\033[0m"
+                echo -e "\033[1;33mRestarting script from line $line_num...\033[0m"
                 ((retrycount++))
+                ((errorCount++))
             fi
-            ((errorCount++))
         fi
     done
     if [ "$success" = true ]; then
         echo $line_num > "$progress_file"
     else
-        python3 fixErrorFwSpare.py 99
+        python3 fixErrorFw.py 100
         # Reset progress file to 0
         echo 0 > "$progress_file"
 
@@ -380,13 +405,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
         # Restart the script
         ((errorCount++))
-        echo "$errorCount" > errorCoutn.txt
+        echo "$errorCount" > errorCount.txt
         echo "$startTime" > startTime.txt
-        exit 0
     fi
   
 
-done < updatedDaqStepsFixSpare.sh
+done < updatedDaqStepsFix.sh
 # Calculate the elapsed time
 
 rm -f "$progress_file"
@@ -395,6 +419,7 @@ elapsed_seconds=$(( SECONDS + startTime ))
 elapsed_formatted=$(date -ud "@$elapsed_seconds" +'%M min %S sec')
 echo "DAQ set-up completed with $errorCount errors"
 echo "Elapsed time: $elapsed_formatted"s
-
-rm -f "$error_state"
-rm -f "$time_state"
+keepError=0
+echo "$keepError" > keepError.txt
+rm -f errorCount.txt
+rm -f startState.txt

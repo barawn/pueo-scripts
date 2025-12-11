@@ -18,7 +18,7 @@ args = parser.parse_args()
 dev = PueoTURF()
 es = EventServer()
 
-thresholdAND = 7000
+thresholdAND = 7400
 
 for i in range(4):
     tio = PueoTURFIO((dev, i), 'TURFGTP')
@@ -43,7 +43,7 @@ for i in range(4):
                 surf.levelone.write(0x800 + i*4,thresholdAND) #
             surf.levelone.write(0x1800, 2)# Apply new thresholds
             
-dev.trig.mask = 0x3FFFFFF
+dev.trig.mask = 0xC000000#FFFFFF
 
 print(dev.trig.mask)
 time.sleep(1)

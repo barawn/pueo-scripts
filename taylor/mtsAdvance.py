@@ -76,7 +76,7 @@ for s in slotList:
     if val == b'\xfe\x13': 
         pass
     else: 
-        print('A SURF failed to MTS align')
+        print(f'SURF#{s} on TURFIO PORT#{args.tio} failed to MTS align')
         sys.exit()
 
-print('All SURFs aligned to 120')
+print(f'All SURFs on TURFIO PORT#{args.tio} aligned to 120')

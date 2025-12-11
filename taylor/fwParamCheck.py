@@ -3,7 +3,7 @@ import time
 import csv
 from datetime import datetime
 
-filename = 'fwParam_v0r6p32.csv'
+filename = 'FINAL_fwParam_v0r7p2.csv'
 
 hsk = HskEthernet()
 headers = [ 'tio', 'slot', 'rxclk', 'cin', 'cin bit']

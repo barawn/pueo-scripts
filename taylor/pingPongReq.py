@@ -115,4 +115,4 @@ for s in slotList:
         print(f"SURF SLOT#{s} on TURFIO PORT#{tios[0]} failed to respond!")
         sys.exit()
 
-print('All SURFs booted and ready')
+print(f'All SURFs on TURFIO PORT#{args.tio} booted and ready')

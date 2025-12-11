@@ -6,7 +6,7 @@ import time
 import csv
 
 
-filename = 'thresholdScanL2take2.csv'
+filename = 'thresholdScanL2take58920384.csv'
 
 highthreshold = 17000
 highsub = 10000
@@ -42,7 +42,7 @@ def thresholdCheck(dev):
     for t in range(4):
         tio = PueoTURFIO((dev, t), 'TURFGTP')
         if t == 0 or t == 1: 
-            for s in range(7):
+            for s in range(6):
                 surf = PueoSURF((tio, s), 'TURFIO')
                 thresholdVals.append(surf.levelone.read(0x800))
         else: 
@@ -55,7 +55,7 @@ def thresholdCheck(dev):
 def surfThresholdSet(surf0, surf1,lowthreshold,lowsub,highthreshold,highsub): 
     thresholds(surf0, lowthreshold, lowsub)
     thresholds(surf1, lowthreshold, lowsub)
-    time.sleep(5)
+    time.sleep(3)
     L2trigs = dev.trig.scaler.leveltwos()
     L1trigs = dev.trig.scaler.scalers()
     vals = thresholdCheck(dev)
@@ -84,10 +84,10 @@ TIO 2:  0   1   2   3   4   5
 # start off with everything high
 for t in range(4):
     tio = PueoTURFIO((dev,t), 'TURFGTP')
-    for s in range(0,7): 
+    for s in range(0,6): 
         surf = PueoSURF((tio, s), 'TURFIO')
         thresholds(surf,highthreshold,highsub)
-        time.sleep(5)
+        time.sleep(3)
 
 
 with open(filename, 'w', newline='') as csvfile:

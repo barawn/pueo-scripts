@@ -71,4 +71,5 @@ for s in slotList:
         print(f"Updating fw failed!") 
 
 time.sleep(1)
-print(f'Firmware loaded from /mnt/bitstreams/{args.fwslot}')
+print(f'TURFIO PORT#{args.tio}: Firmware loaded from /mnt/bitstreams/{args.fwslot} on all SURFs')
+

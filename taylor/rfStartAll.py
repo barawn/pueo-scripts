@@ -35,4 +35,4 @@ for slot in slotList:
     surf.levelone.write(0x2008, 0x00000)
     surf.levelone.write(0x200C, 0x80000000)
 
-print('Okeedokee, clocks started, all beams unmasked!')
+print(f'Okeedokee, clocks started, all beams unmasked on TURFIO PORT#{args.tio}!')
