@@ -34,7 +34,7 @@ es = EventServer()
 # Check if events are running already
 if dev.trig.running == 1: 
     es.close()
-    dev.trig.runcmd(dev.trig.RUCNMD_STOP)
+    dev.trig.runcmd(dev.trig.RUNCMD_STOP)
 
 dev.trig.mask = 0 # sets trigger mask
 
@@ -47,7 +47,7 @@ for slot in slotList:
     surfs[slot] = PueoSURF((tio, slot), 'TURFIO')
 
 slot_combos = list(itertools.combinations(slotList,2))
-beam_combos = list(itertools.product([i for i in range(args.nbeams)],2))
+beam_combos = list(itertools.permutations([i for i in range(args.nbeams)],2))
 nbeams = args.nbeams
 smallThresh = args.smallThresh
 bigThresh = args.bigThresh
